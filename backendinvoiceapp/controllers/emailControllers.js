@@ -247,6 +247,18 @@ const createFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
 
     const pdfBuffer = response.data;
 
+    // Convert reminderFrequency to a number and check for validity
+    const parsedReminderFrequency = parseInt(reminderFrequency, 10);
+    if (isNaN(parsedReminderFrequency)) {
+      throw new Error('Invalid reminder frequency');
+    }
+
+    // Calculate the next reminder date and check for validity
+    const nextReminderDate = new Date(Date.now() + parsedReminderFrequency * 24 * 60 * 60 * 1000);
+    if (isNaN(nextReminderDate.getTime())) {
+      throw new Error('Invalid next reminder date');
+    }
+
     const nouvelleFacture = new Facture({
       number,
       factureId,
@@ -256,8 +268,8 @@ const createFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
       emetteur,
       destinataire,
       userId: req.userData ? req.userData.id : null,
-      nextReminderDate: new Date(Date.now() + reminderFrequency * 24 * 60 * 60 * 1000),
-      reminderFrequency: Number(reminderFrequency),
+      nextReminderDate: nextReminderDate,
+      reminderFrequency: parsedReminderFrequency,
       items: items
     });
 
@@ -287,8 +299,7 @@ const createFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.send({
-      message: "Email envoyé avec succès à " + email,
+    res.status(200).send({ message: 'Factur-X générée et email envoyé avec succès',
       factureId: factureId,
     });
   } catch (error) {
@@ -296,6 +307,7 @@ const createFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
     res.status(500).send("Erreur lors de la génération de la facture ou de l'envoi de l'email: " + error.message);
   }
 });
+
 
 
 

@@ -240,7 +240,7 @@ export const InvoiceDataProvider = ({ children }) => {
       
 
     const handleInvoiceActionSendMailX = async (invoiceData, onSuccess, onError) => {
-        const { number, devise, issuer, client, total, items, reminderFrequency } = invoiceData;
+        const { number, devise, issuer, client, total, items } = invoiceData;
         const areAllRequiredFieldsValid = number !== '' && issuer.name !== '' && client.name !== '';
     
         if (!areAllRequiredFieldsValid) {
@@ -254,7 +254,7 @@ export const InvoiceDataProvider = ({ children }) => {
             email: client.email,
             subject: 'Votre Facture',
             montant: total,
-            factureId: uuidv4(), // assuming uuidv4 is imported or defined somewhere
+            factureId: uuidv4(),
             devise,
             reminderFrequency,
             emetteur: JSON.stringify(issuer),
@@ -263,6 +263,7 @@ export const InvoiceDataProvider = ({ children }) => {
         };
     
         try {
+            console.log('Envoi des données:', invoicePayload);
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/sendEmailx`, invoicePayload, {
                 responseType: 'arraybuffer'
             });
