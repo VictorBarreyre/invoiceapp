@@ -1,0 +1,241 @@
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./fonts/SFProDisplay-Medium.woff2') format('woff2'),
+    url('./fonts/SFProDisplay-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./fonts/SFProDisplay-Semibold.woff2') format('woff2'),
+    url('./fonts/SFProDisplay-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./fonts/SFProDisplay-Light.woff2') format('woff2'),
+    url('./fonts/SFProDisplay-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+::-webkit-scrollbar {
+  width: 0em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f2f2f2;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c2c2c2;
+}
+
+.chakra-ui-light{
+  background-color:rgb(247, 249, 252);
+  min-width: 100vw;
+  overflow-x: hidden;
+}
+
+table{
+  border-collapse: unset !important;
+}
+
+#root {
+
+  font-family: 'SF Pro Display';
+  line-height: 1.5;
+  font-weight: 400;
+  min-width: 100vw;
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+   transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+   -webkit-text-fill-color: #000 !important;
+}
+
+
+a {
+  border-radius: 30px;
+  font-weight: 500;
+  color:#0B3860;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #745FF2 ;
+  
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 36px;
+  line-height: 1.1;
+}
+
+h2 {
+  color: black;
+  margin-bottom: 0.5rem;
+  line-height: 2.4rem;
+}
+
+h3 {
+  color: black;
+}
+
+p {
+  line-height: 1.4rem;
+}
+
+
+button {
+  border-radius: 30px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #000000;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+
+button:hover {
+  box-shadow: rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px  ;
+  color: #745FF2;
+  background-color: white !important;
+}
+
+
+
+input {
+  border: 2px solid transparent; /* Définissez une bordure transparente pour éviter des changements de taille au focus */
+  transition: border-color 0.3s; /* Optionnel : ajoute une transition pour la couleur de la bordure */
+}
+
+input:focus {
+  border: 1px solid #745FF2;
+  border-color: #745FF2 !important;
+}
+
+.tab-button:focus, .tab-button:focus-visible {
+  outline: none; /* Supprime l'indicateur par défaut */
+  box-shadow: 0 0 0 2px #745FF2; /* Exemple d'un box-shadow personnalisé comme indicateur de focus */
+}
+
+
+.tab-button:hover {
+  /* Styles de hover spécifiques aux onglets */
+  box-shadow: none;
+  color: #745FF2; /* Exemple : changer la couleur au survol */
+  background-color: transparent !important; /* Si vous souhaitez un fond transparent au survol */
+}
+
+
+.tab-heading h2 {
+  font-size: 26px;
+}
+
+.tab-list {
+  display: flex;
+  align-items: start;
+  flex-direction: row;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  border-bottom: 2px solid #efefef;
+}
+
+.tab {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0.4rem;
+  margin-right: 2rem;
+  border: none;
+  background-color: transparent;
+  font-family: 'SF Pro Display', sans-serif;
+  font-weight: 400;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 0px;
+  padding-bottom: 0.5rem;
+}
+
+.tab:hover {
+  background-color:transparent;
+  color: #745FF2;
+  box-shadow: none;
+}
+
+.tab:focus {
+  outline: none;
+}
+
+.tab.active {
+  border-bottom: 2px solid #745FF2;
+  color: #745FF2;
+}
+
+.tab.active-dashboard {
+  margin-right: 0;
+  border-right: 3px solid #745FF2;
+  color: #745FF2;
+}
+
+.disabled{
+  color:#718096;
+  cursor: not-allowed;
+}
+
+.tab-panel h3 {
+  margin-bottom: 1rem;
+}
+
+
+
+footer {
+  background-color: #fdfdfd;
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.main-content{
+  min-height: 100vh;
+}
+
+
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

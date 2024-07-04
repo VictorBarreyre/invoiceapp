@@ -1,0 +1,267 @@
+/* CSS pour cacher l'icône de calendrier par défaut et styliser l'input */
+.custom-date-input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+/* Style pour le container */
+.date-input-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Style pour le bouton de calendrier personnalisé */
+.calendar-button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+
+.classicinput {
+  background-color: white !important;
+  margin-bottom: 0.5rem;
+  box-shadow: rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px;
+}
+
+.classicinput:focus {
+  border: 1px solid #745FF2;
+  outline: none !important;
+  border-color: #745FF2 !important;
+  /* Ajoute une bordure rouge lors du focus */
+}
+
+.emptyinput {
+  margin-bottom: 0.5rem;
+  border: 1px dashed red !important;
+}
+
+.emptyinput::placeholder {
+  color: red;
+  /* Nouvelle couleur du texte du placeholder */
+}
+
+
+.final-btn {
+  margin-top: 0.2rem;
+}
+
+.head-tab {
+  font-family: 'SF Pro Display';
+  text-transform: uppercase;
+  color: #4a5568;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.invoice {
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+}
+
+.facto-compo {
+  font-family: 'SF Pro Display';
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  width: -webkit-fill-available-;
+}
+
+.neue-up {
+  background-color: #fdfdfd;
+  box-shadow: rgba(174, 174, 192, 0.4) 1.5px 1.5px 3px 0px, rgb(247 249 252) -1px -1px 3px 0px;
+}
+
+.neue-down.neue-down,
+.neue-down.neue-down[readonly] {
+  height: 2.5rem !important;
+  padding: 1rem !important;
+  border-radius: 5px !important;
+  background-color: #fdfdfd !important;
+  box-shadow: rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px !important;
+}
+
+
+.neue-down-group {
+  border-radius: 5px;
+  box-shadow: rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px;
+}
+
+.chakrabtn {
+  border-radius: 30px;
+  color: white;
+  background-color: black;
+}
+
+
+.form-iban {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 10px;
+}
+
+
+.submitButton {
+  font-family: 'SF Pro Display';
+  font-weight: 600;
+  color: white;
+  background-color: black;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 24px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.inputError {
+  border: 1px solid red;
+}
+
+
+.flex-stepper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepper-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin-top: 7rem;
+  margin-bottom: 2rem;
+}
+
+.tabs-container {
+  border-width: 1px;
+  padding: 3rem;
+  background: white;
+  border-radius: 1vw;
+  box-shadow: rgba(174, 174, 192, 0.4) 1.5px 1.5px 3px 0px, rgb(247 249 252) -1px -1px 3px 0px
+}
+
+.dashboard {
+  display: flex;
+}
+
+.sidebar {
+  border-radius: 1vw;
+  align-items: flex-start;
+  background-color: white;
+  padding-left: 2rem;
+  height: 69.7vh;
+  margin-left: 2rem;
+  margin-top: 7rem;
+  width: 15vw;
+  justify-content: space-between;
+}
+
+.tab-list-dashboard {
+  width: 100%;
+  align-items: left;
+  padding-top: 2rem;
+  list-style: none;
+
+}
+
+.content-dashboard {
+  margin-top: 7rem;
+  margin-left: 3rem;
+}
+
+.tab .icon {
+  width: 20px;
+  /* Ajustez la taille selon vos besoins */
+  height: 20px;
+  /* Ajustez la taille selon vos besoins */
+  margin-right: 10px;
+  /* Espace entre l'icône et le texte */
+  vertical-align: middle;
+  /* Pour aligner verticalement l'icône avec le texte */
+}
+
+
+.tab-panel {
+  margin-bottom: 2rem;
+}
+
+/* à ajouter que si l'utilisateur est log
+.flex-stepper{ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+*/
+
+/* Smartphones en portrait */
+@media only screen and (max-width: 600px) {
+
+
+  .tab{
+    margin-right: 0 !important;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .tabs-container {
+    width: 100vw;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 3rem;
+    padding-bottom: 1.8rem;
+  }
+
+  .tab-list {
+    justify-content: space-between;
+    margin-bottom: 1.2rem !important;
+  }
+
+  .tab.active {
+    margin-right: 0rem;
+  }
+
+  .disabled {
+    margin-right: 0rem !important;
+  }
+
+  .stepper-container {
+    width: 100%;
+    margin-top: 3rem;
+    margin-bottom: 0;
+    margin-left: 0rem
+  }
+
+
+  .tab-panel {
+    margin-bottom: 2rem;
+  }
+}
+
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
