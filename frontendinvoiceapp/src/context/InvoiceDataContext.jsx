@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext';
 import InvoicePDF from '../components/InvoicePDF';
 import { pdf } from '@react-pdf/renderer';
 import axios from 'axios';
+import { PDFDocument, rgb } from 'pdf-lib';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -249,24 +250,49 @@ export const InvoiceDataProvider = ({ children }) => {
             return;
         }
     
-        const invoicePayload = {
-            number,
-            email: client.email,
-            subject: 'Votre Facture',
-            montant: total,
-            factureId: uuidv4(),
-            devise,
-            reminderFrequency,
-            emetteur: JSON.stringify(issuer),
-            destinataire: JSON.stringify(client),
-            items: JSON.stringify(items)
-        };
-    
         try {
-            console.log('Envoi des données:', invoicePayload);
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/sendEmailx`, invoicePayload, {
-                responseType: 'arraybuffer'
-            });
+            // Generate PDF using @react-pdf/renderer
+            const file = <InvoicePDF invoiceData={invoiceData} />;
+            const asPDF = pdf([]);
+            asPDF.updateContainer(file);
+            const pdfBlob = await asPDF.toBlob();
+            console.log('Generated PDF size:', pdfBlob.size); // Log the size of the generated PDF
+    
+            const invoicePayload = {
+                number,
+                email: client.email,
+                subject: 'Votre Facture',
+                montant: total,
+                factureId: uuidv4(),
+                devise,
+                reminderFrequency,
+                emetteur: JSON.stringify(issuer),
+                destinataire: JSON.stringify(client),
+                items: JSON.stringify(items)
+            };
+    
+            const formData = new FormData();
+            formData.append('file', pdfBlob, `Facture-${number}.pdf`);
+            formData.append('number', number);
+            formData.append('email', client.email);
+            formData.append('subject', 'Votre Facture');
+            formData.append('montant', total);
+            formData.append('devise', devise);
+            formData.append('emetteur', JSON.stringify(issuer));
+            formData.append('destinataire', JSON.stringify(client));
+            formData.append('factureId', invoicePayload.factureId);
+            formData.append('reminderFrequency', reminderFrequency);
+            formData.append('items', JSON.stringify(items));
+    
+            const headers = {
+                'Content-Type': 'multipart/form-data'
+            };
+    
+            if (user && user.token) {
+                headers['Authorization'] = `Bearer ${user.token}`;
+            }
+    
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/sendEmailx`, formData, { headers });
     
             if (response.status === 200) {
                 console.log('Email envoyé avec succès');
@@ -280,6 +306,7 @@ export const InvoiceDataProvider = ({ children }) => {
             if (onError) onError('Erreur lors de la génération de la facture ou de l\'envoi de l\'email: ' + error.message);
         }
     };
+    
     
     
 

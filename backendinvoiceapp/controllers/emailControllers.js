@@ -3,12 +3,13 @@ const expressAsyncHandler = require("express-async-handler");
 const dotenv = require("dotenv");
 const nodemailer = require("nodemailer");
 const multer = require('multer');
+
 const Facture = require('../models/Facture');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const cron = require('node-cron');
 const moment = require('moment');
 const FormData = require('form-data');
@@ -223,94 +224,88 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
 });
 
 
-const createFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
-  const { number, email, subject, montant, factureId, devise, reminderFrequency } = req.body;
-  const emetteur = JSON.parse(req.body.emetteur);
-  const destinataire = JSON.parse(req.body.destinataire);
-  const items = JSON.parse(req.body.items) || [];
+const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
+  console.log('Body received:', req.body);
+  console.log('Files received:', req.file);
+
+  const {
+      number, email, subject, montant, devise, reminderFrequency,
+      emetteur, destinataire, items
+  } = req.body;
+
+  console.log('Parsed data - Number:', number);
+  console.log('Parsed data - Email:', email);
+  console.log('Parsed data - Subject:', subject);
+  console.log('Parsed data - Montant:', montant);
+  console.log('Parsed data - Devise:', devise);
+  console.log('Parsed data - Emetteur:', emetteur);
+  console.log('Parsed data - Destinataire:', destinataire);
+  console.log('Parsed data - Items:', items);
+
+  // Convert JSON strings back to objects
+  const emetteurObj = JSON.parse(emetteur);
+  const destinataireObj = JSON.parse(destinataire);
+  const itemsArray = JSON.parse(items);
+
+  // Vérifiez si les champs obligatoires sont présents
+  if (!number || !email || !subject || !montant || !devise || !emetteur || !destinataire || items.length === 0) {
+      return res.status(400).send('All fields are required.');
+  }
+
+  // Vérifiez si le fichier PDF est valide
+  if (!req.file || req.file.mimetype !== 'application/pdf' || req.file.size === 0) {
+      return res.status(400).send('Invalid PDF file.');
+  }
+
+  // Assurez-vous que le fichier n'est pas vide
+  const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facture.pdf`);
+  fs.writeFileSync(pdfPath, req.file.buffer);
 
   const invoiceData = {
-    number,
-    emetteur,
-    destinataire,
-    items,
-    montant,
-    devise,
-    reminderFrequency
+      number,
+      date: new Date().toISOString().split('T')[0],
+      issuer: emetteurObj,
+      client: destinataireObj,
+      items: itemsArray,
+      total: montant,
+      devise
   };
 
-  try {
-    // Appel au microservice pour générer le fichier Factur-X
-    const response = await axios.post('http://localhost:8080/generate-facturx', invoiceData, {
-      responseType: 'arraybuffer'
-    });
+  const invoiceJson = JSON.stringify(invoiceData);
+  const scriptPath = path.join(__dirname, '../scripts/generate_facturx.py');
 
-    const pdfBuffer = response.data;
+  execFile('python3', [scriptPath, invoiceJson], (error, stdout, stderr) => {
+      if (error) {
+          console.error('Erreur lors de l\'exécution du script Python:', error);
+          console.error('stderr:', stderr); // Ajoutez cette ligne pour logguer stderr
+          return res.status(500).send('Erreur lors de l\'exécution du script Python');
+      }
+      console.log('stdout:', stdout);
+      console.log('stderr:', stderr);
 
-    // Convert reminderFrequency to a number and check for validity
-    const parsedReminderFrequency = parseInt(reminderFrequency, 10);
-    if (isNaN(parsedReminderFrequency)) {
-      throw new Error('Invalid reminder frequency');
-    }
+      const mailOptions = {
+          from: process.env.SMTP_MAIL,
+          to: email,
+          subject: subject,
+          text: 'Veuillez trouver ci-joint votre facture.',
+          attachments: [{
+              filename: 'facture.pdf',
+              path: pdfPath
+          }]
+      };
 
-    // Calculate the next reminder date and check for validity
-    const nextReminderDate = new Date(Date.now() + parsedReminderFrequency * 24 * 60 * 60 * 1000);
-    if (isNaN(nextReminderDate.getTime())) {
-      throw new Error('Invalid next reminder date');
-    }
-
-    const nouvelleFacture = new Facture({
-      number,
-      factureId,
-      montant,
-      devise,
-      status: 'en attente',
-      emetteur,
-      destinataire,
-      userId: req.userData ? req.userData.id : null,
-      nextReminderDate: nextReminderDate,
-      reminderFrequency: parsedReminderFrequency,
-      items: items
-    });
-
-    await nouvelleFacture.save();
-
-    const templatePath = path.join(__dirname, '../templates/emailTemplates.html');
-    let template = fs.readFileSync(templatePath, 'utf-8');
-
-    const confirmationLink = `http://localhost:5173/confirmation?facture=${factureId}&montant=${montant}`;
-    template = template.replace('{clientName}', destinataire.name)
-                       .replace('{invoiceNumber}', number)
-                       .replace('{confirmationLink}', confirmationLink)
-                       .replace('{issuerName}', emetteur.name);
-
-    const mailOptions = {
-      from: process.env.SMTP_MAIL,
-      to: email,
-      subject: subject,
-      html: template,
-      attachments: [
-        {
-          filename: 'facture.pdf',
-          content: pdfBuffer,
-        }
-      ],
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    res.status(200).send({ message: 'Factur-X générée et email envoyé avec succès',
-      factureId: factureId,
-    });
-  } catch (error) {
-    console.error("Erreur lors de la génération de la facture ou de l'envoi de l'email:", error);
-    res.status(500).send("Erreur lors de la génération de la facture ou de l'envoi de l'email: " + error.message);
-  }
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              console.error('Erreur lors de l\'envoi de l\'email:', error);
+              return res.status(500).send('Erreur lors de l\'envoi de l\'email');
+          }
+          fs.unlinkSync(pdfPath);  // Supprimer le fichier PDF temporaire
+          res.status(200).send({ message: 'Factur-X générée et email envoyé avec succès' });
+      });
+  });
 });
 
-
-
-
+module.exports = { generateFacturXAndSendEmail };
 
 
 
@@ -335,4 +330,4 @@ const getFactureDetails = expressAsyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { generateFactureId, createFactureAndSendEmail, getFactureDetails, createFacturXAndSendEmail };
+module.exports = { generateFactureId, createFactureAndSendEmail, getFactureDetails, generateFacturXAndSendEmail };
