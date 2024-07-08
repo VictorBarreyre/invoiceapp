@@ -278,7 +278,8 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
       if (error) {
           console.error('Erreur lors de l\'exécution du script Python:', error);
           console.error('stderr:', stderr); // Ajoutez cette ligne pour logguer stderr
-          return res.status(500).send('Erreur lors de l\'exécution du script Python');
+          console.error('stdout:', stdout); // Ajoutez cette ligne pour logguer stdout
+          return res.status(500).send('Erreur lors de l\'exécution du script Python: ' + stderr);
       }
       console.log('stdout:', stdout);
       console.log('stderr:', stderr);
@@ -304,9 +305,6 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
       });
   });
 });
-
-module.exports = { generateFacturXAndSendEmail };
-
 
 
 

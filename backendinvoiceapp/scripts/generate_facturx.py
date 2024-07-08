@@ -7,37 +7,41 @@ import json
 from pdfrw import PdfReader, PdfWriter, PageMerge
 
 def generate_facturx_xml(invoice_data):
-    nsmap = {
-        'rsm': 'urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100',
-        'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
-    }
-    
-    root = etree.Element('{urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100}CrossIndustryInvoice', nsmap=nsmap)
+    try:
+        nsmap = {
+            'rsm': 'urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100',
+            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+        }
+        
+        root = etree.Element('{urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100}CrossIndustryInvoice', nsmap=nsmap)
 
-    # Ajouter les éléments XML requis
-    exchanged_document = etree.SubElement(root, 'ExchangedDocument')
-    etree.SubElement(exchanged_document, 'ID').text = invoice_data['number']
-    etree.SubElement(exchanged_document, 'IssueDateTime').text = invoice_data['date']
-    etree.SubElement(exchanged_document, 'TypeCode').text = '380'
+        # Ajouter les éléments XML requis
+        exchanged_document = etree.SubElement(root, 'ExchangedDocument')
+        etree.SubElement(exchanged_document, 'ID').text = invoice_data['number']
+        etree.SubElement(exchanged_document, 'IssueDateTime').text = invoice_data['date']
+        etree.SubElement(exchanged_document, 'TypeCode').text = '380'
 
-    # Emetteur
-    supply_chain_trade_transaction = etree.SubElement(root, 'SupplyChainTradeTransaction')
-    applicable_header_trade_agreement = etree.SubElement(supply_chain_trade_transaction, 'ApplicableHeaderTradeAgreement')
-    seller_trade_party = etree.SubElement(applicable_header_trade_agreement, 'SellerTradeParty')
-    etree.SubElement(seller_trade_party, 'Name').text = invoice_data['issuer']['name']
+        # Emetteur
+        supply_chain_trade_transaction = etree.SubElement(root, 'SupplyChainTradeTransaction')
+        applicable_header_trade_agreement = etree.SubElement(supply_chain_trade_transaction, 'ApplicableHeaderTradeAgreement')
+        seller_trade_party = etree.SubElement(applicable_header_trade_agreement, 'SellerTradeParty')
+        etree.SubElement(seller_trade_party, 'Name').text = invoice_data['issuer']['name']
 
-    # Destinataire
-    buyer_trade_party = etree.SubElement(applicable_header_trade_agreement, 'BuyerTradeParty')
-    etree.SubElement(buyer_trade_party, 'Name').text = invoice_data['client']['name']
+        # Destinataire
+        buyer_trade_party = etree.SubElement(applicable_header_trade_agreement, 'BuyerTradeParty')
+        etree.SubElement(buyer_trade_party, 'Name').text = invoice_data['client']['name']
 
-    # Items
-    for item in invoice_data['items']:
-        line_item = etree.SubElement(supply_chain_trade_transaction, 'IncludedSupplyChainTradeLineItem')
-        specified_trade_product = etree.SubElement(line_item, 'SpecifiedTradeProduct')
-        etree.SubElement(specified_trade_product, 'Name').text = item['description']
+        # Items
+        for item in invoice_data['items']:
+            line_item = etree.SubElement(supply_chain_trade_transaction, 'IncludedSupplyChainTradeLineItem')
+            specified_trade_product = etree.SubElement(line_item, 'SpecifiedTradeProduct')
+            etree.SubElement(specified_trade_product, 'Name').text = item['description']
 
-    xml_str = etree.tostring(root, pretty_print=True, xml_declaration=True, encoding='UTF-8')
-    return xml_str
+        xml_str = etree.tostring(root, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+        return xml_str
+    except Exception as e:
+        print(f"Erreur lors de la génération de XML: {e}")
+        raise
 
 def create_pdf_with_xml_attachment(pdf_path, xml_data, invoice_data):
     try:
