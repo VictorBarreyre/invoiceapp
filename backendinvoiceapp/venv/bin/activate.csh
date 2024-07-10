@@ -9,7 +9,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/vr/Desktop/DEV2/CLIENTS/invoiceapp/backendinvoiceapp/venv"
+setenv VIRTUAL_ENV "/Users/vr/Desktop/dev/invoiceapp/backendinvoiceapp/venv"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

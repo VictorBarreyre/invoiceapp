@@ -1,4 +1,4 @@
-#!/Users/vr/Desktop/DEV2/CLIENTS/invoiceapp/backendinvoiceapp/venv/bin/python3.12
+#!/Users/vr/Desktop/dev/invoiceapp/backendinvoiceapp/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

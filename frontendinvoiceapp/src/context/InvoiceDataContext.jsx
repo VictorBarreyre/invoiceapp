@@ -3,7 +3,6 @@ import { useAuth } from './AuthContext';
 import InvoicePDF from '../components/InvoicePDF';
 import { pdf } from '@react-pdf/renderer';
 import axios from 'axios';
-import { PDFDocument, rgb } from 'pdf-lib';
 import { v4 as uuidv4 } from 'uuid';
 
 

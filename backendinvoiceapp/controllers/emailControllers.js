@@ -1,20 +1,15 @@
-const express = require('express');
+const path = require('path');
+const { execFile } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const uuidv4 = require('uuid').v4;
 const expressAsyncHandler = require("express-async-handler");
-const dotenv = require("dotenv");
 const nodemailer = require("nodemailer");
 const multer = require('multer');
-
 const Facture = require('../models/Facture');
-const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const { execFile } = require('child_process');
 const cron = require('node-cron');
 const moment = require('moment');
-const FormData = require('form-data');
-const axios = require('axios')
-
+const dotenv = require("dotenv");
 
 dotenv.config();
 
@@ -28,16 +23,13 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-
 cron.schedule('* * * * *', async () => {
   const now = new Date();
 
   try {
-    // Trouver toutes les factures dont la date de prochaine relance est maintenant ou avant et qui sont toujours "en attente"
     const factures = await Facture.find({ nextReminderDate: { $lte: now }, status: 'en attente' });
 
     for (const facture of factures) {
-      // Lire le template HTML pour l'email de relance
       const templatePath = path.join(__dirname, '../templates/relance.html');
       let template = fs.readFileSync(templatePath, 'utf-8');
       template = template.replace('{clientName}', facture.destinataire.name)
@@ -45,7 +37,6 @@ cron.schedule('* * * * *', async () => {
                          .replace('{confirmationLink}', `http://localhost:5173/confirmation?facture=${facture.factureId}&montant=${facture.montant}`)
                          .replace('{issuerName}', facture.emetteur.name);
 
-      // Envoyer l'email de relance
       const mailOptions = {
         from: process.env.SMTP_MAIL,
         to: facture.destinataire.email,
@@ -55,8 +46,7 @@ cron.schedule('* * * * *', async () => {
 
       await transporter.sendMail(mailOptions);
 
-      // Mettre à jour la date de prochaine relance
-      facture.nextReminderDate = moment(facture.nextReminderDate).add(facture.reminderFrequency, 'days').toDate(); // Utiliser la fréquence de relance
+      facture.nextReminderDate = moment(facture.nextReminderDate).add(facture.reminderFrequency, 'days').toDate();
       await facture.save();
 
       console.log('Rappel envoyé pour la facture n°', facture.number);
@@ -65,8 +55,6 @@ cron.schedule('* * * * *', async () => {
     console.error('Erreur lors de l\'envoi des rappels :', error);
   }
 });
-
-
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -92,12 +80,9 @@ const convertPdfToPng = (pdfPath) => {
     const outputBase = path.basename(pdfPath, path.extname(pdfPath));
     const outputPath = path.join(imagesDir, outputBase + ".png");
 
-
     console.log("Chemin du PDF source:", pdfPath);
     console.log("Chemin de destination prévu pour le PNG:", outputPath);
 
-
-    // Notez qu'aucun échappement supplémentaire pour les espaces n'est fait ici
     const command = `pdftoppm -png -f 1 -singlefile "${pdfPath}" "${outputPath.replace('.png', '')}"`;
 
     console.log("Commande exécutée:", command);
@@ -114,15 +99,14 @@ const convertPdfToPng = (pdfPath) => {
   });
 };
 
-
 const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
   console.log("User in request:", req.userData);
   const { number, email, subject, montant, factureId, devise, reminderFrequency } = req.body;
   const emetteur = JSON.parse(req.body.emetteur);
   const destinataire = JSON.parse(req.body.destinataire);
-  const items = JSON.parse(req.body.items) || []; // Assurez-vous que items est un tableau
+  const items = JSON.parse(req.body.items) || [];
 
-  console.log("Items reçus:", items); // Ajoutez ceci pour vérifier les items reçus
+  console.log("Items reçus:", items);
 
   try {
       if (!req.file) {
@@ -146,12 +130,11 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
           userId: req.userData ? req.userData.id : null,
           nextReminderDate: new Date(Date.now() + reminderFrequency * 24 * 60 * 60 * 1000),
           reminderFrequency: Number(reminderFrequency),
-          items: items // Assurez-vous que 'items' est défini
+          items: items
       });
 
       await nouvelleFacture.save();
 
-      // Génération du fichier XML
       const xmlData = `
         <facture>
           <number>${number}</number>
@@ -223,6 +206,8 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const venvPath = path.join(__dirname, '..', 'venv', 'bin', 'python3');
+const scriptPath = path.join(__dirname, '..', 'scripts', 'generate_facturx.py');
 
 const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
   console.log('Body received:', req.body);
@@ -242,24 +227,26 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
   console.log('Parsed data - Destinataire:', destinataire);
   console.log('Parsed data - Items:', items);
 
-  // Convert JSON strings back to objects
   const emetteurObj = JSON.parse(emetteur);
   const destinataireObj = JSON.parse(destinataire);
   const itemsArray = JSON.parse(items);
 
-  // Vérifiez si les champs obligatoires sont présents
   if (!number || !email || !subject || !montant || !devise || !emetteur || !destinataire || items.length === 0) {
       return res.status(400).send('All fields are required.');
   }
 
-  // Vérifiez si le fichier PDF est valide
   if (!req.file || req.file.mimetype !== 'application/pdf' || req.file.size === 0) {
       return res.status(400).send('Invalid PDF file.');
   }
 
-  // Assurez-vous que le fichier n'est pas vide
   const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facture.pdf`);
+  console.log(`Writing PDF to: ${pdfPath}`);
   fs.writeFileSync(pdfPath, req.file.buffer);
+
+  // Vérifiez la taille du fichier PDF après écriture
+  if (fs.statSync(pdfPath).size === 0) {
+      return res.status(400).send('Le fichier PDF est vide après écriture.');
+  }
 
   const invoiceData = {
       number,
@@ -272,13 +259,13 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
   };
 
   const invoiceJson = JSON.stringify(invoiceData);
-  const scriptPath = path.join(__dirname, '../scripts/generate_facturx.py');
 
-  execFile('python3', [scriptPath, invoiceJson], (error, stdout, stderr) => {
+  console.log(`Executing Python script: ${scriptPath}`);
+  execFile(venvPath, [scriptPath, invoiceJson], (error, stdout, stderr) => {
       if (error) {
           console.error('Erreur lors de l\'exécution du script Python:', error);
-          console.error('stderr:', stderr); // Ajoutez cette ligne pour logguer stderr
-          console.error('stdout:', stdout); // Ajoutez cette ligne pour logguer stdout
+          console.error('stderr:', stderr);
+          console.error('stdout:', stdout);
           return res.status(500).send('Erreur lors de l\'exécution du script Python: ' + stderr);
       }
       console.log('stdout:', stdout);
@@ -300,13 +287,11 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
               console.error('Erreur lors de l\'envoi de l\'email:', error);
               return res.status(500).send('Erreur lors de l\'envoi de l\'email');
           }
-          fs.unlinkSync(pdfPath);  // Supprimer le fichier PDF temporaire
+          fs.unlinkSync(pdfPath);
           res.status(200).send({ message: 'Factur-X générée et email envoyé avec succès' });
       });
   });
 });
-
-
 
 const getFactureDetails = expressAsyncHandler(async (req, res) => {
   const { factureId } = req.params;
@@ -329,3 +314,4 @@ const getFactureDetails = expressAsyncHandler(async (req, res) => {
 });
 
 module.exports = { generateFactureId, createFactureAndSendEmail, getFactureDetails, generateFacturXAndSendEmail };
+

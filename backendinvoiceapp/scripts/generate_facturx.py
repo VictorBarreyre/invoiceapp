@@ -45,6 +45,7 @@ def generate_facturx_xml(invoice_data):
 
 def create_pdf_with_xml_attachment(pdf_path, xml_data, invoice_data):
     try:
+        print(f"Creating PDF at: {pdf_path}")  # Log the PDF path
         c = canvas.Canvas(pdf_path, pagesize=A4)
         width, height = A4
 
@@ -59,6 +60,11 @@ def create_pdf_with_xml_attachment(pdf_path, xml_data, invoice_data):
         if not os.path.exists(pdf_path):
             raise FileNotFoundError(f"Le fichier PDF n'a pas été créé : {pdf_path}")
 
+        # Vérifiez la taille du fichier PDF
+        if os.path.getsize(pdf_path) == 0:
+            raise ValueError("Le fichier PDF est vide")
+
+        print(f"Reading PDF from: {pdf_path}")  # Log the PDF read step
         pdf = PdfReader(pdf_path)
         trailer = pdf.trailer
         if trailer is None:
