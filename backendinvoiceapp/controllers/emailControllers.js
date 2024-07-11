@@ -10,8 +10,7 @@ const Facture = require('../models/Facture');
 const cron = require('node-cron');
 const moment = require('moment');
 const dotenv = require("dotenv");
-const { create } = require('xmlbuilder');
-const { PDFDocument, StandardFonts, rgb, PDFName, PDFString, PDFArray, PDFDict } = require('pdf-lib');
+const generateFacturX = require('../utils/generateFacturX');
 
 
 dotenv.config();
@@ -212,107 +211,30 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
 const venvPath = path.join(__dirname, '..', 'venv', 'bin', 'python3');
 const scriptPath = path.join(__dirname, '..', 'scripts', 'generate_facturx.py');
 
-async function generateFacturX(invoiceData, pdfPath) {
-  const xml = create('CrossIndustryInvoice', {
-      version: '1.0',
-      encoding: 'UTF-8',
-      standalone: true
-  })
-      .ele('ExchangedDocument', { xmlns: 'urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100' })
-      .ele('ID', invoiceData.number).up()
-      .ele('IssueDateTime', invoiceData.date).up()
-      .ele('TypeCode', '380').up()
-      .up()
-      .ele('SupplyChainTradeTransaction')
-      .ele('ApplicableHeaderTradeAgreement')
-      .ele('SellerTradeParty')
-      .ele('Name', invoiceData.issuer.name).up()
-      .up()
-      .ele('BuyerTradeParty')
-      .ele('Name', invoiceData.client.name).up()
-      .up()
-      .up()
-      .ele('IncludedSupplyChainTradeLineItem')
-      .ele('SpecifiedTradeProduct')
-      .ele('Name', invoiceData.items[0].description).up()
-      .up()
-      .up()
-      .end({ pretty: true });
-
-  const xmlBuffer = Buffer.from(xml, 'utf-8');
-
-  const pdfDoc = await PDFDocument.create();
-  pdfDoc.setTitle('Facture');
-  pdfDoc.setAuthor('Votre Nom');
-  pdfDoc.setSubject('Facture pour services rendus');
-  pdfDoc.setKeywords(['facture', 'Factur-X', 'PDF/A-3']);
-  
-  const page = pdfDoc.addPage();
-  const { width, height } = page.getSize();
-  const fontSize = 12;
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-  page.drawText(`Facture: ${invoiceData.number}`, { x: 50, y: height - 50, size: fontSize, font });
-  page.drawText(`Date: ${invoiceData.date}`, { x: 50, y: height - 70, size: fontSize, font });
-  page.drawText(`Émetteur: ${invoiceData.issuer.name}`, { x: 50, y: height - 90, size: fontSize, font });
-  page.drawText(`Adresse: ${invoiceData.issuer.adresse}`, { x: 50, y: height - 110, size: fontSize, font });
-  page.drawText(`Destinataire: ${invoiceData.client.name}`, { x: 50, y: height - 130, size: fontSize, font });
-  page.drawText(`Adresse: ${invoiceData.client.adresse}`, { x: 50, y: height - 150, size: fontSize, font });
-
-  let yPosition = height - 170;
-  for (const item of invoiceData.items) {
-      page.drawText(`Description: ${item.description}, Quantité: ${item.quantity}, Prix Unitaire: ${item.unitPrice}`, { x: 50, y: yPosition, size: fontSize, font });
-      yPosition -= 20;
-  }
-  page.drawText(`Total: ${invoiceData.total} ${invoiceData.devise}`, { x: 50, y: yPosition - 20, size: fontSize, font });
-
-  const embeddedFileStream = await pdfDoc.embedFile(xmlBuffer, {
-      mimeType: 'application/xml',
-      fileName: 'factur-x.xml',
-      description: 'Factur-X XML File'
-  });
-
-  const embeddedFilesNameTree = pdfDoc.context.obj({
-      Names: [
-          PDFString.of('factur-x.xml'),
-          embeddedFileStream.ref,
-      ]
-  });
-
-  const nameDict = pdfDoc.context.obj({
-      EmbeddedFiles: embeddedFilesNameTree,
-  });
-
-  const catalog = pdfDoc.catalog;
-  catalog.set(PDFName.of('Names'), nameDict);
-
-  const pdfBytes = await pdfDoc.save();
-  fs.writeFileSync(pdfPath, pdfBytes);
-}
 
 const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
-console.log('Body received:', req.body);
-console.log('Files received:', req.file);
+  console.log('Body received:', req.body);
+  console.log('Files received:', req.file);
 
-const { number, email, subject, montant, devise, reminderFrequency, emetteur, destinataire, items } = req.body;
+  const { number, email, subject, montant, devise, reminderFrequency, emetteur, destinataire, items } = req.body;
 
-const emetteurObj = JSON.parse(emetteur);
-const destinataireObj = JSON.parse(destinataire);
-const itemsArray = JSON.parse(items);
+  const emetteurObj = JSON.parse(emetteur);
+  const destinataireObj = JSON.parse(destinataire);
+  const itemsArray = JSON.parse(items);
 
-if (!number || !email || !subject || !montant || !devise || !emetteur || !destinataire || items.length === 0) {
+  if (!number || !email || !subject || !montant || !devise || !emetteur || !destinataire || items.length === 0) {
     return res.status(400).send('All fields are required.');
-}
+  }
 
-if (!req.file || req.file.mimetype !== 'application/pdf' || req.file.size === 0) {
+  if (!req.file || req.file.mimetype !== 'application/pdf' || req.file.size === 0) {
     return res.status(400).send('Invalid PDF file.');
-}
+  }
 
-const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facture.pdf`);
-console.log(`Writing PDF to: ${pdfPath}`);
-fs.writeFileSync(pdfPath, req.file.buffer);
+  const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facture.pdf`);
+  console.log(`Writing PDF to: ${pdfPath}`);
+  fs.writeFileSync(pdfPath, req.file.buffer);
 
-const invoiceData = {
+  const invoiceData = {
     number,
     date: new Date().toISOString().split('T')[0],
     issuer: emetteurObj,
@@ -320,34 +242,34 @@ const invoiceData = {
     items: itemsArray,
     total: montant,
     devise
-};
+  };
 
-try {
+  try {
     await generateFacturX(invoiceData, pdfPath);
 
     const mailOptions = {
-        from: process.env.SMTP_MAIL,
-        to: email,
-        subject: subject,
-        text: 'Veuillez trouver ci-joint votre facture.',
-        attachments: [{
-            filename: 'facture.pdf',
-            path: pdfPath
-        }]
+      from: process.env.SMTP_MAIL,
+      to: email,
+      subject: subject,
+      text: 'Veuillez trouver ci-joint votre facture.',
+      attachments: [{
+        filename: 'facture.pdf',
+        path: pdfPath
+      }]
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Erreur lors de l\'envoi de l\'email:', error);
-            return res.status(500).send('Erreur lors de l\'envoi de l\'email');
-        }
-        fs.unlinkSync(pdfPath);
-        res.status(200).send({ message: 'Factur-X générée et email envoyé avec succès' });
+      if (error) {
+        console.error('Erreur lors de l\'envoi de l\'email:', error);
+        return res.status(500).send('Erreur lors de l\'envoi de l\'email');
+      }
+      fs.unlinkSync(pdfPath);
+      res.status(200).send({ message: 'Factur-X générée et email envoyé avec succès' });
     });
-} catch (error) {
+  } catch (error) {
     console.error('Erreur lors de la génération de la facture:', error);
     res.status(500).send('Erreur lors de la génération de la facture: ' + error.message);
-}
+  }
 });
 
 
