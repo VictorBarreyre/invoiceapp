@@ -11,7 +11,7 @@ const Facture = require('../models/Facture');
 const cron = require('node-cron');
 const moment = require('moment');
 const dotenv = require("dotenv");
-
+const { exec } = require('child_process');
 dotenv.config();
 
 let transporter = nodemailer.createTransport({
@@ -136,38 +136,6 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
 
       await nouvelleFacture.save();
 
-      const xmlData = `
-        <facture>
-          <number>${number}</number>
-          <date>${new Date().toISOString()}</date>
-          <emetteur>
-            <name>${emetteur.name}</name>
-            <adresse>${emetteur.adresse}</adresse>
-            <siret>${emetteur.siret}</siret>
-            <email>${emetteur.email}</email>
-          </emetteur>
-          <destinataire>
-            <name>${destinataire.name}</name>
-            <adresse>${destinataire.adresse}</adresse>
-            <siret>${destinataire.siret}</siret>
-            <email>${destinataire.email}</email>
-          </destinataire>
-          <items>
-            ${(items || []).map(item => `
-              <item>
-                <description>${item.description}</description>
-                <quantity>${item.quantity}</quantity>
-                <unitPrice>${item.unitPrice}</unitPrice>
-              </item>
-            `).join('')}
-          </items>
-          <total>${montant}</total>
-        </facture>
-      `;
-      
-      const xmlFilePath = path.join(os.tmpdir(), `${uuidv4()}-facture.xml`);
-      fs.writeFileSync(xmlFilePath, xmlData);
-
       const templatePath = path.join(__dirname, '../templates/emailTemplates.html');
       let template = fs.readFileSync(templatePath, 'utf-8');
 
@@ -186,10 +154,6 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
               {
                   filename: req.file.originalname,
                   path: filePath,
-              },
-              {
-                  filename: 'facture.xml',
-                  path: xmlFilePath,
               }
           ],
       };
@@ -206,6 +170,7 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
       res.status(500).send("Erreur lors de la création de la facture ou de l'envoi de l'email: " + error.message);
   }
 });
+
 
 async function generateFacturX(invoiceData, pdfBuffer) {
   const xml = create('CrossIndustryInvoice', {
