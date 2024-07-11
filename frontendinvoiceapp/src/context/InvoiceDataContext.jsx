@@ -255,7 +255,7 @@ export const InvoiceDataProvider = ({ children }) => {
             const asPDF = pdf([]);
             asPDF.updateContainer(file);
             const pdfBlob = await asPDF.toBlob();
-            console.log('Generated PDF size:', pdfBlob.size); // Log the size of the generated PDF
+            console.log('Generated PDF size:', pdfBlob.size);
     
             const invoicePayload = {
                 number,
