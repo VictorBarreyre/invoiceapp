@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const factureSchema = new mongoose.Schema({
   number: {
     type: String,
-    required:true,
+    required: true,
   },
   factureId: {
     type: String,
@@ -20,7 +20,7 @@ const factureSchema = new mongoose.Schema({
   },
   devise: {
     type: String,
-    required:true,
+    required: true,
   },
   status: {
     type: String,
@@ -53,10 +53,14 @@ const factureSchema = new mongoose.Schema({
     type: Date,
   },
   reminderFrequency: {
-    type : Number,
+    type: Number,
     required: true,
-  }, 
-  
-}, { timestamps : true});
+  },
+  format: {
+    type: String,
+    required: true,
+    enum: ['standard', 'factur-x'],
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Facture', factureSchema);
