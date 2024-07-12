@@ -257,6 +257,16 @@ export const InvoiceDataProvider = ({ children }) => {
             const pdfBlob = await asPDF.toBlob();
             console.log('Generated PDF size:', pdfBlob.size);
     
+            // Save the PDF locally for verification
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Facture-${number}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+    
             const invoicePayload = {
                 number,
                 email: client.email,
@@ -305,6 +315,7 @@ export const InvoiceDataProvider = ({ children }) => {
             if (onError) onError('Erreur lors de la génération de la facture ou de l\'envoi de l\'email: ' + error.message);
         }
     };
+    
     
     
     

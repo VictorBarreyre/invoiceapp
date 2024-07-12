@@ -1,5 +1,4 @@
 const { PDFDocument, StandardFonts, rgb, PDFName, PDFString, PDFArray, PDFDict } = require('pdf-lib');
-const { create } = require('xmlbuilder');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -173,64 +172,21 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
 });
 
 async function generateFacturX(invoiceData, pdfBuffer) {
-  const xml = create('CrossIndustryInvoice', {
-      version: '1.0',
-      encoding: 'UTF-8',
-      standalone: true
-  })
-      .ele('ExchangedDocument', { xmlns: 'urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100' })
-      .ele('ID', invoiceData.number).up()
-      .ele('IssueDateTime', invoiceData.date).up()
-      .ele('TypeCode', '380').up()
-      .up()
-      .ele('SupplyChainTradeTransaction')
-      .ele('ApplicableHeaderTradeAgreement')
-      .ele('SellerTradeParty')
-      .ele('Name', invoiceData.issuer.name).up()
-      .up()
-      .ele('BuyerTradeParty')
-      .ele('Name', invoiceData.client.name).up()
-      .up()
-      .up()
-      .ele('IncludedSupplyChainTradeLineItem')
-      .ele('SpecifiedTradeProduct')
-      .ele('Name', invoiceData.items[0].description).up()
-      .up()
-      .up()
-      .end({ pretty: true });
+  try {
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+    pdfDoc.setTitle('Facture');
+    pdfDoc.setAuthor('Votre Nom');
+    pdfDoc.setSubject('Facture pour services rendus');
+    pdfDoc.setKeywords(['facture', 'Factur-X', 'PDF/A-3']);
+    console.log('PDF Document loaded and metadata set.');
 
-  const xmlBuffer = Buffer.from(xml, 'utf-8');
-
-  const pdfDoc = await PDFDocument.load(pdfBuffer);
-  pdfDoc.setTitle('Facture');
-  pdfDoc.setAuthor('Votre Nom');
-  pdfDoc.setSubject('Facture pour services rendus');
-  pdfDoc.setKeywords(['facture', 'Factur-X', 'PDF/A-3']);
-
-  // Embedding the XML file into the PDF
-  const embeddedFile = pdfDoc.context.flateStream(xmlBuffer);
-  const filespec = pdfDoc.context.obj({
-      Type: 'Filespec',
-      F: PDFString.of('factur-x.xml'),
-      EF: PDFDict.from({ F: embeddedFile }),
-  });
-
-  pdfDoc.catalog.set(
-      PDFName.of('Names'),
-      pdfDoc.context.obj({
-          EmbeddedFiles: PDFDict.from({
-              Names: PDFArray.of(PDFString.of('factur-x.xml'), filespec),
-          }),
-      })
-  );
-
-  pdfDoc.catalog.set(
-      PDFName.of('AF'),
-      PDFArray.of(filespec)
-  );
-
-  const pdfBytes = await pdfDoc.save();
-  return pdfBytes;
+    const pdfBytes = await pdfDoc.save();
+    console.log('PDF Document saved.');
+    return pdfBytes;
+  } catch (error) {
+    console.error('Erreur lors de la génération de Factur-X:', error);
+    throw error;
+  }
 }
 
 const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
@@ -262,6 +218,7 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
         const pdfBytes = await generateFacturX(invoiceData, pdfBuffer);
         const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facture.pdf`);
         fs.writeFileSync(pdfPath, pdfBytes);
+        console.log('PDF Document written to disk:', pdfPath);
 
         const imagePath = await convertPdfToPng(pdfPath);
         const imageName = path.relative(imagesDir, imagePath);
@@ -284,6 +241,7 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
         });
 
         await nouvelleFacture.save();
+        console.log('Facture saved to database.');
 
         const templatePath = path.join(__dirname, '../templates/emailTemplates.html');
         let template = fs.readFileSync(templatePath, 'utf-8');
@@ -306,6 +264,7 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully.');
 
         fs.unlinkSync(pdfPath);
 
