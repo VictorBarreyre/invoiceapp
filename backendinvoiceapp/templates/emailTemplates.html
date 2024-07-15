@@ -64,8 +64,10 @@
     <div class="content">
       <p>Cher {clientName},</p>
       <p>Veuillez trouver ci-joint votre facture n°{invoiceNumber}.</p>
-      <p>Afin d'informer, veuillez cliquer sur le lien ci-dessous :</p>
-      <a href="{confirmationLink}" class="button">Confirmer et Signer</a>
+      <p>Afin d'informer "{issuerName}" que le paiement à été effectué, veuillez cliquer sur le bouton ci-dessous :</p>
+      <a href="{confirmationLink}" class="button">
+      <p>Un email sera envoyé à {issuerName} afin de lui informer que vous avez réglé cette facture, il pourra ainsi l'archiver.</p>
+      </a>
     </div>
     <div class="footer">
       <p>Nous vous remercions pour votre confiance et restons à votre disposition pour toute information complémentaire.</p>
