@@ -48,21 +48,14 @@ const Stepper = () => {
     }
     setSendButtonClicked('sendInvoice');
 
-    const hasActiveSubscription = await checkActiveSubscription(email);
-
-    if (hasActiveSubscription) {
-      await handleInvoiceActionSendMail(invoiceData, () => {
-        setIsSubmitting(false);
-        console.log('Invoice sent successfully.');
-        navigate('/success');
-      }, (error) => {
-        setIsSubmitting(false);
-        console.error('Error sending invoice:', error);
-      });
-    } else {
-      navigate('/abonnement');
+    await handleInvoiceActionSendMail(invoiceData, () => {
       setIsSubmitting(false);
-    }
+      console.log('Invoice sent successfully.');
+      navigate('/success');
+    }, (error) => {
+      setIsSubmitting(false);
+      console.error('Error sending invoice:', error);
+    });
   };
 
   const handleSendInvoiceX = async () => {
@@ -77,21 +70,14 @@ const Stepper = () => {
     }
     setSendButtonClicked('sendInvoiceX');
 
-    const hasActiveSubscription = await checkActiveSubscription(email);
-
-    if (hasActiveSubscription) {
-      await handleInvoiceActionSendMailX(invoiceData, () => {
-        setIsSubmitting(false);
-        console.log('Invoice sent successfully.');
-        navigate('/success');
-      }, (error) => {
-        setIsSubmitting(false);
-        console.error('Error sending invoice:', error);
-      });
-    } else {
-      navigate('/abonnement');
+    await handleInvoiceActionSendMailX(invoiceData, () => {
       setIsSubmitting(false);
-    }
+      console.log('Invoice sent successfully.');
+      navigate('/success');
+    }, (error) => {
+      setIsSubmitting(false);
+      console.error('Error sending invoice:', error);
+    });
   };
 
   useEffect(() => {
@@ -119,28 +105,16 @@ const Stepper = () => {
       const isClientEmailFilled = invoiceData.client.email.trim() !== '';
       const areQuantitiesValid = invoiceData.items.every(item => item.quantity > 0);
       const isTotalValid = invoiceData.total > 0;
-  
+
       const isInvoiceDataValid = isNumberFilled && isIssuerNameFilled && isClientNameFilled &&
         isIssuerAdresseFilled && isIssuerSiretFilled && isIssuerEmailFilled && isIssuerIbanFilled &&
         isClientAdresseFilled && isClientSiretFilled && isClientEmailFilled && areQuantitiesValid && isTotalValid;
-  
-      // Vérification des données utilisateur
-      const isUserNameFilled = user && user.name && user.name.trim() !== '';
-      const isUserEmailFilled = user && user.email && user.email.trim() !== '';
-      const isUserAdresseFilled = user && user.adresse && user.adresse.trim() !== '';
-      const isUserSiretFilled = user && user.siret && user.siret.trim() !== '';
-      const isUserIbanFilled = user && user.iban && user.iban.trim() !== '';
-  
-      const isUserDataValid = isUserNameFilled && isUserEmailFilled && isUserAdresseFilled && isUserSiretFilled && isUserIbanFilled;
-  
-      const isNextStepAvailable = isInvoiceDataValid || isUserDataValid;
-  
-      setIsStepNextAvailable(isNextStepAvailable);
+
+      setIsStepNextAvailable(isInvoiceDataValid);
     };
-  
+
     checkStepNextAvailability();
-  }, [invoiceData, user]);
-  
+  }, [invoiceData]);
 
   const handleTabClick = (index) => {
     if (index > 0 && !isStepNextAvailable) {

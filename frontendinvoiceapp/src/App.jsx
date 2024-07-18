@@ -62,7 +62,7 @@ function App() {
                     <Route path="/parametres" element={<PrivateRoute><Paramètres /></PrivateRoute>} />
                     <Route path="/payment-success" element={<PrivateRoute><PaymentSuccess /></PrivateRoute>} />
                     <Route path="/abonnement" element={<PrivateRoute><Abo /></PrivateRoute>} />
-                    <Route path="/success" element={<PrivateRoute><Success /></PrivateRoute>} />
+                    <Route path="/success" element={<Success/>}/>
                     <Route path="/conditions-generales" element={<CGU />} />
                     <Route path="/mentions-legales" element={<MentionsLegales />} />
                     <Route path="/politique-de-confidentialite" element={<PolitiqueConfidentialite />} />
