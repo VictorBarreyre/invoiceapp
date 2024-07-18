@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      padding: 20px;
+      background-color: white;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .content {
+      font-size: 16px;
+      line-height: 1.6;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #888;
+    }
+    .signature {
+      margin-top: 40px;
+      font-size: 16px;
+      font-style: italic;
+      color: #333;
+    }
+    .signature-logo {
+      display: block;
+      margin: 20px auto 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <p>Bonjour {name},</p>
+      <p>Vous êtes maintenant inscrit sur notre plateforme. Votre mot de passe temporaire est : <strong>{password}</strong></p>
+      <p>Nous vous invitons à le modifier lors de votre prochaine connexion.</p>
+    </div>
+    <div class="footer">
+      <p>Nous vous remercions pour votre inscription et restons à votre disposition pour toute information complémentaire.</p>
+      <p>Cordialement,</p>
+      <p>L'équipe Support</p>
+      <div class="signature">
+        <p>--<br/>Service proposé par</p>
+        <img src="http://localhost:8000/public/images/logo/db-logo.png" alt="Signature Logo" class="signature-logo" />
+      </div>
+    </div>
+  </div>
+</body>
+</html>

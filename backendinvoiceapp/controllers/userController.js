@@ -36,12 +36,19 @@ exports.signupUser = expressAsyncHandler(async (req, res) => {
   });
 
   if (user) {
+    // Charger et remplir le template HTML
+    const templatePath = path.join(__dirname, '../templates/signup.html');
+    let template = fs.readFileSync(templatePath, 'utf-8');
+    
+    template = template.replace('{name}', name)
+                       .replace('{password}', password);
+
     // Envoyer un e-mail de confirmation
     const mailOptions = {
       from: process.env.SMTP_MAIL,
       to: email,
       subject: 'Confirmation d\'inscription',
-      text: `Bonjour ${name}, vous êtes maintenant inscrit sur notre plateforme. Votre mot de passe temporaire est : ${password}`,
+      html: template
     };
 
     await transporter.sendMail(mailOptions);
