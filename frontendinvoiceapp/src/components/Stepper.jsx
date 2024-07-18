@@ -119,24 +119,28 @@ const Stepper = () => {
       const isClientEmailFilled = invoiceData.client.email.trim() !== '';
       const areQuantitiesValid = invoiceData.items.every(item => item.quantity > 0);
       const isTotalValid = invoiceData.total > 0;
-
+  
+      const isInvoiceDataValid = isNumberFilled && isIssuerNameFilled && isClientNameFilled &&
+        isIssuerAdresseFilled && isIssuerSiretFilled && isIssuerEmailFilled && isIssuerIbanFilled &&
+        isClientAdresseFilled && isClientSiretFilled && isClientEmailFilled && areQuantitiesValid && isTotalValid;
+  
       // Vérification des données utilisateur
       const isUserNameFilled = user && user.name && user.name.trim() !== '';
       const isUserEmailFilled = user && user.email && user.email.trim() !== '';
       const isUserAdresseFilled = user && user.adresse && user.adresse.trim() !== '';
       const isUserSiretFilled = user && user.siret && user.siret.trim() !== '';
       const isUserIbanFilled = user && user.iban && user.iban.trim() !== '';
-
-      const isNextStepAvailable = isNumberFilled && isIssuerNameFilled && isClientNameFilled &&
-        isIssuerAdresseFilled && isIssuerSiretFilled && isIssuerEmailFilled && isIssuerIbanFilled &&
-        isClientAdresseFilled && isClientSiretFilled && isClientEmailFilled && areQuantitiesValid && isTotalValid &&
-        isUserNameFilled && isUserEmailFilled && isUserAdresseFilled && isUserSiretFilled && isUserIbanFilled;
-
+  
+      const isUserDataValid = isUserNameFilled && isUserEmailFilled && isUserAdresseFilled && isUserSiretFilled && isUserIbanFilled;
+  
+      const isNextStepAvailable = isInvoiceDataValid || isUserDataValid;
+  
       setIsStepNextAvailable(isNextStepAvailable);
     };
-
+  
     checkStepNextAvailability();
   }, [invoiceData, user]);
+  
 
   const handleTabClick = (index) => {
     if (index > 0 && !isStepNextAvailable) {

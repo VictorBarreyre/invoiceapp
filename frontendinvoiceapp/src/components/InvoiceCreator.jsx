@@ -371,13 +371,7 @@ const InvoiceCreator = ({ totalError }) => {
             placeholder="Votre IBAN"
             name="issuer.iban"
             value={invoiceData.issuer.iban}
-            onChange={(e) => {
-              const newIban = e.target.value;
-              handleInvoiceDataChange({
-                ...invoiceData,
-                issuer: { ...invoiceData.issuer, iban: newIban }
-              });
-            }}
+            onChange={handleChange}
           />
         </Flex>
         <Text p='0' mt='1rem' color='#4A5568' w='97%'>

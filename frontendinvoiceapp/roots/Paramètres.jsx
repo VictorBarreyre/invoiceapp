@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../src/context/AuthContext';
 import {
   Button,
@@ -23,6 +23,13 @@ import {
   Link as Chakralink,
   useToast,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { Link, useNavigate } from 'react-router-dom';
@@ -33,9 +40,8 @@ const Paramètres = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const [accountDeleted, setAccountDeleted] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
+  const cancelRef = useRef();
   const navigate = useNavigate();
   const toast = useToast();
   const [newPassword, setNewPassword] = useState('');
@@ -46,6 +52,7 @@ const Paramètres = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const [showPasswordInput, setShowPasswordInput] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
   const handlePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -73,8 +80,11 @@ const Paramètres = () => {
     try {
       const success = await deleteAccount(password);
       if (success) {
-        setAccountDeleted(true);
-        setTimeout(() => navigate('/'), 3000); // Redirige après 3 secondes
+        setIsConfirmationOpen(true);
+        setTimeout(() => {
+          setIsConfirmationOpen(false);
+          navigate('/');
+        }, 3000); // Redirige après 3 secondes
       }
     } catch (error) {
       setPasswordError('Mot de passe incorrect.');
@@ -158,23 +168,6 @@ const Paramètres = () => {
       });
     }
   };
-
-  if (accountDeleted) {
-    return (
-      <div className='flex-stepper'>
-        <div className="stepper-container">
-          <div className="tabs-container">
-            <Heading fontSize={{ base: '24px', lg: '26px' }}>Compte supprimé avec succès!</Heading>
-            <Text>Votre compte a été supprimé avec succès.</Text>
-            <Text>Vous serez redirigé vers la page d'accueil sous peu.</Text>
-            <Flex mt='2rem' w='fit-content' direction='column'>
-              <Chakralink as={Link} to="/">Retour à la page d'accueil</Chakralink>
-            </Flex>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className='flex-stepper'>
@@ -313,7 +306,6 @@ const Paramètres = () => {
                 </Flex>
               )}
 
-
               <Flex mt='2rem' w={{ base: '100%', lg: '25rem' }} borderBottom='1px solid #efefef' pb='1rem' direction='column'>
                 <Heading mb='0.5rem' size="sm">Vos données personnelles</Heading>
                 <Chakralink mt="0.5rem" color="#745FF2" onClick={handleDownloadData} colorScheme="blue">
@@ -373,7 +365,7 @@ const Paramètres = () => {
                       </FormControl>
                     </AlertDialogBody>
 
-                    <AlertDialogFooter>
+                    <AlertDialogFooter borderRadius="10px">
                       <Button borderRadius='30px' ref={cancelRef} onClick={onClose}>
                         Annuler
                       </Button>
@@ -384,6 +376,27 @@ const Paramètres = () => {
                   </AlertDialogContent>
                 </AlertDialogOverlay>
               </AlertDialog>
+
+              <Modal isOpen={isConfirmationOpen} onClose={() => setIsConfirmationOpen(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Compte supprimé avec succès</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Text>Votre compte a été supprimé avec succès. Vous serez redirigé vers la page d'accueil sous peu.</Text>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      onClick={() => {
+                        setIsConfirmationOpen(false);
+                        navigate('/');
+                      }}
+                    >
+                      Retour à la page d'accueil
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
             </Flex>
           </Flex>
         </div>

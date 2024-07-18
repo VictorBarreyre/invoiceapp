@@ -29,7 +29,6 @@ export const InvoiceDataProvider = ({ children }) => {
             adresse: '43 Grande rue',
             siret: 'zrzaeazeaz',
             email: 'barreyrevictor.contact@gmail.com',
-            iban: '',
         },
         items: [{ description: '', quantity: 1, unitPrice: 0 }],
         subtotal: 0,
@@ -91,6 +90,8 @@ export const InvoiceDataProvider = ({ children }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log(invoiceData)
+        console.log(user)
         if (name.startsWith('items.')) {
             const [_, index, field] = name.split('.');
             handleInvoiceDataChange(prevState => {
