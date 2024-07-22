@@ -99,81 +99,87 @@ const Factures = () => {
             <Heading pb='1rem' mb={{ base: '0rem', lg: '2rem' }} borderBottom={{ base: 'unset', lg: '2px solid #efefef' }} fontSize={{ base: '22px', lg: '26px' }}>Vos factures</Heading>
             {message && <Text>{message}</Text>}
 
-            {isMobile ? (
-              <>
-                {invoices.slice().reverse().map(invoice => (
-                  <Box key={invoice._id} borderBottom="1px solid #efefef" pt='1rem' pb='1rem' mb='1rem'>
-                    <Flex justifyContent="space-between">
-                      <Text>Facture n°{invoice.number}</Text>
-                      <Text>{invoice.montant}{invoice.devise}</Text>
-                      <IconButton
-                        aria-label="Supprimer la facture"
-                        icon={<DeleteIcon />}
-                        size="sm"
-                        backgroundColor="transparent"
-                        onClick={() => handleDeleteInvoice(invoice._id)}
-                      />
-                    </Flex>
-                    <Flex justifyContent="space-between">
-                      <Chakralink color="#745FF2" onClick={() => handlePreviewClick(invoice.urlImage)}>
-                        Voir la facture
-                      </Chakralink>
-                      {invoice.status === 'paid' ? (
-                        <Chakralink color="#745FF2" onClick={() => handleMarkAsUnpaid(invoice._id)}>
-                          Marquer comme non traitée
-                        </Chakralink>
-                      ) : (
-                        <Chakralink color="#745FF2" onClick={() => handleMarkAsPaid(invoice._id)}>
-                          Marquer comme traitée
-                        </Chakralink>
-                      )}
-                    </Flex>
-                  </Box>
-                ))}
-              </>
+            {invoices.length === 0 ? (
+              <Text>Vous n'avez aucunes factures à afficher</Text>
             ) : (
-              <TableContainer>
-                <Table variant='simple'>
-                  <Thead>
-                    <Tr>
-                      <Th>Numéro de Facture</Th>
-                      <Th>Montant</Th>
-                      <Th pr='0rem' textAlign='end'>Action</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
+              <>
+                {isMobile ? (
+                  <>
                     {invoices.slice().reverse().map(invoice => (
-                      <Tr key={invoice._id}>
-                        <Td>Facture n°{invoice.number}</Td>
-                        <Td>{invoice.montant}{invoice.devise}</Td>
-                        <Td pr='0rem' textAlign='end'>
-                          <Flex justifyContent="space-between">
-                            <Chakralink color="#745FF2" onClick={() => handlePreviewClick(invoice.urlImage)}>
-                              Voir la facture
+                      <Box key={invoice._id} borderBottom="1px solid #efefef" pt='1rem' pb='1rem' mb='1rem'>
+                        <Flex justifyContent="space-between">
+                          <Text>Facture n°{invoice.number}</Text>
+                          <Text>{invoice.montant}{invoice.devise}</Text>
+                          <IconButton
+                            aria-label="Supprimer la facture"
+                            icon={<DeleteIcon />}
+                            size="sm"
+                            backgroundColor="transparent"
+                            onClick={() => handleDeleteInvoice(invoice._id)}
+                          />
+                        </Flex>
+                        <Flex justifyContent="space-between">
+                          <Chakralink color="#745FF2" onClick={() => handlePreviewClick(invoice.urlImage)}>
+                            Voir la facture
+                          </Chakralink>
+                          {invoice.status === 'paid' ? (
+                            <Chakralink color="#745FF2" onClick={() => handleMarkAsUnpaid(invoice._id)}>
+                              Marquer comme non traitée
                             </Chakralink>
-                            {invoice.status === 'paid' ? (
-                              <Chakralink color="#745FF2" onClick={() => handleMarkAsUnpaid(invoice._id)}>
-                                Marquer comme non traitée
-                              </Chakralink>
-                            ) : (
-                              <Chakralink color="#745FF2" onClick={() => handleMarkAsPaid(invoice._id)}>
-                                Marquer comme traitée
-                              </Chakralink>
-                            )}
-                            <IconButton
-                              aria-label="Supprimer la facture"
-                              icon={<DeleteIcon />}
-                              size="sm"
-                              backgroundColor="transparent"
-                              onClick={() => handleDeleteInvoice(invoice._id)}
-                            />
-                          </Flex>
-                        </Td>
-                      </Tr>
+                          ) : (
+                            <Chakralink color="#745FF2" onClick={() => handleMarkAsPaid(invoice._id)}>
+                              Marquer comme traitée
+                            </Chakralink>
+                          )}
+                        </Flex>
+                      </Box>
                     ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+                  </>
+                ) : (
+                  <TableContainer>
+                    <Table variant='simple'>
+                      <Thead>
+                        <Tr>
+                          <Th>Numéro de Facture</Th>
+                          <Th>Montant</Th>
+                          <Th pr='0rem' textAlign='end'>Action</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {invoices.slice().reverse().map(invoice => (
+                          <Tr key={invoice._id}>
+                            <Td>Facture n°{invoice.number}</Td>
+                            <Td>{invoice.montant}{invoice.devise}</Td>
+                            <Td pr='0rem' textAlign='end'>
+                              <Flex justifyContent="space-between">
+                                <Chakralink color="#745FF2" onClick={() => handlePreviewClick(invoice.urlImage)}>
+                                  Voir la facture
+                                </Chakralink>
+                                {invoice.status === 'paid' ? (
+                                  <Chakralink color="#745FF2" onClick={() => handleMarkAsUnpaid(invoice._id)}>
+                                    Marquer comme non traitée
+                                  </Chakralink>
+                                ) : (
+                                  <Chakralink color="#745FF2" onClick={() => handleMarkAsPaid(invoice._id)}>
+                                    Marquer comme traitée
+                                  </Chakralink>
+                                )}
+                                <IconButton
+                                  aria-label="Supprimer la facture"
+                                  icon={<DeleteIcon />}
+                                  size="sm"
+                                  backgroundColor="transparent"
+                                  onClick={() => handleDeleteInvoice(invoice._id)}
+                                />
+                              </Flex>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                )}
+              </>
             )}
           </Flex>
         </div>
