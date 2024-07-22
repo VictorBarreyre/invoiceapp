@@ -103,27 +103,61 @@ exports.signinUser = expressAsyncHandler(async (req, res) => {
 
 exports.sendResetEmail = expressAsyncHandler(async (req, res) => {
   const { email } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({ message: 'Utilisateur non trouvé' });
-  }
-  const resetToken = jwt.sign({ _id: user._id }, process.env.JWT_RESET_SECRET, { expiresIn: '15m' });
-  console.log('Generated reset token:', resetToken);
-  user.resetPasswordToken = resetToken;
-  user.resetPasswordExpire = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
-  await user.save();
+  console.log("Email received for password reset:", email); // Ajout d'un log pour vérifier l'email reçu
 
-  // Construisez un lien de réinitialisation qui pointe vers l'interface frontend
-  const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
-  const mailOptions = {
-    from: process.env.SMTP_MAIL,
-    to: email,
-    subject: 'Réinitialisation de votre mot de passe',
-    text: `Bonjour, vous avez demandé la réinitialisation de votre mot de passe. Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe: ${resetLink}`
-  };
-  await transporter.sendMail(mailOptions);
-  res.json({ message: 'Un e-mail de réinitialisation a été envoyé.' });
+  if (!process.env.JWT_RESET_SECRET) {
+    console.error('JWT_RESET_SECRET is not defined');
+    return res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+
+  try {
+    console.log("Searching for user with email:", email); // Ajout d'un log avant la recherche de l'utilisateur
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log("User not found with email:", email); // Ajout d'un log si l'utilisateur n'est pas trouvé
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    console.log("User found:", user); // Ajout d'un log pour vérifier les détails de l'utilisateur trouvé
+
+    const resetToken = jwt.sign({ _id: user._id }, process.env.JWT_RESET_SECRET, { expiresIn: '15m' });
+    console.log('Generated reset token:', resetToken); // Ajout d'un log pour vérifier le token généré
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpire = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
+    console.log('Saving user with reset token and expiration time'); // Ajout d'un log avant de sauvegarder l'utilisateur
+    await user.save();
+
+    const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+    console.log('Generated reset link:', resetLink); // Ajout d'un log pour vérifier le lien de réinitialisation
+
+    // Lire et remplir le template HTML
+    const templatePath = path.join(__dirname, '../templates/reset_password.html');
+    let template = fs.readFileSync(templatePath, 'utf-8');
+    template = template.replace('{resetLink}', resetLink);
+
+    console.log('Template content:', template); // Ajout d'un log pour vérifier le contenu du template après remplacement
+
+    const mailOptions = {
+      from: process.env.SMTP_MAIL,
+      to: email,
+      subject: 'Réinitialisation de votre mot de passe',
+      html: template
+    };
+
+    console.log('Sending email to:', email); // Ajout d'un log avant l'envoi de l'email
+    await transporter.sendMail(mailOptions);
+    console.log("Password reset email sent to:", email); // Ajout d'un log pour vérifier que l'email est envoyé
+
+    res.json({ message: 'Un e-mail de réinitialisation a été envoyé.' });
+  } catch (error) {
+    console.error('Error in sendResetEmail:', error); // Ajout d'un log pour afficher les erreurs
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
 });
+
+
+
 
 // Fonction pour obtenir les informations d'un utilisateur par son ID
 exports.getUser = expressAsyncHandler(async (req, res) => {
