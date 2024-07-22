@@ -30,7 +30,7 @@ function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const toast = useToast();
-  const {  isValidEmail } = useInvoiceData();
+  const { isValidEmail } = useInvoiceData();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -43,11 +43,25 @@ function SignupForm() {
     // Vérifiez si l'email est valide
     if (!isValidEmail(email)) {
       setErrorMessage("L'adresse e-mail n'est pas valide.");
+      toast({
+        title: 'Erreur',
+        description: "L'adresse e-mail n'est pas valide.",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
       return; // Stop the submission if email is not valid
     }
 
     if (password !== confirmPassword) {
       setErrorMessage("Les mots de passe ne correspondent pas.");
+      toast({
+        title: 'Erreur',
+        description: "Les mots de passe ne correspondent pas.",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
       return; // Stop the submission if passwords do not match
     } else {
       setErrorMessage(''); // Clear error message
@@ -71,18 +85,36 @@ function SignupForm() {
         login({ email, name, id: data._id });
         navigate('/profil'); // Assurez-vous que la méthode login est récupérée avec useAuth()
         console.log('Inscription réussie et utilisateur connecté');
+        toast({
+          title: 'Succès',
+          description: 'Inscription réussie et utilisateur connecté',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
       } else {
         throw new Error(data.message || 'Impossible de créer le compte');
       }
     } catch (error) {
-      setErrorMessage(error.message);
-      toast({
-        title: 'Erreur d\'inscription',
-        description: error.message,
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
+      if (error.response && error.response.status === 400 && error.response.data.message === 'Un utilisateur existe déjà avec cet email') {
+        setErrorMessage("Un utilisateur existe déjà avec cet email.");
+        toast({
+          title: 'Erreur',
+          description: "Un utilisateur existe déjà avec cet email.",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        setErrorMessage(error.message);
+        toast({
+          title: 'Erreur d\'inscription',
+          description: error.message,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
   };
 
