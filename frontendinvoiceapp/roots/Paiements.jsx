@@ -15,7 +15,8 @@ import {
   AccordionIcon,
   List,
   ListItem,
-  ListIcon
+  ListIcon,
+  useToast
 } from '@chakra-ui/react';
 import { CheckCircleIcon, CheckIcon } from '@chakra-ui/icons';
 import SubscribeForm from '../src/components/SubcribeForm';
@@ -35,28 +36,29 @@ const Paiements = () => {
   const [product, setProduct] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const { invoiceData } = useInvoiceData();
+  const toast = useToast();
+
+  const fetchSubscriptionStatus = async () => {
+    if (user && user.email) {
+      try {
+        const { hasActiveSubscription, subscription } = await checkActiveSubscription(user.email);
+        console.log('Subscription check response:', hasActiveSubscription, subscription);
+
+        if (hasActiveSubscription) {
+          setSubscriptionStatus('Actif');
+          setSubscriptionDetails(subscription);
+        } else {
+          setSubscriptionStatus('Inactif');
+        }
+      } catch (error) {
+        console.error('Error checking subscription status:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchSubscriptionStatus = async () => {
-      if (user && user.email) {
-        try {
-          const { hasActiveSubscription, subscription } = await checkActiveSubscription(user.email);
-          console.log('Subscription check response:', hasActiveSubscription, subscription);
-
-          if (hasActiveSubscription) {
-            setSubscriptionStatus('Actif');
-            setSubscriptionDetails(subscription);
-          } else {
-            setSubscriptionStatus('Inactif');
-          }
-        } catch (error) {
-          console.error('Error checking subscription status:', error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
     fetchSubscriptionStatus();
   }, [user, checkActiveSubscription]);
 
@@ -68,7 +70,7 @@ const Paiements = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        const targetProduct = data.find(p => p.name === 'Premium'); // Remplacez 'Premium' par le nom de votre produit
+        const targetProduct = data.find(p => p.name === 'Premium');
         setProduct(targetProduct);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -128,15 +130,26 @@ const Paiements = () => {
       });
 
       if (response.data.success) {
-        setSubscriptionStatus('Inactif');
-        setSubscriptionDetails(null);
-        alert('Subscription cancelled successfully.');
+        toast({
+          title: 'Abonnement annulé',
+          description: 'Votre abonnement sera annulé à la fin de la période de facturation.',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        fetchSubscriptionStatus();
       } else {
         throw new Error(response.data.error.message);
       }
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      alert('Failed to cancel subscription.');
+      toast({
+        title: 'Erreur',
+        description: 'Erreur lors de l\'annulation de l\'abonnement.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
@@ -151,7 +164,7 @@ const Paiements = () => {
   }
 
   if (subscriptionStatus === 'Actif' && subscriptionDetails) {
-    const { plan, currency, current_period_start, current_period_end, status } = subscriptionDetails;
+    const { plan, currency, current_period_start, current_period_end, status, cancel_at_period_end } = subscriptionDetails;
 
     return (
       <div className='flex-stepper'>
@@ -166,7 +179,11 @@ const Paiements = () => {
               <Text><strong>Date de début:</strong> {new Date(current_period_start * 1000).toLocaleDateString()}</Text>
               <Text><strong>Date de fin:</strong> {new Date(current_period_end * 1000).toLocaleDateString()}</Text>
               <Text><strong>Statut:</strong> {status}</Text>
-              <Link mt='2rem' color='red' onClick={handleCancelSubscription}>Résilier mon abonnement</Link>
+              {cancel_at_period_end ? (
+                <Text mt='0.5rem' color='red.500'>Votre abonnement sera annulé à la fin de la période de facturation.</Text>
+              ) : (
+                <Link mt='2rem' color='red' onClick={handleCancelSubscription}>Résilier mon abonnement</Link>
+              )}
             </Flex>
           </div>
         </div>

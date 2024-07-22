@@ -125,7 +125,6 @@ exports.checkActiveSubscription = async (req, res) => {
   }
 };
 
-
 exports.cancelSubscription = async (req, res) => {
   const { email } = req.body;
 
@@ -154,9 +153,16 @@ exports.cancelSubscription = async (req, res) => {
         const activeSubscription = subscriptions.data[0];
         console.log('Canceling subscription:', activeSubscription.id);
 
-        // Utilisez stripe.subscriptions.del pour annuler la souscription
-        const canceledSubscription = await stripe.subscriptions.del(activeSubscription.id);
-        console.log('Subscription canceled:', canceledSubscription.id);
+        // Calculer la date de fin du mois prochain
+        const now = new Date();
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+        const cancelAt = Math.floor(nextMonth.getTime() / 1000); // Convertir en timestamp Unix
+
+        // Utiliser stripe.subscriptions.update pour annuler la souscription à une date future
+        const canceledSubscription = await stripe.subscriptions.update(activeSubscription.id, {
+          cancel_at: cancelAt,
+        });
+        console.log('Subscription set to cancel at:', new Date(cancelAt * 1000).toISOString());
         return res.send({ success: true, subscription: canceledSubscription });
       } else {
         console.log('No active subscription found.');
