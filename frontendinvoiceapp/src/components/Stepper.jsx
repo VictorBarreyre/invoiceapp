@@ -8,6 +8,7 @@ import InvoiceSummary from './InvoiceSummary';
 import { useTheme } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Abo from '../../roots/Abo';
 
 const Stepper = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -29,6 +30,7 @@ const Stepper = () => {
   const [isStepNextAvailable, setIsStepNextAvailable] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showErrorSched, setShowErrorSched] = useState(false);
+  const [showAbo, setShowAbo] = useState(false); // Nouvel état pour afficher Abo
   const theme = useTheme();
   const breakpointMd = parseInt(theme.breakpoints.md, 10);
   const [isMobile, setIsMobile] = useState(false);
@@ -46,6 +48,15 @@ const Stepper = () => {
       setIsSubmitting(false);
       return;
     }
+    
+    // Vérifier l'abonnement ici
+    const { hasActiveSubscription } = await checkActiveSubscription(email);
+    if (!hasActiveSubscription) {
+      setShowAbo(true);
+      setIsSubmitting(false);
+      return;
+    }
+    
     setSendButtonClicked('sendInvoice');
 
     await handleInvoiceActionSendMail(invoiceData, () => {
@@ -68,6 +79,15 @@ const Stepper = () => {
       setIsSubmitting(false);
       return;
     }
+    
+    // Vérifier l'abonnement ici
+    const { hasActiveSubscription } = await checkActiveSubscription(email);
+    if (!hasActiveSubscription) {
+      setShowAbo(true);
+      setIsSubmitting(false);
+      return;
+    }
+    
     setSendButtonClicked('sendInvoiceX');
 
     await handleInvoiceActionSendMailX(invoiceData, () => {
@@ -236,6 +256,10 @@ const Stepper = () => {
     const mobileTexts = ["Votre facture", "Vos échéances", "Envoi"];
     return isMobile ? mobileTexts[index] : texts[index];
   };
+
+  if (showAbo) {
+    return <Abo />;
+  }
 
   return (
     <div className='flex-stepper'>
