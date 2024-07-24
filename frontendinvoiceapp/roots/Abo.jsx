@@ -50,6 +50,7 @@ const Abo = () => {
         };
 
         fetchProductsAndPrices();
+        console.log(clientSecret)
     }, [baseUrl]);
 
     const handleCheckoutSessionCreation = async (priceId) => {

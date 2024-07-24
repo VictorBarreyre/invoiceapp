@@ -224,17 +224,14 @@ const InvoicePDF = ({ invoiceData }) => (
         </View>
         <View style={{ marginTop: 60 }}>
           <Text style={styles.date}>
-            Veuillez noter que le paiement de cette facture constitue une acceptation des termes et conditions du contrat établi entre {invoiceData.issuer.name} et {invoiceData.client.name}. Vous trouverez les détails concernant la procédure d'acceptation et de signature du contrat dans l'email accompagnant cette facture.
-          </Text>
-          <Text style={styles.mentionsLegales}>
-            Cette facture est éditée par {invoiceData.issuer.name}, 
+          Cette facture est éditée par {invoiceData.issuer.name}, 
             <br />
             Conformément aux articles L.441-9 et suivants du Code de commerce, cette facture doit être réglée dans un délai de 30 jours à compter de sa date d'émission.
             <br />
             En cas de retard de paiement, une pénalité de retard calculée sur la base de trois fois le taux d'intérêt légal sera appliquée. Une indemnité forfaitaire de 40 euros pour frais de recouvrement sera également due (art. D.441-5 du Code de commerce).
             <br />
             Pour toute question relative à cette facture, merci de contacter notre service comptable à l'adresse {invoiceData.issuer.email}.
-          </Text>
+          </Text>          
         </View>
 
       </View>

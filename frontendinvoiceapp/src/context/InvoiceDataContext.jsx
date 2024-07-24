@@ -212,6 +212,11 @@ export const InvoiceDataProvider = ({ children }) => {
                 formData.append('reminderFrequency', reminderFrequency);
                 formData.append('items', JSON.stringify(items)); // Ajouter les articles ici
     
+                // Log formData content
+                for (const [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+    
                 const headers = {
                     'Content-Type': 'multipart/form-data'
                 };
@@ -237,6 +242,7 @@ export const InvoiceDataProvider = ({ children }) => {
             onError(); // Appeler onError en cas d'erreur
         }
     };
+    
     
       
 

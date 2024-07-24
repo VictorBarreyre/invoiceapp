@@ -134,17 +134,25 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
           format: 'standard'
       });
 
+    
+
       await nouvelleFacture.save();
 
       const templatePath = path.join(__dirname, '../templates/emailTemplates.html');
       let template = fs.readFileSync(templatePath, 'utf-8');
 
       const confirmationLink = `http://localhost:5173/confirmation?facture=${factureId}&montant=${montant}`;
-      template = template.replace('{clientName}', destinataire.name)
-                         .replace('{invoiceNumber}', number)
-                         .replace('{confirmationLink}', confirmationLink)
-                         .replace('{issuerName}', emetteur.name);
-      
+
+      const replacements = {
+        '{clientName}': destinataire.name,
+        '{invoiceNumber}': number,
+        '{confirmationLink}': confirmationLink,
+        '{issuerName}': emetteur.name
+    };
+
+    template = template.replace(/{clientName}|{invoiceNumber}|{confirmationLink}|{issuerName}/g, matched => replacements[matched]);
+
+    
       const mailOptions = {
           from: process.env.SMTP_MAIL,
           to: email,
@@ -159,9 +167,10 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
       };
 
       await transporter.sendMail(mailOptions);
+      console.log(nouvelleFacture)
 
       res.send({
-          message: "Email envoyé avec succès à " + email,
+          message: "Email envoyé avec succès à " + email, 
           factureId: factureId,
           urlImage: urlImage,
       });
@@ -247,10 +256,15 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
         let template = fs.readFileSync(templatePath, 'utf-8');
 
         const confirmationLink = `http://localhost:5173/confirmation?facture=${factureId}&montant=${montant}`;
-        template = template.replace('{clientName}', destinataire.name)
-                            .replace('{invoiceNumber}', number)
-                            .replace('{confirmationLink}', confirmationLink)
-                            .replace('{issuerName}', emetteur.name);
+        
+         const replacements = {
+        '{clientName}': destinataire.name,
+        '{invoiceNumber}': number,
+        '{confirmationLink}': confirmationLink,
+        '{issuerName}': emetteur.name
+    };
+
+    template = template.replace(/{clientName}|{invoiceNumber}|{confirmationLink}|{issuerName}/g, matched => replacements[matched]);
 
         const mailOptions = {
             from: process.env.SMTP_MAIL,
