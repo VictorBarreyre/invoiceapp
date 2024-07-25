@@ -240,7 +240,10 @@ const Stepper = () => {
           <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'>
             {buttonLabel}
           </Button>
+
+          <Heading mt='2rem' size="sm">Vous pouvez aussi juste télécharger la facture </Heading>
           <Flex mt='1rem'> 
+         
           <Button onClick={handleDownloadInvoice}  w={{ base: 'unset', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'> Télécharger ma facture </Button>
           <Button onClick={handleDownloadFacturX} ml='1rem' w={{ base: 'unset', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2' p='10px 20px 10px 20px'> Télécharger ma factureX </Button>
           </Flex>
