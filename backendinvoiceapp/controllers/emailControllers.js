@@ -133,6 +133,29 @@ const downloadInvoice = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const downloadFacturX = expressAsyncHandler(async (req, res) =>{
+
+  try {
+    const invoiceData = JSON.parse(req.body.invoiceData);
+    const pdfBuffer = req.file.buffer;
+    
+    const pdfBytes = await createFacturXPDF(invoiceData, pdfBuffer);
+    const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
+    fs.writeFileSync(pdfPath, pdfBytes);
+    
+    res.download(pdfPath, `FactureX-${invoiceData.number}.pdf`, (err) => {
+        if (err) {
+            console.error('Error while sending the file:', err);
+        }
+        fs.unlinkSync(pdfPath);
+    });
+} catch (error) {
+    console.error('Error generating or sending PDF:', error);
+    res.status(500).send('Error generating or sending PDF');
+}
+
+});
+
 
 
 const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
@@ -350,4 +373,4 @@ const getFactureDetails = expressAsyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { generateFactureId, downloadInvoice, createFactureAndSendEmail, getFactureDetails, generateFacturXAndSendEmail };
+module.exports = { generateFactureId, downloadInvoice, downloadFacturX, createFactureAndSendEmail, getFactureDetails, generateFacturXAndSendEmail };
