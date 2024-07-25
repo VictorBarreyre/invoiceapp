@@ -151,24 +151,25 @@ export const InvoiceDataProvider = ({ children }) => {
     };
 
     const handleDownloadInvoice = async () => {
-        try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/downloadInvoice`, { invoiceData }, { responseType: 'blob' });
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `Facture-${invoiceData.number}.pdf`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error("Error downloading the invoice:", error);
-        }
+        const file = <InvoicePDF invoiceData={invoiceData} />;
+        const asPDF = pdf([]);
+        asPDF.updateContainer(file);
+        const pdfBlob = await asPDF.toBlob();
+
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Facture-${invoiceData.number}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     };
     
 
     const handleDownloadFacturX = async () => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/downloadFacturX`, { invoiceData }, { responseType: 'blob' });
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/downloadFacturX`, { invoiceData }, { responseType: 'blob' });
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;

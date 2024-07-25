@@ -13,6 +13,9 @@ const dotenv = require("dotenv");
 const { exec } = require('child_process');
 dotenv.config();
 
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+
 let transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
@@ -101,60 +104,32 @@ const convertPdfToPng = (pdfPath) => {
 };
 
 
-const downloadInvoice = expressAsyncHandler(async (req, res) => {
-  try {
-    // Parse the invoice data from the request body
-    const invoiceData = JSON.parse(req.body.invoiceData);
-    
-    // Render the invoice PDF using @react-pdf/renderer
-    const file = React.createElement(InvoicePDF, { invoiceData });
-    const asPDF = pdf([]);
-    asPDF.updateContainer(file);
-    
-    // Convert the PDF blob to a buffer
-    const pdfBlob = await asPDF.toBlob();
-    const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer());
-    
-    // Write the PDF buffer to a temporary file
-    const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-invoice.pdf`);
-    fs.writeFileSync(pdfPath, pdfBuffer);
-    
-    // Send the PDF file as a download response
-    res.download(pdfPath, `Facture-${invoiceData.number}.pdf`, (err) => {
-      if (err) {
-        console.error("Error while sending the file:", err);
-      }
-      // Delete the temporary file after download
-      fs.unlinkSync(pdfPath);
-    });
-  } catch (error) {
-    console.error("Error generating or sending PDF:", error);
-    res.status(500).send("Error generating or sending PDF");
-  }
-});
 
-const downloadFacturX = expressAsyncHandler(async (req, res) =>{
 
+const downloadFacturX = expressAsyncHandler(async (req, res) => {
   try {
-    const invoiceData = JSON.parse(req.body.invoiceData);
+    // Extract invoice data directly from the request body
+    const invoiceData = req.body.invoiceData;
     const pdfBuffer = req.file.buffer;
-    
+
+    // Generate the Factur-X PDF
     const pdfBytes = await createFacturXPDF(invoiceData, pdfBuffer);
     const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
     fs.writeFileSync(pdfPath, pdfBytes);
-    
+
+    // Send the Factur-X PDF file as a download response
     res.download(pdfPath, `FactureX-${invoiceData.number}.pdf`, (err) => {
-        if (err) {
-            console.error('Error while sending the file:', err);
-        }
-        fs.unlinkSync(pdfPath);
+      if (err) {
+        console.error('Error while sending the file:', err);
+      }
+      fs.unlinkSync(pdfPath);
     });
-} catch (error) {
+  } catch (error) {
     console.error('Error generating or sending PDF:', error);
     res.status(500).send('Error generating or sending PDF');
-}
-
+  }
 });
+
 
 
 

@@ -14,8 +14,6 @@ router.get("/generateFactureId", generateFactureId);
 
 router.post("/sendEmail", upload.single('file'), createFactureAndSendEmail);
 
-router.post("/downloadInvoice",upload.single('file'), downloadInvoice);
-
 router.post("/downloadFacturX",upload.single('file'), downloadFacturX);
 
 router.post('/sendEmailx', upload.single('file'), generateFacturXAndSendEmail);

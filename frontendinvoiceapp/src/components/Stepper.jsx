@@ -236,12 +236,14 @@ const Stepper = () => {
       );
     } else {
       return (
-        <Flex justifyContent='space-between'>
+        <Flex justifyContent='space-between' w="100%" flexDirection='column'>
           <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'>
             {buttonLabel}
           </Button>
-          <Button onClick={handleDownloadInvoice} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'> Télécharger ma facture </Button>
-          <Button onClick={handleDownloadFacturX} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2'> Télécharger ma factureX </Button>
+          <Flex mt='1rem'> 
+          <Button onClick={handleDownloadInvoice}  w={{ base: 'unset', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'> Télécharger ma facture </Button>
+          <Button onClick={handleDownloadFacturX} ml='1rem' w={{ base: 'unset', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2' p='10px 20px 10px 20px'> Télécharger ma factureX </Button>
+          </Flex>
         </Flex>
       );
     }
