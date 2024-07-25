@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useInvoiceData } from '../context/InvoiceDataContext';
 import InvoiceCreator from './InvoiceCreator';
-import { Heading, Text, Button } from '@chakra-ui/react';
+import { Heading, Text, Button, Flex } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import PaymentScheduleForm from './PaymentScheduleForm';
 import InvoiceSummary from './InvoiceSummary';
@@ -23,7 +23,9 @@ const Stepper = () => {
     handleInvoiceActionSendMail,
     handleInvoiceActionSendMailX,
     checkActiveSubscription,
-    reminderFrequency
+    reminderFrequency,
+    handleDownloadInvoice,
+    handleDownloadFacturX,
   } = useInvoiceData();
 
   const { user } = useAuth();
@@ -48,7 +50,7 @@ const Stepper = () => {
       setIsSubmitting(false);
       return;
     }
-    
+
     // Vérifier l'abonnement ici
     const { hasActiveSubscription } = await checkActiveSubscription(email);
     if (!hasActiveSubscription) {
@@ -56,7 +58,7 @@ const Stepper = () => {
       setIsSubmitting(false);
       return;
     }
-    
+
     setSendButtonClicked('sendInvoice');
 
     await handleInvoiceActionSendMail(invoiceData, () => {
@@ -79,7 +81,7 @@ const Stepper = () => {
       setIsSubmitting(false);
       return;
     }
-    
+
     // Vérifier l'abonnement ici
     const { hasActiveSubscription } = await checkActiveSubscription(email);
     if (!hasActiveSubscription) {
@@ -87,7 +89,7 @@ const Stepper = () => {
       setIsSubmitting(false);
       return;
     }
-    
+
     setSendButtonClicked('sendInvoiceX');
 
     await handleInvoiceActionSendMailX(invoiceData, () => {
@@ -219,6 +221,7 @@ const Stepper = () => {
         <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'>
           {buttonLabel}
         </Button>
+
       );
     } else if (tabIndex === 2) {
       return (
@@ -226,16 +229,20 @@ const Stepper = () => {
           <Button onClick={handleSendInvoice} disabled={isSubmitting} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black' m={2}>
             Envoyer ma facture
           </Button>
-          <Button onClick={handleSendInvoiceX} disabled={isSubmitting} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='blue.500' m={2}>
+          <Button onClick={handleSendInvoiceX} disabled={isSubmitting} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2' m={2}>
             Envoyer ma facture-X
           </Button>
         </div>
       );
     } else {
       return (
-        <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'>
-          {buttonLabel}
-        </Button>
+        <Flex justifyContent='space-between'>
+          <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'>
+            {buttonLabel}
+          </Button>
+          <Button onClick={handleDownloadInvoice} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'> Télécharger ma facture </Button>
+          <Button onClick={handleDownloadFacturX} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2'> Télécharger ma factureX </Button>
+        </Flex>
       );
     }
   };

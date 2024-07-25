@@ -4,7 +4,7 @@ const multer = require('multer');
 const authenticate = require('../middleware/authentificate');
 
 // Assurez-vous que le chemin vers votre module est correct
-const { createFactureAndSendEmail, generateFactureId, getFactureDetails, generateFacturXAndSendEmail } = require("../controllers/emailControllers");
+const { createFactureAndSendEmail,downloadInvoice, generateFactureId, getFactureDetails, generateFacturXAndSendEmail } = require("../controllers/emailControllers");
 
 // Configuration de Multer pour le stockage en mémoire
 const upload = multer({ storage: multer.memoryStorage() });
@@ -13,6 +13,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get("/generateFactureId", generateFactureId);
 
 router.post("/sendEmail", upload.single('file'), createFactureAndSendEmail);
+
+router.post("/downloadInvoice",upload.single('file'), downloadInvoice);
 
 router.post('/sendEmailx', upload.single('file'), generateFacturXAndSendEmail);
 

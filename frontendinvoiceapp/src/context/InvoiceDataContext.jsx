@@ -149,6 +149,21 @@ export const InvoiceDataProvider = ({ children }) => {
             if (onError) onError(error.message);
         }
     };
+
+    const handleDownloadInvoice = async () => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/downloadInvoice`, { invoiceData }, { responseType: 'blob' });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Facture-${invoiceData.number}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error downloading the invoice:", error);
+        }
+    };
     
     const handleSendInvoice = () => {
         const { email, name } = invoiceData.issuer;
@@ -356,6 +371,7 @@ export const InvoiceDataProvider = ({ children }) => {
             setIsTotalPercentage100,
             remainingPercentage,
             setRemainingPercentage,
+            handleDownloadInvoice,
             handleInvoiceActionSendMail,
             handleInvoiceActionSendMailX,
             getClassForField,
