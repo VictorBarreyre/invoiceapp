@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useInvoiceData } from '../context/InvoiceDataContext';
 import InvoiceCreator from './InvoiceCreator';
-import { Heading, Text, Button, Flex } from '@chakra-ui/react';
+import { Heading, Text, Button, Flex, Link } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import PaymentScheduleForm from './PaymentScheduleForm';
 import InvoiceSummary from './InvoiceSummary';
@@ -236,17 +236,25 @@ const Stepper = () => {
       );
     } else {
       return (
-        <Flex justifyContent='space-between' w="100%" flexDirection='column'>
-          <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black'>
+
+        <Flex flexWrap='wrap' justifyContent='space-between' w='100%'>
+          <Flex justifyContent='space-between' w={{ base: '100%', lg: '50%' }} flexDirection='column' >
+            <Heading mt='2rem' size="sm">Vous pouvez : configurer l'envoie par mail avec la fréquence des relances</Heading>
+            <Flex mt='1rem'>
+            <Button onClick={handleNavigateTo} rightIcon={<ArrowForwardIcon />} w={{ base: 'unset', lg: 'fit-content' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'>
             {buttonLabel}
           </Button>
-
-          <Heading mt='2rem' size="sm">Vous pouvez aussi juste télécharger la facture </Heading>
-          <Flex mt='1rem'> 
-         
-          <Button onClick={handleDownloadInvoice}  w={{ base: 'unset', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'> Télécharger ma facture </Button>
-          <Button onClick={handleDownloadFacturX} ml='1rem' w={{ base: 'unset', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2' p='10px 20px 10px 20px'> Télécharger ma factureX </Button>
+             
+            </Flex>
           </Flex>
+          <Flex mt={{ base : '1rem', lg: 'unset'}} justifyContent='space-between' w={{ base: '100%', lg: '50%' }} flexDirection='column' alignItems={{ base: 'start', lg: 'end' }}>
+          <Heading mt='2rem' size="sm">Ou directement télécharger la facture  </Heading>
+          <Flex mt='1rem'>
+          <Button onClick={handleDownloadInvoice} w={{ base: 'unset', lg: 'fit-content' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'> Télécharger ma facture </Button>
+          <Button onClick={handleDownloadFacturX} ml='1rem' w={{ base: 'unset', lg: 'fit-content' }} color='white' borderRadius='30px' backgroundColor='#745FF2' p='10px 20px 10px 20px'> Télécharger ma factureX </Button>
+          </Flex>
+            </Flex>
+
         </Flex>
       );
     }
