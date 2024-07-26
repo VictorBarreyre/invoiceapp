@@ -13,8 +13,6 @@ const dotenv = require("dotenv");
 const { exec } = require('child_process');
 dotenv.config();
 
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
 
 let transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -348,4 +346,4 @@ const getFactureDetails = expressAsyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { generateFactureId, downloadInvoice, downloadFacturX, createFactureAndSendEmail, getFactureDetails, generateFacturXAndSendEmail };
+module.exports = { generateFactureId,  downloadFacturX, createFactureAndSendEmail, getFactureDetails, generateFacturXAndSendEmail };
