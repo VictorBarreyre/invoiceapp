@@ -104,33 +104,6 @@ const convertPdfToPng = (pdfPath) => {
 
 
 
-const downloadFacturX = expressAsyncHandler(async (req, res) => {
-  try {
-    // Extract invoice data directly from the request body
-    const invoiceData = req.body.invoiceData;
-    const pdfBuffer = req.file.buffer;
-
-    // Generate the Factur-X PDF
-    const pdfBytes = await createFacturXPDF(invoiceData, pdfBuffer);
-    const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
-    fs.writeFileSync(pdfPath, pdfBytes);
-
-    // Send the Factur-X PDF file as a download response
-    res.download(pdfPath, `FactureX-${invoiceData.number}.pdf`, (err) => {
-      if (err) {
-        console.error('Error while sending the file:', err);
-      }
-      fs.unlinkSync(pdfPath);
-    });
-  } catch (error) {
-    console.error('Error generating or sending PDF:', error);
-    res.status(500).send('Error generating or sending PDF');
-  }
-});
-
-
-
-
 const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
   console.log("User in request:", req.userData);
   const { number, email, subject, montant, factureId, devise, reminderFrequency } = req.body;
@@ -229,6 +202,34 @@ async function generateFacturX(invoiceData, pdfBuffer) {
     throw error;
   }
 }
+
+
+const downloadFacturX = expressAsyncHandler(async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("Aucun fichier fourni.");
+    }
+
+    const invoiceData = JSON.parse(req.body.invoiceData);
+    const pdfBuffer = req.file.buffer;
+
+    // Generate the Factur-X PDF
+    const pdfBytes = await generateFacturX(invoiceData, pdfBuffer);
+    const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
+    fs.writeFileSync(pdfPath, pdfBytes);
+
+    // Send the Factur-X PDF file as a download response
+    res.download(pdfPath, `FactureX-${invoiceData.number}.pdf`, (err) => {
+      if (err) {
+        console.error('Error while sending the file:', err);
+      }
+      fs.unlinkSync(pdfPath);
+    });
+  } catch (error) {
+    console.error('Error generating or sending PDF:', error);
+    res.status(500).send('Error generating or sending PDF');
+  }
+});
 
 const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
     console.log("User in request:", req.userData);

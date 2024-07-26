@@ -169,7 +169,22 @@ export const InvoiceDataProvider = ({ children }) => {
 
     const handleDownloadFacturX = async () => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/downloadFacturX`, { invoiceData }, { responseType: 'blob' });
+            const file = <InvoicePDF invoiceData={invoiceData} />;
+            const asPDF = pdf([]);
+            asPDF.updateContainer(file);
+            const pdfBlob = await asPDF.toBlob();
+    
+            const formData = new FormData();
+            formData.append('file', pdfBlob, `FactureX-${invoiceData.number}.pdf`);
+            formData.append('invoiceData', JSON.stringify(invoiceData));
+    
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/downloadFacturX`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                responseType: 'blob'
+            });
+    
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -181,6 +196,7 @@ export const InvoiceDataProvider = ({ children }) => {
             console.error("Error downloading the Factur-X invoice:", error);
         }
     };
+    
 
 
     const handleSendInvoice = () => {
