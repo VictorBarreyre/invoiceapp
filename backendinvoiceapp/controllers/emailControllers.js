@@ -1,4 +1,4 @@
-const { PDFDocument, StandardFonts, rgb, PDFName, PDFString, PDFArray, PDFDict, PDFHexString } = require('pdf-lib');
+const { PDFDocument, StandardFonts, rgb, PDFName, PDFHexString } = require('pdf-lib');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -80,24 +80,171 @@ const convertPdfToPng = (pdfPath) => {
     const outputBase = path.basename(pdfPath, path.extname(pdfPath));
     const outputPath = path.join(imagesDir, outputBase + ".png");
 
-    console.log("Chemin du PDF source:", pdfPath);
-    console.log("Chemin de destination prévu pour le PNG:", outputPath);
-
     const command = `pdftoppm -png -f 1 -singlefile "${pdfPath}" "${outputPath.replace('.png', '')}"`;
-
-    console.log("Commande exécutée:", command);
 
     exec(command, (err) => {
       if (err) {
-        console.log("Erreur lors de l'exécution de la commande:", err);
         reject(err);
       } else {
-        console.log("Conversion réussie, fichier PNG:", outputPath);
         resolve(outputPath);
       }
     });
   });
 };
+
+async function generateFacturX(invoiceData, pdfBuffer) {
+  try {
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+
+    pdfDoc.setTitle('Facture');
+    pdfDoc.setAuthor('Votre Nom');
+    pdfDoc.setSubject('Facture pour services rendus');
+    pdfDoc.setKeywords(['facture', 'Factur-X', 'PDF/A-3']);
+    pdfDoc.setProducer('PDF Producer');
+    pdfDoc.setCreator('PDF Creator');
+    pdfDoc.setCreationDate(new Date());
+    pdfDoc.setModificationDate(new Date());
+
+    // Create the Factur-X XML
+    const xmlContent = generateFacturXXML(invoiceData);
+    const xmlBytes = new TextEncoder().encode(xmlContent);
+
+    // Create an embedded file stream
+    const embeddedFileStream = pdfDoc.context.flateStream(xmlBytes);
+    const embeddedFile = pdfDoc.context.obj({
+      Type: 'EmbeddedFile',
+      Subtype: 'application/xml',
+      Params: {
+        ModDate: new Date(),
+        Size: xmlBytes.length,
+      },
+    });
+    pdfDoc.context.register(embeddedFileStream, embeddedFile);
+
+    // Create the embedded files name tree
+    const embeddedFilesNameTree = pdfDoc.context.obj({
+      Names: [
+        PDFHexString.fromText('factur-x.xml'), embeddedFileStream,
+      ],
+    });
+
+    // Add the embedded files name tree to the document's name dictionary
+    const nameDict = pdfDoc.context.obj({
+      EmbeddedFiles: embeddedFilesNameTree,
+    });
+    pdfDoc.catalog.set(PDFName.of('Names'), nameDict);
+
+    // Mark the document as PDF/A-3
+    pdfDoc.catalog.set(PDFName.of('MarkInfo'), pdfDoc.context.obj({
+      Marked: true,
+    }));
+    pdfDoc.catalog.set(PDFName.of('GTS_PDFXVersion'), PDFHexString.fromText('PDF/A-3'));
+    pdfDoc.catalog.set(PDFName.of('GTS_PDFXConformance'), PDFHexString.fromText('B'));
+
+    const pdfBytes = await pdfDoc.save();
+    return pdfBytes;
+  } catch (error) {
+    throw new Error(`Erreur lors de la génération de Factur-X: ${error.message}`);
+  }
+}
+
+function generateFacturXXML(invoiceData) {
+  const { number, date, issuer, client, items, total, vatRate, devise } = invoiceData;
+  const totalAmount = parseFloat(total);
+  const vatAmount = totalAmount * (vatRate / 100);
+  const grandTotalAmount = totalAmount + vatAmount;
+
+  if (isNaN(totalAmount)) {
+    throw new Error('Le total doit être un nombre');
+  }
+
+  return `
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100">
+    <rsm:ExchangedDocument>
+      <ram:ID>${number}</ram:ID>
+      <ram:TypeCode>380</ram:TypeCode>
+      <ram:IssueDateTime>
+        <udt:DateTimeString format="102">${date.replace(/-/g, '')}</udt:DateTimeString>
+      </ram:IssueDateTime>
+      <ram:IncludedNote>
+        <ram:Content>${issuer.name} - ${issuer.adresse}</ram:Content>
+      </ram:IncludedNote>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+      <ram:ApplicableSupplyChainTradeAgreement>
+        <ram:BuyerReference>${client.name}</ram:BuyerReference>
+      </ram:ApplicableSupplyChainTradeAgreement>
+      <ram:ApplicableSupplyChainTradeDelivery>
+        <ram:ActualDeliveryDate>
+          <udt:DateTimeString format="102">${date.replace(/-/g, '')}</udt:DateTimeString>
+        </ram:ActualDeliveryDate>
+      </ram:ApplicableSupplyChainTradeDelivery>
+      <ram:ApplicableSupplyChainTradeSettlement>
+        <ram:SpecifiedTradeSettlementMonetarySummation>
+          <ram:LineTotalAmount currencyID="${devise}">${totalAmount.toFixed(2)}</ram:LineTotalAmount>
+          <ram:TaxTotalAmount currencyID="${devise}">${vatAmount.toFixed(2)}</ram:TaxTotalAmount>
+          <ram:GrandTotalAmount currencyID="${devise}">${grandTotalAmount.toFixed(2)}</ram:GrandTotalAmount>
+        </ram:SpecifiedTradeSettlementMonetarySummation>
+      </ram:ApplicableSupplyChainTradeSettlement>
+      <ram:IncludedSupplyChainTradeLineItem>
+        ${items.map((item, index) => {
+          const itemTotal = parseFloat(item.unitPrice) * parseInt(item.quantity, 10);
+          return `
+          <ram:AssociatedDocumentLineDocument>
+            <ram:LineID>${index + 1}</ram:LineID>
+          </ram:AssociatedDocumentLineDocument>
+          <ram:SpecifiedTradeProduct>
+            <ram:Name>${item.description}</ram:Name>
+          </ram:SpecifiedTradeProduct>
+          <ram:SpecifiedLineTradeAgreement>
+            <ram:NetPriceProductTradePrice>
+              <ram:ChargeAmount currencyID="${devise}">${parseFloat(item.unitPrice).toFixed(2)}</ram:ChargeAmount>
+            </ram:NetPriceProductTradePrice>
+          </ram:SpecifiedLineTradeAgreement>
+          <ram:SpecifiedLineTradeDelivery>
+            <ram:BilledQuantity unitCode="C62">${parseInt(item.quantity, 10)}</ram:BilledQuantity>
+          </ram:SpecifiedLineTradeDelivery>
+          <ram:SpecifiedLineTradeSettlement>
+            <ram:SpecifiedTradeSettlementLineMonetarySummation>
+              <ram:LineTotalAmount currencyID="${devise}">${itemTotal.toFixed(2)}</ram:LineTotalAmount>
+            </ram:SpecifiedTradeSettlementLineMonetarySummation>
+          </ram:SpecifiedLineTradeSettlement>
+          `;
+        }).join('')}
+      </ram:IncludedSupplyChainTradeLineItem>
+    </rsm:SupplyChainTradeTransaction>
+  </rsm:CrossIndustryInvoice>
+  `;
+}
+
+const downloadFacturX = expressAsyncHandler(async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("Aucun fichier fourni.");
+    }
+
+    const invoiceData = JSON.parse(req.body.invoiceData);
+    const pdfBuffer = req.file.buffer;
+
+    if (!invoiceData.total || isNaN(parseFloat(invoiceData.total))) {
+      throw new Error('Le total doit être un nombre valide');
+    }
+
+    const pdfBytes = await generateFacturX(invoiceData, pdfBuffer);
+    const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
+    fs.writeFileSync(pdfPath, pdfBytes);
+
+    res.download(pdfPath, `FactureX-${invoiceData.number}.pdf`, (err) => {
+      if (err) {
+        console.error('Error while sending the file:', err);
+      }
+      fs.unlinkSync(pdfPath);
+    });
+  } catch (error) {
+    console.error('Error generating or sending PDF:', error);
+    res.status(500).send('Error generating or sending PDF');
+  }
+});
 
 const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
   console.log("User in request:", req.userData);
@@ -176,168 +323,6 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
     res.status(500).send("Erreur lors de la création de la facture ou de l'envoi de l'email: " + error.message);
   }
 });
-
-async function generateFacturX(invoiceData, pdfBuffer) {
-  try {
-    const pdfDoc = await PDFDocument.load(pdfBuffer);
-
-    // Set metadata
-    pdfDoc.setTitle('Facture');
-    pdfDoc.setAuthor('Votre Nom');
-    pdfDoc.setSubject('Facture pour services rendus');
-    pdfDoc.setKeywords(['facture', 'Factur-X', 'PDF/A-3']);
-    console.log('PDF Document loaded and metadata set.');
-
-    // Create the Factur-X XML
-    const xmlContent = generateFacturXXML(invoiceData);
-    const xmlBytes = new TextEncoder().encode(xmlContent);
-
-    // Create an embedded file stream
-    const embeddedFileStream = pdfDoc.context.flateStream(xmlBytes);
-    const embeddedFile = pdfDoc.context.obj({
-      Type: 'EmbeddedFile',
-      Subtype: 'application/xml',
-      Params: {
-        ModDate: new Date(),
-        Size: xmlBytes.length,
-      },
-    });
-    pdfDoc.context.register(embeddedFileStream, embeddedFile);
-
-    // Create the embedded files name tree
-    const embeddedFilesNameTree = pdfDoc.context.obj({
-      Names: [
-        PDFHexString.fromText('factur-x.xml'), embeddedFileStream,
-      ],
-    });
-
-    // Add the embedded files name tree to the document's name dictionary
-    const nameDict = pdfDoc.context.obj({
-      EmbeddedFiles: embeddedFilesNameTree,
-    });
-    pdfDoc.catalog.set(PDFName.of('Names'), nameDict);
-
-    // Mark the document as PDF/A-3
-    pdfDoc.catalog.set(PDFName.of('MarkInfo'), pdfDoc.context.obj({
-      Marked: true,
-    }));
-    pdfDoc.catalog.set(PDFName.of('GTS_PDFXVersion'), PDFHexString.fromText('PDF/A-3'));
-    pdfDoc.catalog.set(PDFName.of('GTS_PDFXConformance'), PDFHexString.fromText('B'));
-
-    const pdfBytes = await pdfDoc.save();
-    console.log('PDF Document saved.');
-    return pdfBytes;
-  } catch (error) {
-    console.error('Erreur lors de la génération de Factur-X:', error);
-    throw error;
-  }
-}
-
-
-function generateFacturXXML(invoiceData) {
-  const { number, date, issuer, client, items, total, vatRate, devise } = invoiceData;
-
-   // Validation et conversion des données
-   const totalAmount = parseFloat(total);
-   const vatAmount = totalAmount * (vatRate / 100);
-   const grandTotalAmount = totalAmount + vatAmount;
- 
-   if (isNaN(totalAmount)) {
-     throw new Error('Le total doit être un nombre');
-   }
- 
-
-  return `
-<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100">
-    <rsm:ExchangedDocument>
-      <ram:ID>${number}</ram:ID>
-      <ram:TypeCode>380</ram:TypeCode>
-      <ram:IssueDateTime>
-        <udt:DateTimeString format="102">${date.replace(/-/g, '')}</udt:DateTimeString>
-      </ram:IssueDateTime>
-      <ram:IncludedNote>
-        <ram:Content>${issuer.name} - ${issuer.adresse}</ram:Content>
-      </ram:IncludedNote>
-    </rsm:ExchangedDocument>
-    <rsm:SupplyChainTradeTransaction>
-      <ram:ApplicableSupplyChainTradeAgreement>
-        <ram:BuyerReference>${client.name}</ram:BuyerReference>
-      </ram:ApplicableSupplyChainTradeAgreement>
-      <ram:ApplicableSupplyChainTradeDelivery>
-        <ram:ActualDeliveryDate>
-          <udt:DateTimeString format="102">${date.replace(/-/g, '')}</udt:DateTimeString>
-        </ram:ActualDeliveryDate>
-      </ram:ApplicableSupplyChainTradeDelivery>
-      <ram:ApplicableSupplyChainTradeSettlement>
-        <ram:SpecifiedTradeSettlementMonetarySummation>
-          <ram:LineTotalAmount currencyID="${devise}">${totalAmount.toFixed(2)}</ram:LineTotalAmount>
-          <ram:TaxTotalAmount currencyID="${devise}">${vatAmount.toFixed(2)}</ram:TaxTotalAmount>
-          <ram:GrandTotalAmount currencyID="${devise}">${grandTotalAmount.toFixed(2)}</ram:GrandTotalAmount>
-        </ram:SpecifiedTradeSettlementMonetarySummation>
-      </ram:ApplicableSupplyChainTradeSettlement>
-      <ram:IncludedSupplyChainTradeLineItem>
-        ${items.map((item, index) => {
-          const itemTotal = parseFloat(item.unitPrice) * parseInt(item.quantity, 10);
-          return `
-          <ram:AssociatedDocumentLineDocument>
-            <ram:LineID>${index + 1}</ram:LineID>
-          </ram:AssociatedDocumentLineDocument>
-          <ram:SpecifiedTradeProduct>
-            <ram:Name>${item.description}</ram:Name>
-          </ram:SpecifiedTradeProduct>
-          <ram:SpecifiedLineTradeAgreement>
-            <ram:NetPriceProductTradePrice>
-              <ram:ChargeAmount currencyID="${devise}">${parseFloat(item.unitPrice).toFixed(2)}</ram:ChargeAmount>
-            </ram:NetPriceProductTradePrice>
-          </ram:SpecifiedLineTradeAgreement>
-          <ram:SpecifiedLineTradeDelivery>
-            <ram:BilledQuantity unitCode="C62">${parseInt(item.quantity, 10)}</ram:BilledQuantity>
-          </ram:SpecifiedLineTradeDelivery>
-          <ram:SpecifiedLineTradeSettlement>
-            <ram:SpecifiedTradeSettlementLineMonetarySummation>
-              <ram:LineTotalAmount currencyID="${devise}">${itemTotal.toFixed(2)}</ram:LineTotalAmount>
-            </ram:SpecifiedTradeSettlementLineMonetarySummation>
-          </ram:SpecifiedLineTradeSettlement>
-          `;
-        }).join('')}
-      </ram:IncludedSupplyChainTradeLineItem>
-    </rsm:SupplyChainTradeTransaction>
-  </rsm:CrossIndustryInvoice>
-  `;
-}
-
-const downloadFacturX = expressAsyncHandler(async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).send("Aucun fichier fourni.");
-    }
-
-    const invoiceData = JSON.parse(req.body.invoiceData);
-    const pdfBuffer = req.file.buffer;
-
-    // Vérifiez que les données sont correctes
-    if (!invoiceData.total || isNaN(parseFloat(invoiceData.total))) {
-      throw new Error('Le total doit être un nombre valide');
-    }
-
-    // Generate the Factur-X PDF
-    const pdfBytes = await generateFacturX(invoiceData, pdfBuffer);
-    const pdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
-    fs.writeFileSync(pdfPath, pdfBytes);
-
-    // Send the Factur-X PDF file as a download response
-    res.download(pdfPath, `FactureX-${invoiceData.number}.pdf`, (err) => {
-      if (err) {
-        console.error('Error while sending the file:', err);
-      }
-      fs.unlinkSync(pdfPath);
-    });
-  } catch (error) {
-    console.error('Error generating or sending PDF:', error);
-    res.status(500).send('Error generating or sending PDF');
-  }
-});
-
 
 const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
   console.log("User in request:", req.userData);
