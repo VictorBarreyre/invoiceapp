@@ -226,11 +226,16 @@ const convertToPDFA3 = (inputPath, outputPath) => {
     console.log(`Executing command: ${command}`);
     exec(command, (err, stdout, stderr) => {
       if (err) {
-        console.error('PDF/A-3 conversion error:', stderr);
+        console.error('Error converting to PDF/A-3:', stderr);
         reject(new Error('Error converting to PDF/A-3'));
       } else {
         console.log('PDF/A-3 conversion stdout:', stdout);
-        resolve(outputPath);
+        // Vérifier si le fichier de sortie existe après l'exécution de la commande
+        if (fs.existsSync(outputPath)) {
+          resolve(outputPath);
+        } else {
+          reject(new Error('PDF/A-3 conversion failed, output file not found.'));
+        }
       }
     });
   });
