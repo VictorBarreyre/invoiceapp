@@ -222,11 +222,11 @@ async function generateFacturX(invoiceData, pdfBuffer) {
 // Function to convert PDF to PDF/A-3 using PDFBox
 const convertToPDFA3 = (inputPath, outputPath) => {
   return new Promise((resolve, reject) => {
-    const command = `java -jar pdfbox-app-3.0.2.jar Preflight ${inputPath} ${outputPath}`;
-    console.log('Executing command:', command);
+    const command = `java -jar pdfbox-app-3.0.2.jar PDFToPDFA ${inputPath} ${outputPath}`;
+    console.log(`Executing command: ${command}`);
     exec(command, (err, stdout, stderr) => {
       if (err) {
-        console.error('Error converting to PDF/A-3:', stderr);
+        console.error('PDF/A-3 conversion error:', stderr);
         reject(new Error('Error converting to PDF/A-3'));
       } else {
         console.log('PDF/A-3 conversion stdout:', stdout);
@@ -253,6 +253,9 @@ const downloadFacturX = expressAsyncHandler(async (req, res) => {
     const pdfBytes = await generateFacturX(invoiceData, pdfBuffer);
     const tempPdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-temp.pdf`);
     const finalPdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
+
+    console.log(`Temporary PDF path: ${tempPdfPath}`);
+    console.log(`Final PDF path: ${finalPdfPath}`);
 
     fs.writeFileSync(tempPdfPath, pdfBytes);
 
@@ -301,6 +304,9 @@ const generateFacturXAndSendEmail = expressAsyncHandler(async (req, res) => {
     const pdfBytes = await generateFacturX(invoiceData, pdfBuffer);
     const tempPdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-temp.pdf`);
     const finalPdfPath = path.join(os.tmpdir(), `${uuidv4()}-facturx-invoice.pdf`);
+
+    console.log(`Temporary PDF path: ${tempPdfPath}`);
+    console.log(`Final PDF path: ${finalPdfPath}`);
 
     fs.writeFileSync(tempPdfPath, pdfBytes);
 
