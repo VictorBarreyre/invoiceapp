@@ -5,13 +5,11 @@ import { pdf } from '@react-pdf/renderer';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-
 const InvoiceDataContext = createContext();
 
 export const useInvoiceData = () => useContext(InvoiceDataContext);
 
 export const InvoiceDataProvider = ({ children }) => {
-
     const { user } = useAuth();
 
     const [invoiceData, setInvoiceData] = useState({
@@ -86,12 +84,10 @@ export const InvoiceDataProvider = ({ children }) => {
         }
     };
 
-    
-
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(invoiceData)
-        console.log(user)
+        console.log(invoiceData);
+        console.log(user);
         if (name.startsWith('items.')) {
             const [_, index, field] = name.split('.');
             handleInvoiceDataChange(prevState => {
@@ -111,7 +107,7 @@ export const InvoiceDataProvider = ({ children }) => {
                         [field]: value,
                     },
                 }));
-                setRequiredFieldsValid(true)
+                setRequiredFieldsValid(true);
             } else {
                 handleInvoiceDataChange(prevState => ({ ...prevState, [name]: value }));
             }
@@ -129,14 +125,14 @@ export const InvoiceDataProvider = ({ children }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, name, priceId }),
             });
-    
+
             if (!response.ok) {
                 const errorResponse = await response.json();
                 console.error('Error creating checkout session:', errorResponse);
                 if (onError) onError(errorResponse.error.message);
                 return;
             }
-    
+
             const { clientSecret, sessionId } = await response.json();
             if (clientSecret) {
                 if (onSuccess) onSuccess(clientSecret, sessionId);
@@ -165,7 +161,6 @@ export const InvoiceDataProvider = ({ children }) => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     };
-    
 
     const handleDownloadFacturX = async () => {
         try {
@@ -173,18 +168,18 @@ export const InvoiceDataProvider = ({ children }) => {
             const asPDF = pdf([]);
             asPDF.updateContainer(file);
             const pdfBlob = await asPDF.toBlob();
-    
+
             const formData = new FormData();
             formData.append('file', pdfBlob, `FactureX-${invoiceData.number}.pdf`);
             formData.append('invoiceData', JSON.stringify(invoiceData));
-    
+
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/downloadFacturX`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
                 responseType: 'blob'
             });
-    
+
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -196,8 +191,6 @@ export const InvoiceDataProvider = ({ children }) => {
             console.error("Error downloading the Factur-X invoice:", error);
         }
     };
-    
-
 
     const handleSendInvoice = () => {
         const { email, name } = invoiceData.issuer;
@@ -214,13 +207,13 @@ export const InvoiceDataProvider = ({ children }) => {
             setShowError(true);
         });
     };
-    
+
     const checkActiveSubscription = async (email) => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/abonnement/check-active-subscription`, { email }, {
                 headers: { 'Content-Type': 'application/json' }
             });
-        
+
             const { hasActiveSubscription, subscription } = response.data;
             return { hasActiveSubscription, subscription };
         } catch (error) {
@@ -232,22 +225,22 @@ export const InvoiceDataProvider = ({ children }) => {
     const handleInvoiceActionSendMail = async (invoiceData, onSuccess, onError) => {
         const { number, devise, issuer, client, total, items } = invoiceData;
         const areAllRequiredFieldsValid = number !== '' && issuer.name !== '' && client.name !== '';
-    
+
         if (!areAllRequiredFieldsValid) {
             console.log('Champs requis manquants ou invalides');
             return;
         }
-    
+
         try {
             const file = <InvoicePDF invoiceData={invoiceData} />;
             const asPDF = pdf([]);
             asPDF.updateContainer(file);
             const pdfBlob = await asPDF.toBlob();
-    
+
             if (client.email && isValidEmail(client.email)) {
                 const factureIdResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/email/generateFactureId`);
                 const { factureId } = factureIdResponse.data;
-    
+
                 const formData = new FormData();
                 formData.append('file', pdfBlob, `Facture-${number}.pdf`);
                 formData.append('number', number);
@@ -260,22 +253,17 @@ export const InvoiceDataProvider = ({ children }) => {
                 formData.append('factureId', factureId);
                 formData.append('reminderFrequency', reminderFrequency);
                 formData.append('items', JSON.stringify(items)); // Ajouter les articles ici
-    
-                // Log formData content
-                for (const [key, value] of formData.entries()) {
-                    console.log(`${key}: ${value}`);
-                }
-    
+
                 const headers = {
                     'Content-Type': 'multipart/form-data'
                 };
-    
+
                 if (user && user.token) {
                     headers['Authorization'] = `Bearer ${user.token}`;
                 }
-    
+
                 const createAndSendEmailResponse = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/sendEmail`, formData, { headers });
-    
+
                 if (createAndSendEmailResponse.status === 200) {
                     console.log("Facture créée et email envoyé avec succès !");
                     onSuccess();
@@ -291,20 +279,17 @@ export const InvoiceDataProvider = ({ children }) => {
             onError(); // Appeler onError en cas d'erreur
         }
     };
-    
-    
-      
 
     const handleInvoiceActionSendMailX = async (invoiceData, onSuccess, onError) => {
         const { number, devise, issuer, client, total, items } = invoiceData;
         const areAllRequiredFieldsValid = number !== '' && issuer.name !== '' && client.name !== '';
-    
+
         if (!areAllRequiredFieldsValid) {
             console.log('Champs requis manquants ou invalides');
             if (onError) onError('Champs requis manquants ou invalides');
             return;
         }
-    
+
         try {
             // Generate PDF using @react-pdf/renderer
             const file = <InvoicePDF invoiceData={invoiceData} />;
@@ -312,7 +297,7 @@ export const InvoiceDataProvider = ({ children }) => {
             asPDF.updateContainer(file);
             const pdfBlob = await asPDF.toBlob();
             console.log('Generated PDF size:', pdfBlob.size);
-    
+
             // Save the PDF locally for verification
             const url = URL.createObjectURL(pdfBlob);
             const a = document.createElement('a');
@@ -322,7 +307,7 @@ export const InvoiceDataProvider = ({ children }) => {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-    
+
             const invoicePayload = {
                 number,
                 email: client.email,
@@ -335,7 +320,7 @@ export const InvoiceDataProvider = ({ children }) => {
                 destinataire: JSON.stringify(client),
                 items: JSON.stringify(items)
             };
-    
+
             const formData = new FormData();
             formData.append('file', pdfBlob, `Facture-${number}.pdf`);
             formData.append('number', number);
@@ -348,17 +333,17 @@ export const InvoiceDataProvider = ({ children }) => {
             formData.append('factureId', invoicePayload.factureId);
             formData.append('reminderFrequency', reminderFrequency);
             formData.append('items', JSON.stringify(items));
-    
+
             const headers = {
                 'Content-Type': 'multipart/form-data'
             };
-    
+
             if (user && user.token) {
                 headers['Authorization'] = `Bearer ${user.token}`;
             }
-    
+
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/sendEmailx`, formData, { headers });
-    
+
             if (response.status === 200) {
                 console.log('Email envoyé avec succès');
                 if (onSuccess) onSuccess();
@@ -371,11 +356,6 @@ export const InvoiceDataProvider = ({ children }) => {
             if (onError) onError('Erreur lors de la génération de la facture ou de l\'envoi de l\'email: ' + error.message);
         }
     };
-    
-    
-    
-    
-    
 
     return (
         <InvoiceDataContext.Provider value={{
