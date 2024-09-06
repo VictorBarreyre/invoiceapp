@@ -25,7 +25,6 @@ const Stepper = () => {
     checkActiveSubscription,
     reminderFrequency,
     handleDownloadInvoice,
-    handleDownloadFacturX,
   } = useInvoiceData();
 
   const { user } = useAuth();
@@ -71,36 +70,7 @@ const Stepper = () => {
     });
   };
 
-  const handleSendInvoiceX = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    const { email, name } = invoiceData.issuer;
-    if (!email || !name) {
-      console.error("Email or Name is missing.");
-      setShowError(true);
-      setIsSubmitting(false);
-      return;
-    }
 
-    // Vérifier l'abonnement ici
-    const { hasActiveSubscription } = await checkActiveSubscription(email);
-    if (!hasActiveSubscription) {
-      setShowAbo(true);
-      setIsSubmitting(false);
-      return;
-    }
-
-    setSendButtonClicked('sendInvoiceX');
-
-    await handleInvoiceActionSendMailX(invoiceData, () => {
-      setIsSubmitting(false);
-      console.log('Invoice sent successfully.');
-      navigate('/success');
-    }, (error) => {
-      setIsSubmitting(false);
-      console.error('Error sending invoice:', error);
-    });
-  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -229,9 +199,6 @@ const Stepper = () => {
           <Button onClick={handleSendInvoice} disabled={isSubmitting} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='black' m={2}>
             Envoyer ma facture
           </Button>
-          <Button onClick={handleSendInvoiceX} disabled={isSubmitting} rightIcon={<ArrowForwardIcon />} w={{ base: '100%', lg: 'unset' }} color='white' borderRadius='30px' backgroundColor='#745FF2' m={2}>
-            Envoyer ma facture-X
-          </Button>
         </div>
       );
     } else {
@@ -251,7 +218,7 @@ const Stepper = () => {
           <Heading mt='2rem' size="sm">Ou directement télécharger la facture  </Heading>
           <Flex mt='1rem'>
           <Button onClick={handleDownloadInvoice} w={{ base: 'unset', lg: 'fit-content' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'> Télécharger ma facture </Button>
-          <Button onClick={handleDownloadFacturX} ml='1rem' w={{ base: 'unset', lg: 'fit-content' }} color='white' borderRadius='30px' backgroundColor='#745FF2' p='10px 20px 10px 20px'> Télécharger ma factureX </Button>
+       
           </Flex>
             </Flex>
 
