@@ -100,6 +100,27 @@ const Abo = () => {
         "Accès à des fonctionnalités exclusives"
     ];
 
+    const stripeAppearance = {
+        theme: 'flat',
+        variables: {
+            fontFamily: 'SF Pro Display, sans-serif',
+        },
+        rules: {
+            '.Label': {
+                'fontSize': 'SF Pro Display, sans-serif',
+                'fontWeight': '600',
+                'marginBottom': '0.5rem',
+            },
+            '.Input': {
+                'backgroundColor': '#fdfdfd',
+                'border': '1px solid #E2E8F0',
+                'boxShadow': 'rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px',
+                'borderRadius': '4px',
+                'padding': '10px',
+            },
+        },
+    };
+
     return (
         <>
             {/* Affichage inchangé des offres d'abonnement */}
@@ -211,12 +232,11 @@ const Abo = () => {
             </div>
 
             {/* Modale de paiement */}
-            <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+            <Modal isOpen={isOpen} onClose={onClose} size="6xl" >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Procéder au paiement</ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody>
+                    <ModalBody padding='2rem'>
                         <Flex direction={{ base: 'column', lg: 'row' }} gap="20px">
                             {/* Récapitulatif du prix sélectionné */}
                             <Box flex="1" padding="1rem" borderRight={{ lg: '1px solid #E2E8F0' }}>
@@ -229,7 +249,7 @@ const Abo = () => {
                             {/* Informations de paiement */}
                             <Box flex="1" padding="1rem">
                                 {clientSecret && (
-                                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                                    <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
                                         <SubscribeForm 
                                             clientSecret={clientSecret} 
                                             setClientSecret={setClientSecret} 
@@ -240,11 +260,7 @@ const Abo = () => {
                             </Box>
                         </Flex>
                     </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
-                            Fermer
-                        </Button>
-                    </ModalFooter>
+             
                 </ModalContent>
             </Modal>
         </>

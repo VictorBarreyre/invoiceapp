@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Button, Box, Input, Flex, Alert, AlertIcon } from '@chakra-ui/react';
+import { Button, Box, Input, Flex, Alert, AlertIcon,Heading } from '@chakra-ui/react';
 import { useInvoiceData } from '../context/InvoiceDataContext';
 
 const SubscribeForm = ({ clientSecret }) => {
@@ -55,6 +55,8 @@ const SubscribeForm = ({ clientSecret }) => {
           {error}
         </Alert>
       )}
+
+<Heading size="md" mb='2rem'>Vos informations de paiement</Heading>
       <Input
         className='neue-down'
         type="email"
