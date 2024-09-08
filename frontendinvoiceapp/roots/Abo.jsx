@@ -36,7 +36,7 @@ const Abo = () => {
     const [selectedPlan, setSelectedPlan] = useState(''); // Nouvel état pour gérer la sélection de la carte
     const [clientSecret, setClientSecret] = useState('');
     const [isCheckoutSessionCreated, setIsCheckoutSessionCreated] = useState(false);
-    
+
     // Hook pour gérer la modale
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -118,6 +118,11 @@ const Abo = () => {
                 'borderRadius': '4px',
                 'padding': '10px',
             },
+            '.Tab--selected': {
+                'backgroundColor': '#745FF2',
+            },
+
+            
         },
     };
 
@@ -136,11 +141,11 @@ const Abo = () => {
                             <Flex direction={{ base: 'column', lg: 'row' }} gap='2rem' w='100%' justify="center">
                                 {/* Plan Mensuel */}
                                 {monthlyPrice && (
-                                    <Box 
-                                        borderWidth="1px" 
-                                        borderRadius="lg" 
-                                        overflow="hidden" 
-                                        padding="1.5rem" 
+                                    <Box
+                                        borderWidth="1px"
+                                        borderRadius="lg"
+                                        overflow="hidden"
+                                        padding="1.5rem"
                                         backgroundColor={selectedPlan === 'monthly' ? 'white' : '#fdfdfd'}
                                         boxShadow="md"
                                         maxW="350px"
@@ -163,12 +168,12 @@ const Abo = () => {
                                                     </ListItem>
                                                 ))}
                                             </List>
-                                            <Button 
-                                                onClick={() => handleCheckoutSessionCreation(monthlyPrice.id)} 
-                                                color='white' 
-                                                borderRadius='30px' 
+                                            <Button
+                                                onClick={() => handleCheckoutSessionCreation(monthlyPrice.id)}
+                                                color='white'
+                                                borderRadius='30px'
                                                 backgroundColor={selectedPlan === 'monthly' ? '#745FF2' : 'black'} // Couleur du CTA
-                                                width="100%" 
+                                                width="100%"
                                                 p='10px 20px'
                                                 mt='1rem'
                                             >
@@ -180,11 +185,11 @@ const Abo = () => {
 
                                 {/* Plan Annuel */}
                                 {yearlyPrice && (
-                                    <Box 
-                                        borderWidth="1px" 
-                                        borderRadius="lg" 
-                                        overflow="hidden" 
-                                        padding="1.5rem" 
+                                    <Box
+                                        borderWidth="1px"
+                                        borderRadius="lg"
+                                        overflow="hidden"
+                                        padding="1.5rem"
                                         backgroundColor={selectedPlan === 'yearly' ? 'white' : '#fdfdfd'}
                                         boxShadow="md"
                                         maxW="350px"
@@ -207,12 +212,12 @@ const Abo = () => {
                                                     </ListItem>
                                                 ))}
                                             </List>
-                                            <Button 
-                                                onClick={() => handleCheckoutSessionCreation(yearlyPrice.id)} 
-                                                color='white' 
-                                                borderRadius='30px' 
+                                            <Button
+                                                onClick={() => handleCheckoutSessionCreation(yearlyPrice.id)}
+                                                color='white'
+                                                borderRadius='30px'
                                                 backgroundColor={selectedPlan === 'yearly' ? '#745FF2' : 'black'} // Couleur du CTA
-                                                width="100%" 
+                                                width="100%"
                                                 p='10px 20px'
                                                 mt='1rem'
                                             >
@@ -244,23 +249,32 @@ const Abo = () => {
                                 <Text><strong>Plan sélectionné:</strong> {selectedPlan === 'monthly' ? 'Mensuel' : 'Annuel'}</Text>
                                 <Text><strong>Prix:</strong> {selectedPlan === 'monthly' ? (monthlyPrice.unit_amount / 100).toLocaleString() : (yearlyPrice.unit_amount / 100).toLocaleString()} {invoiceData.devise} {selectedPlan === 'monthly' ? '/ Mois' : '/ An'}</Text>
                                 <Text mt='1rem'><strong>Description:</strong> {product.description}</Text>
+                                <List spacing={2}>
+                                <Text mt='1rem'><strong>Vos avantages:</strong> </Text>
+                                                {advantages.map((adv, index) => (
+                                                    <ListItem key={index}>
+                                                        <ListIcon as={CheckIcon} color='#745FF2' />
+                                                        {adv}
+                                                    </ListItem>
+                                                ))}
+                                            </List>
                             </Box>
 
                             {/* Informations de paiement */}
                             <Box flex="1" padding="1rem">
                                 {clientSecret && (
                                     <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-                                        <SubscribeForm 
-                                            clientSecret={clientSecret} 
-                                            setClientSecret={setClientSecret} 
-                                            selectedPriceId={selectedPlan === 'monthly' ? monthlyPrice.id : yearlyPrice.id} 
+                                        <SubscribeForm
+                                            clientSecret={clientSecret}
+                                            setClientSecret={setClientSecret}
+                                            selectedPriceId={selectedPlan === 'monthly' ? monthlyPrice.id : yearlyPrice.id}
                                         />
                                     </Elements>
                                 )}
                             </Box>
                         </Flex>
                     </ModalBody>
-             
+
                 </ModalContent>
             </Modal>
         </>

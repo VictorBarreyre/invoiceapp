@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Button, Box, Input, Flex, Alert, AlertIcon,Heading } from '@chakra-ui/react';
+import { Button, Box, Input, Flex, Alert, AlertIcon, Heading } from '@chakra-ui/react';
 import { useInvoiceData } from '../context/InvoiceDataContext';
 
 const SubscribeForm = ({ clientSecret }) => {
@@ -56,7 +56,7 @@ const SubscribeForm = ({ clientSecret }) => {
         </Alert>
       )}
 
-<Heading size="md" mb='2rem'>Vos informations de paiement</Heading>
+      <Heading size="md" mb='2rem'>Vos informations de paiement</Heading>
       <Input
         className='neue-down'
         type="email"
@@ -111,10 +111,10 @@ const SubscribeForm = ({ clientSecret }) => {
         type="submit"
         mt='2rem'
         mb='2rem'
-        w={{ base: '100%', lg: 'unset' }}
+        w='100%'
         color='white'
         borderRadius='30px'
-        backgroundColor='black'
+        backgroundColor='#745FF2'
         disabled={!stripe || !clientSecret}
       >
         Profiter de l'offre
