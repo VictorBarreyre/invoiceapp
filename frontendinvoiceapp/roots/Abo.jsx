@@ -104,6 +104,7 @@ const Abo = () => {
         theme: 'flat',
         variables: {
             fontFamily: 'SF Pro Display, sans-serif',
+            colorPrimary: '#745FF2', // Couleur principale violette
         },
         rules: {
             '.Label': {
@@ -121,6 +122,9 @@ const Abo = () => {
             '.Tab--selected': {
                 'backgroundColor': '#745FF2',
             },
+            '.u-color-primary': {
+                color: '#745FF2', // Applique la couleur violette à cet élément
+              },
 
             
         },
