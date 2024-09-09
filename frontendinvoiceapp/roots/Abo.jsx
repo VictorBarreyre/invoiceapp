@@ -97,7 +97,8 @@ const Abo = () => {
         "Accès illimité au contenu",
         "Support client prioritaire",
         "Mises à jour régulières",
-        "Accès à des fonctionnalités exclusives"
+        "Accès à des fonctionnalités exclusives",
+        "Possibilité de résilier votre abonnement à tout moment"
     ];
 
     const stripeAppearance = {
@@ -125,8 +126,6 @@ const Abo = () => {
             '.u-color-primary': {
                 color: '#745FF2', // Applique la couleur violette à cet élément
               },
-
-            
         },
     };
 
@@ -163,7 +162,7 @@ const Abo = () => {
                                                 <CheckCircleIcon color={selectedPlan === 'monthly' ? '#745FF2' : 'gray.400'} />
                                                 <Heading color={selectedPlan === 'monthly' ? '#745FF2' : 'black'} size="md">Paiement mensuel</Heading>
                                             </HStack>
-                                            <Text fontSize="lg">{(monthlyPrice.unit_amount / 100).toLocaleString()} {invoiceData.devise} / Mois</Text>
+                                            <Heading fontSize="lg">{(monthlyPrice.unit_amount / 100).toLocaleString()} {invoiceData.devise} / Mois</Heading>
                                             <List spacing={2}>
                                                 {advantages.map((adv, index) => (
                                                     <ListItem key={index}>
@@ -207,7 +206,7 @@ const Abo = () => {
                                                 <CheckCircleIcon color={selectedPlan === 'yearly' ? '#745FF2' : 'gray.400'} />
                                                 <Heading color={selectedPlan === 'yearly' ? '#745FF2' : 'black'} size="md">Paiement annuel</Heading>
                                             </HStack>
-                                            <Text fontSize="lg">{(yearlyPrice.unit_amount / 100).toLocaleString()} {invoiceData.devise} / An</Text>
+                                            <Heading fontSize="lg">{(yearlyPrice.unit_amount / 100).toLocaleString()} {invoiceData.devise} / An</Heading>
                                             <List spacing={2}>
                                                 {advantages.map((adv, index) => (
                                                     <ListItem key={index}>
