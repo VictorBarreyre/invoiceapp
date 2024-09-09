@@ -32,8 +32,8 @@ const stripePromise = loadStripe('pk_test_51OwLFM00KPylCGutjKAkwhqleWEzuvici1dQU
 const Abo = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { invoiceData, baseUrl, createCheckoutSession } = useInvoiceData();
-    const [selectedPlan, setSelectedPlan] = useState(''); // Nouvel état pour gérer la sélection de la carte
+    const {invoiceData, baseUrl, createCheckoutSession } = useInvoiceData();
+    const [selectedPlan, setSelectedPlan] = useState('monthly'); // Nouvel état pour gérer la sélection de la carte
     const [clientSecret, setClientSecret] = useState('');
     const [isCheckoutSessionCreated, setIsCheckoutSessionCreated] = useState(false);
 
@@ -125,7 +125,7 @@ const Abo = () => {
             },
             '.u-color-primary': {
                 color: '#745FF2', // Applique la couleur violette à cet élément
-              },
+            },
         },
     };
 
@@ -240,7 +240,11 @@ const Abo = () => {
             </div>
 
             {/* Modale de paiement */}
-            <Modal isOpen={isOpen} onClose={onClose} size="6xl" >
+            <Modal isOpen={isOpen} onClose={() => {
+                onClose();
+                setClientSecret(''); // Reset client secret
+                setIsCheckoutSessionCreated(false); // Allow new session creation
+            }} size="6xl">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalCloseButton />
@@ -253,14 +257,14 @@ const Abo = () => {
                                 <Text><strong>Prix:</strong> {selectedPlan === 'monthly' ? (monthlyPrice.unit_amount / 100).toLocaleString() : (yearlyPrice.unit_amount / 100).toLocaleString()} {invoiceData.devise} {selectedPlan === 'monthly' ? '/ Mois' : '/ An'}</Text>
                                 <Text mt='1rem'><strong>Description:</strong> {product.description}</Text>
                                 <List spacing={2}>
-                                <Text mt='1rem'><strong>Vos avantages:</strong> </Text>
-                                                {advantages.map((adv, index) => (
-                                                    <ListItem key={index}>
-                                                        <ListIcon as={CheckIcon} color='#745FF2' />
-                                                        {adv}
-                                                    </ListItem>
-                                                ))}
-                                            </List>
+                                    <Text mt='1rem'><strong>Vos avantages:</strong> </Text>
+                                    {advantages.map((adv, index) => (
+                                        <ListItem key={index}>
+                                            <ListIcon as={CheckIcon} color='#745FF2' />
+                                            {adv}
+                                        </ListItem>
+                                    ))}
+                                </List>
                             </Box>
 
                             {/* Informations de paiement */}
