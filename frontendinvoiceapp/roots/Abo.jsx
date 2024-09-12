@@ -1,25 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Heading,
-    Flex,
-    Text,
-    Box,
-    Spinner,
-    List,
-    ListItem,
-    ListIcon,
-    Link,
-    Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    ModalFooter,
-    useDisclosure,
-    VStack,
-    HStack
+    Heading, Flex, Text, Box, Spinner, List, ListItem, ListIcon, Button, Modal, ModalOverlay,
+    ModalContent, ModalCloseButton, ModalBody, useDisclosure, VStack, HStack, Alert, AlertIcon, Link
 } from '@chakra-ui/react';
 import { CheckCircleIcon, CheckIcon } from '@chakra-ui/icons';
 import { useInvoiceData } from '../src/context/InvoiceDataContext';
@@ -27,56 +9,81 @@ import SubscribeForm from '../src/components/SubcribeForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+// Charger Stripe avec votre clé publique
 const stripePromise = loadStripe('pk_test_51OwLFM00KPylCGutjKAkwhqleWEzuvici1dQUPCIvZHofEzLtGyM9Gdz5zEfvwSZKekKRgA1el5Ypnw7HLfYWOuB00ZdrKdygg');
 
 const Abo = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {invoiceData, baseUrl, createCheckoutSession } = useInvoiceData();
-    const [selectedPlan, setSelectedPlan] = useState('monthly'); // Nouvel état pour gérer la sélection de la carte
+    const { invoiceData, createCheckoutSession } = useInvoiceData();
+    const [selectedPlan, setSelectedPlan] = useState('monthly'); // Gérer la sélection du plan
     const [clientSecret, setClientSecret] = useState('');
     const [isCheckoutSessionCreated, setIsCheckoutSessionCreated] = useState(false);
+    const [error, setError] = useState(null); // Gérer les erreurs
 
-    // Hook pour gérer la modale
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure(); // Gérer l'état de la modale
 
     useEffect(() => {
         const fetchProductsAndPrices = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/abonnement/products-and-prices`);
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/abonnement/products-and-prices`); // Utilisez des backticks ici
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                const targetProduct = data.find(p => p.name === 'Premium'); // Remplacer 'Premium' par le nom du produit à afficher
+                const targetProduct = data.find(p => p.name === 'Premium');
                 setProduct(targetProduct);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching products:', error);
+                setError('Une erreur est survenue lors du chargement des produits.');
                 setLoading(false);
             }
         };
-
+    
         fetchProductsAndPrices();
-    }, [baseUrl]);
+    }, []);
+    
 
+    // Gérer la création de la session Stripe et l'affichage de la modale
     const handleCheckoutSessionCreation = async (priceId) => {
-        if (isCheckoutSessionCreated) return;
+        console.log('Creating checkout session with priceId:', priceId); // Ajoutez ce log
+        if (isCheckoutSessionCreated || !priceId) return;
         setIsCheckoutSessionCreated(true);
+        setError(null);
+    
         try {
             const onSuccess = (clientSecret) => {
+                console.log('Checkout session created successfully:', clientSecret);
                 setClientSecret(clientSecret);
-                onOpen(); // Ouvre la modale une fois la session de checkout créée
+                onOpen(); // Ouvre la modale
             };
             const onError = (error) => {
                 console.error('Error creating checkout session:', error);
+                setError('Une erreur est survenue lors de la création de la session de paiement.');
+                setIsCheckoutSessionCreated(false); // Réinitialiser l'état
             };
-            await createCheckoutSession(invoiceData.issuer.email, invoiceData.issuer.name, priceId, onSuccess, onError);
+            // Ajoutez les champs d'adresse, pays et code postal
+            await createCheckoutSession(
+                invoiceData.issuer.email,
+                invoiceData.issuer.name,
+                priceId,
+                invoiceData.issuer.adresse, // Adresse du client
+                invoiceData.issuer.country, // Pays du client
+                invoiceData.issuer.postalCode, // Code postal du client
+                onSuccess,
+                onError
+            );
         } catch (error) {
-            console.error('Error creating checkout session:', error);
+            console.error('Error during checkout session creation:', error);
+            setError('Une erreur est survenue lors de la création de la session.');
+            setIsCheckoutSessionCreated(false); // Réinitialiser pour permettre une nouvelle tentative
         }
     };
+    
+    
 
+    // Affichage pendant le chargement des produits
     if (loading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
@@ -85,14 +92,18 @@ const Abo = () => {
         );
     }
 
-    if (!product) {
-        return <Text>Aucun produit trouvé.</Text>;
+    // Affichage d'une erreur si le produit n'est pas trouvé
+    if (!product || error) {
+        return (
+            <Box textAlign="center">
+                <Text>{error || 'Aucun produit trouvé.'}</Text>
+            </Box>
+        );
     }
 
     const monthlyPrice = product.prices.find(price => price.recurring?.interval === 'month');
     const yearlyPrice = product.prices.find(price => price.recurring?.interval === 'year');
 
-    // Exemple d'avantages pour chaque plan
     const advantages = [
         "Accès illimité au contenu",
         "Support client prioritaire",
@@ -103,39 +114,25 @@ const Abo = () => {
 
     const stripeAppearance = {
         theme: 'flat',
-        variables: {
-            fontFamily: 'SF Pro Display, sans-serif',
-            colorPrimary: '#745FF2', // Couleur principale violette
-        },
+        variables: { fontFamily: 'SF Pro Display, sans-serif', colorPrimary: '#745FF2' },
         rules: {
-            '.Label': {
-                'fontSize': 'SF Pro Display, sans-serif',
-                'fontWeight': '600',
-                'marginBottom': '0.5rem',
-            },
+            '.Label': { 'fontSize': '14px', 'fontWeight': '600', 'marginBottom': '0.5rem' },
             '.Input': {
                 'backgroundColor': '#fdfdfd',
                 'border': '1px solid #E2E8F0',
-                'boxShadow': 'rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px',
                 'borderRadius': '4px',
                 'padding': '10px',
             },
-            '.Tab--selected': {
-                'backgroundColor': '#745FF2',
-            },
-            '.u-color-primary': {
-                color: '#745FF2', // Applique la couleur violette à cet élément
-            },
+            '.Tab--selected': { 'backgroundColor': '#745FF2' },
         },
     };
 
     return (
         <>
-            {/* Affichage inchangé des offres d'abonnement */}
             <div className='flex-stepper'>
                 <div className="stepper-container">
                     <div className="tabs-container">
-                        <Flex direction="column" align="center" >
+                        <Flex direction="column" align="center">
                             <Heading fontSize={{ base: '24px', lg: '26px' }} mb='1rem'>Choisissez votre formule d'abonnement</Heading>
                             <Text color='#4A5568' w='100%' mb='3rem' textAlign="center">
                                 Nous respectons votre choix de ne pas accepter les cookies. Découvrez notre formule premium.
@@ -147,15 +144,10 @@ const Abo = () => {
                                     <Box
                                         borderWidth="1px"
                                         borderRadius="lg"
-                                        overflow="hidden"
                                         padding="1.5rem"
                                         backgroundColor={selectedPlan === 'monthly' ? 'white' : '#fdfdfd'}
-                                        boxShadow="md"
-                                        maxW="350px"
-                                        width="100%"
                                         borderColor={selectedPlan === 'monthly' ? '#745FF2' : 'transparent'}
-                                        cursor="pointer"
-                                        onClick={() => setSelectedPlan('monthly')} // Sélection de la carte
+                                        onClick={() => setSelectedPlan('monthly')}
                                     >
                                         <VStack align="start" spacing="1rem">
                                             <HStack>
@@ -175,7 +167,7 @@ const Abo = () => {
                                                 onClick={() => handleCheckoutSessionCreation(monthlyPrice.id)}
                                                 color='white'
                                                 borderRadius='30px'
-                                                backgroundColor={selectedPlan === 'monthly' ? '#745FF2' : 'black'} // Couleur du CTA
+                                                backgroundColor={selectedPlan === 'monthly' ? '#745FF2' : 'black'}
                                                 width="100%"
                                                 p='10px 20px'
                                                 mt='1rem'
@@ -191,15 +183,10 @@ const Abo = () => {
                                     <Box
                                         borderWidth="1px"
                                         borderRadius="lg"
-                                        overflow="hidden"
                                         padding="1.5rem"
                                         backgroundColor={selectedPlan === 'yearly' ? 'white' : '#fdfdfd'}
-                                        boxShadow="md"
-                                        maxW="350px"
-                                        width="100%"
                                         borderColor={selectedPlan === 'yearly' ? '#745FF2' : 'transparent'}
-                                        cursor="pointer"
-                                        onClick={() => setSelectedPlan('yearly')} // Sélection de la carte
+                                        onClick={() => setSelectedPlan('yearly')}
                                     >
                                         <VStack align="start" spacing="1rem">
                                             <HStack>
@@ -219,7 +206,7 @@ const Abo = () => {
                                                 onClick={() => handleCheckoutSessionCreation(yearlyPrice.id)}
                                                 color='white'
                                                 borderRadius='30px'
-                                                backgroundColor={selectedPlan === 'yearly' ? '#745FF2' : 'black'} // Couleur du CTA
+                                                backgroundColor={selectedPlan === 'yearly' ? '#745FF2' : 'black'}
                                                 width="100%"
                                                 p='10px 20px'
                                                 mt='1rem'
@@ -234,6 +221,14 @@ const Abo = () => {
                             <Text color='#4A5568' fontSize="14px" mt='2rem' textAlign="center">
                                 En continuant, vous acceptez <Link color='#745FF2'>nos termes et conditions.</Link>
                             </Text>
+
+                            {/* Affichage des erreurs */}
+                            {error && (
+                                <Alert status="error" mt="2rem">
+                                    <AlertIcon />
+                                    {error}
+                                </Alert>
+                            )}
                         </Flex>
                     </div>
                 </div>
@@ -243,7 +238,7 @@ const Abo = () => {
             <Modal isOpen={isOpen} onClose={() => {
                 onClose();
                 setClientSecret(''); // Reset client secret
-                setIsCheckoutSessionCreated(false); // Allow new session creation
+                setIsCheckoutSessionCreated(false); // Reset session creation state
             }} size="6xl">
                 <ModalOverlay />
                 <ModalContent>
@@ -271,17 +266,12 @@ const Abo = () => {
                             <Box flex="1" padding="1rem">
                                 {clientSecret && (
                                     <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-                                        <SubscribeForm
-                                            clientSecret={clientSecret}
-                                            setClientSecret={setClientSecret}
-                                            selectedPriceId={selectedPlan === 'monthly' ? monthlyPrice.id : yearlyPrice.id}
-                                        />
+                                        <SubscribeForm clientSecret={clientSecret} />
                                     </Elements>
                                 )}
                             </Box>
                         </Flex>
                     </ModalBody>
-
                 </ModalContent>
             </Modal>
         </>

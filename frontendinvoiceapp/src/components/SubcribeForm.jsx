@@ -10,8 +10,8 @@ const SubscribeForm = ({ clientSecret }) => {
   const [email, setEmail] = useState(invoiceData.issuer.email);
   const [name, setName] = useState(invoiceData.issuer.name);
   const [address, setAddress] = useState(invoiceData.issuer.adresse);
-  const [country, setCountry] = useState('');
-  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState(invoiceData.issuer.country);
+  const [postalCode, setPostalCode] = useState(invoiceData.issuer.postalCode);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (event) => {

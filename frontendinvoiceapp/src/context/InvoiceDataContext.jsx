@@ -18,6 +18,8 @@ export const InvoiceDataProvider = ({ children }) => {
         issuer: {
             name: '',
             adresse: '',
+            country: '',
+            postalCode: '',
             siret: '',
             email: '',
             iban: '',
@@ -25,6 +27,8 @@ export const InvoiceDataProvider = ({ children }) => {
         client: {
             name: 'Victor Barreyre',
             adresse: '43 Grande rue',
+            country: '',
+            postalCode: '',
             siret: 'zrzaeazeaz',
             email: 'barreyrevictor.contact@gmail.com',
         },
@@ -118,21 +122,21 @@ export const InvoiceDataProvider = ({ children }) => {
         return /\S+@\S+\.\S+/.test(email);
     };
 
-    const createCheckoutSession = async (email, name, priceId, onSuccess, onError) => {
+    const createCheckoutSession = async (email, name, priceId, address, country, postalCode, onSuccess, onError) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/abonnement/create-checkout-session`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, name, priceId }),
+                body: JSON.stringify({ email, name, priceId, address, country, postalCode }),
             });
-
+    
             if (!response.ok) {
                 const errorResponse = await response.json();
                 console.error('Error creating checkout session:', errorResponse);
                 if (onError) onError(errorResponse.error.message);
                 return;
             }
-
+    
             const { clientSecret, sessionId } = await response.json();
             if (clientSecret) {
                 if (onSuccess) onSuccess(clientSecret, sessionId);
@@ -145,6 +149,7 @@ export const InvoiceDataProvider = ({ children }) => {
             if (onError) onError(error.message);
         }
     };
+    
 
     const handleDownloadInvoice = async () => {
         const file = <InvoicePDF invoiceData={invoiceData} />;

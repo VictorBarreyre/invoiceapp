@@ -18,12 +18,13 @@ exports.getProductsAndPrices = async (req, res) => {
 };
 
 exports.createCheckoutSession = async (req, res) => {
-  const { email, name, priceId } = req.body;
-  console.log('Received request to create checkout session for email:', email, 'name:', name, 'priceId:', priceId);
+  const { email, name, priceId, address, country, postalCode } = req.body;
 
-  if (!email || !name || !priceId) {
-    console.log('Email, Name or Price ID is missing in the request.');
-    return res.status(400).send({ error: { message: 'Email, Name and Price ID are required.' } });
+  console.log('Received request to create checkout session for email:', email, 'name:', name, 'priceId:', priceId, 'address:', address, 'country:', country, 'postalCode:', postalCode);
+
+  if (!email || !name || !priceId ) {
+    console.log('Email, Name, Address, Country, or Postal Code is missing in the request.');
+    return res.status(400).send({ error: { message: 'Email, Name, Address, Country, Postal Code, and Price ID are required.' } });
   }
 
   try {
@@ -31,27 +32,43 @@ exports.createCheckoutSession = async (req, res) => {
     const existingCustomers = await stripe.customers.list({ email });
     let customer;
 
+    // Customer data with address
+    const customerData = {
+      email,
+      name,
+      address: {
+        line1: address, // This is the address line (e.g., street name and number)
+        country: country, // This must be the country code (e.g., 'FR' for France)
+        postal_code: postalCode, // Postal code of the customer
+      },
+    };
+
     if (existingCustomers.data.length > 0) {
       customer = existingCustomers.data[0];
       console.log('Using existing customer:', customer.id);
 
-      // Check for active subscription
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customer.id,
-        status: 'active',
-        limit: 1
-      });
-
-      if (subscriptions.data.length > 0) {
-        console.log('Customer already has an active subscription:', subscriptions.data[0].id);
-        return res.status(400).send({ error: { message: 'You already have an active subscription.' } });
-      }
+      // **Update existing customer information** if name or address changes
+      customer = await stripe.customers.update(customer.id, customerData);
+      console.log('Customer updated with new name and address:', customer.id);
     } else {
-      customer = await stripe.customers.create({ email, name });
-      console.log('New customer created:', customer.id);
+      // Create a new customer if none exists
+      customer = await stripe.customers.create(customerData);
+      console.log('New customer created with address:', customer.id);
     }
 
-    // Create subscription
+    // Check for active subscription
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customer.id,
+      status: 'active',
+      limit: 1
+    });
+
+    if (subscriptions.data.length > 0) {
+      console.log('Customer already has an active subscription:', subscriptions.data[0].id);
+      return res.status(400).send({ error: { message: 'You already have an active subscription.' } });
+    }
+
+    // Create a new subscription
     console.log('Creating subscription with price ID:', priceId);
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
@@ -61,7 +78,7 @@ exports.createCheckoutSession = async (req, res) => {
     });
 
     console.log('Subscription created with ID:', subscription.id);
-    
+
     const paymentIntent = subscription.latest_invoice.payment_intent;
     console.log('PaymentIntent retrieved with ID:', paymentIntent.id);
 
@@ -80,6 +97,7 @@ exports.createCheckoutSession = async (req, res) => {
     res.status(500).send({ error: { message: 'Failed to create payment session', details: error.message } });
   }
 };
+
 
 exports.checkActiveSubscription = async (req, res) => {
   const { email } = req.body;

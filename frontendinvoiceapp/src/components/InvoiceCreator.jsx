@@ -122,6 +122,12 @@ const InvoiceCreator = ({ totalError }) => {
             <Input
               className={getClassForField(invoiceData.issuer.adresse)}
               placeholder="Adresse*" name="issuer.adresse" value={invoiceData.issuer.adresse} onChange={handleChange} />
+              <Flex gap='0.5rem'> <Input
+              className={getClassForField(invoiceData.issuer.country)}
+              placeholder="Pays*" name="issuer.country" value={invoiceData.issuer.country} onChange={handleChange} />
+            <Input
+              className={getClassForField(invoiceData.issuer.postalCode)}
+              placeholder="Code postale*" name="issuer.postalCode" value={invoiceData.issuer.postalCode} onChange={handleChange} /> </Flex>
             <Input
               className='classicinput' placeholder="N° Siret" name="issuer.siret" value={invoiceData.issuer.siret} onChange={handleChange} />
             <Input
@@ -133,6 +139,12 @@ const InvoiceCreator = ({ totalError }) => {
               placeholder="Nom et Prénom / Société*" name="client.name" value={invoiceData.client.name} onChange={handleChange} />
             <Input className={getClassForField(invoiceData.client.adresse)}
               placeholder="Adresse*" name="client.adresse" value={invoiceData.client.adresse} onChange={handleChange} />
+              <Flex gap='0.5rem'>
+              <Input className={getClassForField(invoiceData.client.country)}
+              placeholder="Pays*" name="client.country" value={invoiceData.client.country} onChange={handleChange} />
+              <Input className={getClassForField(invoiceData.client.adresse)}
+              placeholder="Code postale*" name="client.postalCode" value={invoiceData.client.postalCode} onChange={handleChange} />
+              </Flex>
             <Input className='classicinput' placeholder="N° Siret" name="client.siret" value={invoiceData.client.siret} onChange={handleChange} />
             <Input className={getClassForField(invoiceData.client.email)} placeholder="Email du client " name="client.email" value={invoiceData.client.email} onChange={handleChange} />
           </Flex>
