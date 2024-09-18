@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { pdf, PDFViewer } from '@react-pdf/renderer';
 import {
   Stack,
-  Table, Thead, Tbody, Tfoot, Tr, Th, Td, Box, Input, InputGroup, InputRightElement, Button, Heading, Text, VStack, IconButton, Flex, Link,
+  Table, Thead, Tbody, Tfoot, Tr, Th, Td, Box, Input, InputGroup, InputRightElement, Button, Heading, Text, VStack, IconButton, Flex, Link,Textarea
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
@@ -34,10 +34,25 @@ const InvoiceCreator = ({ totalError }) => {
   const [clientSuggestions, setClientSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
 
+    // Références pour le redimensionnement automatique des Textareas
+    const issuerTextareaRef = useRef(null);
+    const clientTextareaRef = useRef(null);
+
+    // Fonction pour redimensionner automatiquement un Textarea
+  const autoResizeTextarea = (ref) => {
+    if (ref.current) {
+      ref.current.style.height = 'auto'; // Réinitialise la hauteur
+      ref.current.style.height = `${ref.current.scrollHeight}px`; // Ajuste en fonction du contenu
+    }
+  };
+
+  
+
 
   const handleAddressInputChangeForIssuer = async (e) => {
     const value = e.target.value;
     handleChange(e);
+    autoResizeTextarea(issuerTextareaRef);
   
     if (value.length > 2) {
       try {
@@ -59,6 +74,7 @@ const InvoiceCreator = ({ totalError }) => {
   const handleAddressInputChangeForClient = async (e) => {
     const value = e.target.value;
     handleChange(e);
+    autoResizeTextarea(clientTextareaRef);
   
     if (value.length > 2) {
       try {
@@ -210,12 +226,17 @@ const InvoiceCreator = ({ totalError }) => {
 
             <Input className={getClassForField(invoiceData.issuer.name)}
               placeholder="Nom et Prénom / Société*" name="issuer.name" value={invoiceData.issuer.name} onChange={handleChange} />
-            <Input
+            <Textarea
+              ref={issuerTextareaRef}
               className={getClassForField(invoiceData.issuer.adresse)}
-              placeholder="Adresse et ville*"
+              placeholder="Adresse*"
               name="issuer.adresse"
               value={invoiceData.issuer.adresse}
               onChange={handleAddressInputChangeForIssuer}
+              rows={1}
+              size="md"
+              wrap="soft"
+              resize="none"
             />
             {/* Suggestions dropdown */}
             {issuerSuggestions.length > 0 && (
@@ -259,12 +280,17 @@ const InvoiceCreator = ({ totalError }) => {
             <Heading mb='1rem' size="sm">Informations sur le client :</Heading>
             <Input className={getClassForField(invoiceData.client.name)}
               placeholder="Nom et Prénom / Société*" name="client.name" value={invoiceData.client.name} onChange={handleChange} />
-            <Input
+           <Textarea
+              ref={clientTextareaRef} // Référence pour l'auto-resize
               className={getClassForField(invoiceData.client.adresse)}
               placeholder="Adresse*"
               name="client.adresse"
               value={invoiceData.client.adresse}
               onChange={handleAddressInputChangeForClient}
+              rows={1}
+              size="md"
+              wrap="soft"
+              resize="none" // Désactive le redimensionnement manuel
             />
             {/* Suggestions dropdown */}
             {clientSuggestions.length > 0 && (
