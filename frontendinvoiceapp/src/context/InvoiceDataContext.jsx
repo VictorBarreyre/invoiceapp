@@ -26,7 +26,7 @@ export const InvoiceDataProvider = ({ children }) => {
         },
         client: {
             name: 'Victor Barreyre',
-            adresse: '43 Grande rue',
+            adresse: '',
             country: '',
             postalCode: '',
             siret: 'zrzaeazeaz',

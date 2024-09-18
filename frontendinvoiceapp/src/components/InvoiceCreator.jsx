@@ -30,6 +30,100 @@ const InvoiceCreator = ({ totalError }) => {
   const theme = useTheme();
   const breakpointMd = parseInt(theme.breakpoints.md, 10);
   const [isMobile, setIsMobile] = useState(window.innerWidth < breakpointMd);
+  const [issuerSuggestions, setIssuerSuggestions] = useState([]);
+  const [clientSuggestions, setClientSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+  const handleAddressInputChangeForIssuer = async (e) => {
+    const value = e.target.value;
+    handleChange(e);
+  
+    if (value.length > 2) {
+      try {
+        const apiKey = import.meta.env.VITE_LOCATION_API_KEY; // Utilisez import.meta.env pour Vite
+        const response = await fetch(
+          `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${value}&format=json`
+        );
+        const results = await response.json();
+        setIssuerSuggestions(results);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des suggestions d\'adresse:', error);
+        setIssuerSuggestions([]); // Vider les suggestions en cas d'erreur
+      }
+    } else {
+      setIssuerSuggestions([]);
+    }
+  };
+
+  const handleAddressInputChangeForClient = async (e) => {
+    const value = e.target.value;
+    handleChange(e);
+  
+    if (value.length > 2) {
+      try {
+        const apiKey = import.meta.env.VITE_LOCATION_API_KEY; // Utilisez import.meta.env pour Vite
+        const response = await fetch(
+          `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${value}&format=json`
+        );
+        const results = await response.json();
+        setClientSuggestions(results);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des suggestions d\'adresse:', error);
+        setClientSuggestions([]); // Vider les suggestions en cas d'erreur
+      }
+    } else {
+      setClientSuggestions([]);
+    }
+  };
+  
+
+  const handleSelectIssuerSuggestion = (suggestion) => {
+    const { display_name } = suggestion;
+
+    // Diviser la chaîne 'display_name' par les virgules pour extraire les différentes parties de l'adresse
+    const addressParts = display_name.split(',').map(part => part.trim());
+
+    // Exemple : ["43", "Grande Rue", "Étiolles", "Saint-Germain-lès-Corbeil", "Essonne", "91450", "France"]
+    const street = addressParts[0] + ', ' + addressParts[1]; // Rue (index 0 et 1)
+    const city = addressParts[2]; // Ville (index 2)
+    const postalCode = addressParts[addressParts.length - 2]; // Code postal (avant-dernier élément)
+    const country = addressParts[addressParts.length - 1]; // Pays (dernier élément)
+
+    // Remplir les champs avec les données extraites
+    handleChange({ target: { name: 'issuer.adresse', value: `${street}, ${city}` } });
+
+    handleChange({ target: { name: 'issuer.postalCode', value: postalCode } });
+
+    handleChange({ target: { name: 'issuer.country', value: country } });
+
+    setIssuerSuggestions([]); // Vider les suggestions après la sélection
+  };
+
+
+  const handleSelectClientSuggestion = (suggestion) => {
+    const { display_name } = suggestion;
+
+    // Diviser la chaîne 'display_name' par les virgules pour extraire les différentes parties de l'adresse
+    const addressParts = display_name.split(',').map(part => part.trim());
+
+    // Exemple : ["43", "Grande Rue", "Étiolles", "Saint-Germain-lès-Corbeil", "Essonne", "91450", "France"]
+    const street = addressParts[0] + ', ' + addressParts[1]; // Rue (index 0 et 1)
+    const city = addressParts[2]; // Ville (index 2)
+    const postalCode = addressParts[addressParts.length - 2]; // Code postal (avant-dernier élément)
+    const country = addressParts[addressParts.length - 1]; // Pays (dernier élément)
+
+    // Remplir les champs avec les données extraites
+    handleChange({ target: { name: 'client.adresse', value: `${street}, ${city}` } });
+
+    handleChange({ target: { name: 'client.postalCode', value: postalCode } });
+
+    handleChange({ target: { name: 'client.country', value: country } });
+
+    setClientSuggestions([]); // Vider les suggestions après la sélection
+  };
+
+
 
   const handleAddItem = () => {
     const items = [...invoiceData.items, { description: '', quantity: 1, unitPrice: 0 }];
@@ -113,21 +207,49 @@ const InvoiceCreator = ({ totalError }) => {
         <Flex flexDirection={{ base: 'column', lg: 'row' }} w='25vw' justifyContent='space-between' width='-webkit-fill-available' pb="2rem">
           <Flex direction="column" w={{ base: 'unset', lg: '25vw' }} alignItems='start'>
             <Heading mb='1rem' size="sm">Informations sur l'émetteur :</Heading>
-            <Input
-              className={getClassForField(invoiceData.issuer.name)}
-              placeholder="Nom et Prénom / Société*"
-              name="issuer.name"
-              value={invoiceData.issuer.name}
-              onChange={handleChange} />
+
+            <Input className={getClassForField(invoiceData.issuer.name)}
+              placeholder="Nom et Prénom / Société*" name="issuer.name" value={invoiceData.issuer.name} onChange={handleChange} />
             <Input
               className={getClassForField(invoiceData.issuer.adresse)}
-              placeholder="Adresse*" name="issuer.adresse" value={invoiceData.issuer.adresse} onChange={handleChange} />
-              <Flex gap='0.5rem'> <Input
-              className={getClassForField(invoiceData.issuer.country)}
-              placeholder="Pays*" name="issuer.country" value={invoiceData.issuer.country} onChange={handleChange} />
-            <Input
-              className={getClassForField(invoiceData.issuer.postalCode)}
-              placeholder="Code postale*" name="issuer.postalCode" value={invoiceData.issuer.postalCode} onChange={handleChange} /> </Flex>
+              placeholder="Adresse et ville*"
+              name="issuer.adresse"
+              value={invoiceData.issuer.adresse}
+              onChange={handleAddressInputChangeForIssuer}
+            />
+            {/* Suggestions dropdown */}
+            {issuerSuggestions.length > 0 && (
+              <ul style={{ border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: '0.5rem' }}>
+                {issuerSuggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleSelectIssuerSuggestion(suggestion)}
+                    style={{ cursor: 'pointer', padding: '0.5rem', borderBottom: '1px solid #ddd' }}
+                  >
+                    {suggestion.display_name}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <Flex gap="0.5rem" w="-webkit-fill-available">
+              <Input
+                className={getClassForField(invoiceData.issuer.country)}
+                placeholder="Pays*"
+                name="issuer.country"
+                value={invoiceData.issuer.country}
+                onChange={handleChange}
+              />
+              <Input
+                className={getClassForField(invoiceData.issuer.postalCode)}
+                placeholder="Code postal*"
+                name="issuer.postalCode"
+                value={invoiceData.issuer.postalCode}
+                onChange={handleChange}
+              />
+            </Flex>
+
+
             <Input
               className='classicinput' placeholder="N° Siret" name="issuer.siret" value={invoiceData.issuer.siret} onChange={handleChange} />
             <Input
@@ -137,14 +259,46 @@ const InvoiceCreator = ({ totalError }) => {
             <Heading mb='1rem' size="sm">Informations sur le client :</Heading>
             <Input className={getClassForField(invoiceData.client.name)}
               placeholder="Nom et Prénom / Société*" name="client.name" value={invoiceData.client.name} onChange={handleChange} />
-            <Input className={getClassForField(invoiceData.client.adresse)}
-              placeholder="Adresse*" name="client.adresse" value={invoiceData.client.adresse} onChange={handleChange} />
-              <Flex gap='0.5rem'>
-              <Input className={getClassForField(invoiceData.client.country)}
-              placeholder="Pays*" name="client.country" value={invoiceData.client.country} onChange={handleChange} />
-              <Input className={getClassForField(invoiceData.client.adresse)}
-              placeholder="Code postale*" name="client.postalCode" value={invoiceData.client.postalCode} onChange={handleChange} />
-              </Flex>
+            <Input
+              className={getClassForField(invoiceData.client.adresse)}
+              placeholder="Adresse*"
+              name="client.adresse"
+              value={invoiceData.client.adresse}
+              onChange={handleAddressInputChangeForClient}
+            />
+            {/* Suggestions dropdown */}
+            {clientSuggestions.length > 0 && (
+              <ul style={{ border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: '0.5rem' }}>
+                {clientSuggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleSelectClientSuggestion(suggestion)}
+                    style={{ cursor: 'pointer', padding: '0.5rem', borderBottom: '1px solid #ddd' }}
+                  >
+                    {suggestion.display_name}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <Flex gap="0.5rem" w="-webkit-fill-available">
+              <Input
+                className={getClassForField(invoiceData.client.country)}
+                placeholder="Pays*"
+                name="client.country"
+                value={invoiceData.client.country}
+                onChange={handleChange}
+              />
+              <Input
+                className={getClassForField(invoiceData.client.postalCode)}
+                placeholder="Code postal*"
+                name="client.postalCode"
+                value={invoiceData.client.postalCode}
+                onChange={handleChange}
+              />
+            </Flex>
+
+
             <Input className='classicinput' placeholder="N° Siret" name="client.siret" value={invoiceData.client.siret} onChange={handleChange} />
             <Input className={getClassForField(invoiceData.client.email)} placeholder="Email du client " name="client.email" value={invoiceData.client.email} onChange={handleChange} />
           </Flex>
