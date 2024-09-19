@@ -274,7 +274,7 @@ const InvoiceCreator = ({ totalError }) => {
             <Input
               className='classicinput' placeholder="N° Siret" name="issuer.siret" value={invoiceData.issuer.siret} onChange={handleChange} />
             <Input
-              className={getClassForField(invoiceData.issuer.email)} placeholder="Email de l'émetteur" name="issuer.email" value={invoiceData.issuer.email} onChange={handleChange} />
+              className={getClassForField(invoiceData.issuer.email)} placeholder="Email de l'émetteur*" name="issuer.email" value={invoiceData.issuer.email} onChange={handleChange} />
           </Flex>
           <Flex w={{ base: 'unset', lg: '25vw' }} mt={{ base: '3rem', lg: '5rem' }} direction="column" alignItems='start'>
             <Heading mb='1rem' size="sm">Informations sur le client :</Heading>
@@ -326,7 +326,7 @@ const InvoiceCreator = ({ totalError }) => {
 
 
             <Input className='classicinput' placeholder="N° Siret" name="client.siret" value={invoiceData.client.siret} onChange={handleChange} />
-            <Input className={getClassForField(invoiceData.client.email)} placeholder="Email du client " name="client.email" value={invoiceData.client.email} onChange={handleChange} />
+            <Input className={getClassForField(invoiceData.client.email)} placeholder="Email du client*" name="client.email" value={invoiceData.client.email} onChange={handleChange} />
           </Flex>
         </Flex>
 
@@ -466,13 +466,16 @@ const InvoiceCreator = ({ totalError }) => {
                 {invoiceData.items.map((item, index) => (
                   <Tr key={index}>
                     <Td pl='0'>
-                      <Input
+                      <Textarea
                         _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
                         className={getClassForField(item.description)}
                         placeholder="Description"
                         name={`items.${index}.description`}
                         value={item.description}
                         onChange={handleChange}
+                        rows={1}
+                        wrap="soft"
+                        resize="none"
                       />
                     </Td>
                     <Td>
