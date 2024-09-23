@@ -353,7 +353,7 @@ const InvoiceCreator = ({ totalError }) => {
                       <Input
                         _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
                         className={getClassForField(item.description)}
-                        placeholder="Description"
+                        placeholder="Description*"
                         value={item.description}
                         onChange={handleChange}
                         name={`items.${index}.description`}
@@ -469,7 +469,7 @@ const InvoiceCreator = ({ totalError }) => {
                       <Textarea
                         _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
                         className={getClassForField(item.description)}
-                        placeholder="Description"
+                        placeholder="Description*"
                         name={`items.${index}.description`}
                         value={item.description}
                         onChange={handleChange}

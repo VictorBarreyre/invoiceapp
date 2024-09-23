@@ -89,18 +89,15 @@ const Stepper = () => {
       const isIssuerNameFilled = invoiceData.issuer.name.trim() !== '';
       const isClientNameFilled = invoiceData.client.name.trim() !== '';
       const isIssuerAdresseFilled = invoiceData.issuer.adresse.trim() !== '';
-      const isIssuerSiretFilled = invoiceData.issuer.siret.trim() !== '';
       const isIssuerEmailFilled = invoiceData.issuer.email.trim() !== '';
-      const isIssuerIbanFilled = invoiceData.issuer.iban.trim() !== '';
       const isClientAdresseFilled = invoiceData.client.adresse.trim() !== '';
-      const isClientSiretFilled = invoiceData.client.siret.trim() !== '';
       const isClientEmailFilled = invoiceData.client.email.trim() !== '';
       const areQuantitiesValid = invoiceData.items.every(item => item.quantity > 0);
       const isTotalValid = invoiceData.total > 0;
 
       const isInvoiceDataValid = isNumberFilled && isIssuerNameFilled && isClientNameFilled &&
-        isIssuerAdresseFilled && isIssuerSiretFilled && isIssuerEmailFilled && isIssuerIbanFilled &&
-        isClientAdresseFilled && isClientSiretFilled && isClientEmailFilled && areQuantitiesValid && isTotalValid;
+        isIssuerAdresseFilled  && isIssuerEmailFilled &&
+        isClientAdresseFilled  && isClientEmailFilled && areQuantitiesValid && isTotalValid;
 
       setIsStepNextAvailable(isInvoiceDataValid);
     };
