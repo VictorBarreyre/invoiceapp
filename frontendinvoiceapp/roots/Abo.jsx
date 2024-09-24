@@ -40,10 +40,10 @@ const Abo = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchProductsAndPrices();
     }, []);
-    
+
 
     // Gérer la création de la session Stripe et l'affichage de la modale
     const handleCheckoutSessionCreation = async (priceId) => {
@@ -51,7 +51,7 @@ const Abo = () => {
         if (isCheckoutSessionCreated || !priceId) return;
         setIsCheckoutSessionCreated(true);
         setError(null);
-    
+
         try {
             const onSuccess = (clientSecret) => {
                 console.log('Checkout session created successfully:', clientSecret);
@@ -80,8 +80,8 @@ const Abo = () => {
             setIsCheckoutSessionCreated(false); // Réinitialiser pour permettre une nouvelle tentative
         }
     };
-    
-    
+
+
 
     // Affichage pendant le chargement des produits
     if (loading) {
@@ -135,9 +135,10 @@ const Abo = () => {
                         <Flex direction="column" align="center">
                             <Heading fontSize={{ base: '24px', lg: '26px' }} mb='1rem'>Choisissez votre formule d'abonnement</Heading>
                             <Text color='#4A5568' w='100%' mb='3rem' textAlign="center">
-                                Nous respectons votre choix de ne pas accepter les cookies. Découvrez notre formule premium.
+                                L'automatisation des relances par email nécessite un abonnement, que vous pourrez résilier à tout moment.
+                                Un compte sera automatiquement créé pour vous, et vous recevrez un mot de passe temporaire par email afin de vous connecter à votre espace personnel.
+                                Depuis cet espace, vous pourrez suivre le statut de vos factures, gérer les relances, et bien plus encore.
                             </Text>
-
                             <Flex direction={{ base: 'column', lg: 'row' }} gap='2rem' w='100%' justify="center">
                                 {/* Plan Mensuel */}
                                 {monthlyPrice && (

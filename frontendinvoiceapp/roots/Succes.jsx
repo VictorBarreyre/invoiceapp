@@ -17,9 +17,10 @@ const SuccessPage = () => {
     ? "Facture envoyée avec succès !"
     : "Abonnement souscrit avec succès !";
 
-  const messageText = fromInvoice
+    const messageText = fromInvoice
     ? `Votre facture a été envoyée avec succès à l'adresse email du destinataire. ${invoiceData.client.name} recevra des rappels de paiement tous les ${invoiceData.reminderFrequency}.`
-    : "Votre abonnement a été activé avec succès. Vous pouvez maintenant envoyer des factures sans restrictions.";
+    : "Votre abonnement a été activé avec succès. Un compte a été créé pour vous et un mot de passe temporaire vous a été envoyé par email. Vous pouvez maintenant accéder à votre espace personnel pour envoyer des factures, suivre leur statut, gérer les relances, et bien plus encore.";
+  
 
   const linkTo = user ? "/factures" : "/home";
   const textLink = user ? 'Vos factures' : "Retour à l'accueil";
