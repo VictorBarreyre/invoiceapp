@@ -29,7 +29,7 @@ export const InvoiceDataProvider = ({ children }) => {
             adresse: '',
             country: '',
             postalCode: '',
-            siret: 'zrzaeazeaz',
+            siret: '',
             email: 'barreyrevictor.contact@gmail.com',
         },
         items: [{ description: '', quantity: 1, unitPrice: 0 }],

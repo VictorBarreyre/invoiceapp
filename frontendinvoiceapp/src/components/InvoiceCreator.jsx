@@ -272,7 +272,7 @@ const InvoiceCreator = ({ totalError }) => {
 
 
             <Input
-              className='classicinput' placeholder="N° Siret" name="issuer.siret" value={invoiceData.issuer.siret} onChange={handleChange} />
+              className='classicinput' placeholder="N° de Siret (Si professionnel)" name="issuer.siret" value={invoiceData.issuer.siret} onChange={handleChange} />
             <Input
               className={getClassForField(invoiceData.issuer.email)} placeholder="Email de l'émetteur*" name="issuer.email" value={invoiceData.issuer.email} onChange={handleChange} />
           </Flex>
@@ -325,7 +325,7 @@ const InvoiceCreator = ({ totalError }) => {
             </Flex>
 
 
-            <Input className='classicinput' placeholder="N° Siret" name="client.siret" value={invoiceData.client.siret} onChange={handleChange} />
+            <Input className='classicinput' placeholder="N° de Siret (Si professionnel)" name="client.siret" value={invoiceData.client.siret} onChange={handleChange} />
             <Input className={getClassForField(invoiceData.client.email)} placeholder="Email du client*" name="client.email" value={invoiceData.client.email} onChange={handleChange} />
           </Flex>
         </Flex>
@@ -563,7 +563,7 @@ const InvoiceCreator = ({ totalError }) => {
           <Input
             _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
             className='neue-down'
-            placeholder="Votre IBAN"
+            placeholder="Votre IBAN (Facultatif)"
             name="issuer.iban"
             value={invoiceData.issuer.iban}
             onChange={handleChange}
