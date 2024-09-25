@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const dotenv = require('dotenv');
 const emailRoutes = require('./routes/emailRoutes');
@@ -10,12 +8,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./models/User'); 
 const path = require('path');
+const bodyParser = require('body-parser');
 
 dotenv.config();
 
 const app = express();
 
-// Limiter à 50mb pour l'analyse des données JSON (hors webhooks)
+app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
+
+// Limiter à 50mb pour l'analyse des données JSON
 app.use(express.json({ limit: '50mb' }));
 
 app.use(cors({
@@ -24,17 +25,18 @@ app.use(cors({
 
 app.use(express.static('public'));
 app.use('/public', express.static(path.join(__dirname, 'public'), {
-  maxAge: '1d', // Cache assets for 1 day
+  maxAge: '1d',
   etag: false
 }));
 
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+
 // Routes
 app.use('/email', emailRoutes);
 app.use('/api/users', userRoutes);
 app.use('/abonnement', aboRoutes); 
-app.use('/webhook', webhookRoutes); // Les webhooks gèrent leur propre analyse de données (raw)
+app.use('/webhook', webhookRoutes); 
 
 app.get('/', (req, res) => {
   res.send('The Backend of my Invoice App');
@@ -48,16 +50,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error('Failed to connect to MongoDB', err));
 
 mongoose.set('debug', true);
-
-// Fonction pour récupérer les utilisateurs
-async function fetchUsers() {
-  try {
-    const users = await User.find({});
-    console.log("All users:", users);
-  } catch (err) {
-    console.error("Error fetching users:", err);
-  }
-}
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 8000;

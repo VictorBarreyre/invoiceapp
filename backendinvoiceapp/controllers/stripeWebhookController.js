@@ -22,11 +22,13 @@ let transporter = nodemailer.createTransport({
 
 exports.handleWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
+  console.log('Received signature:', sig);
   let event;
 
   // Vérification de la signature du webhook Stripe
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+    // Utiliser req.body ici, car bodyParser.raw() est déjà utilisé pour cette route
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     console.log('✅ Webhook Stripe reçu avec succès:', event.type);
   } catch (err) {
     console.error('⚠️  Erreur lors de la vérification du webhook:', err.message);
@@ -52,30 +54,31 @@ exports.handleWebhook = async (req, res) => {
 
       // Générer un mot de passe temporaire
       const tempPassword = uuidv4().slice(0, 8);
-      const hashedPassword = await argon2.hash(tempPassword);
 
       // Créer un nouvel utilisateur
-      const newUser = new User({
+      const newUser = await User.create({
         email,
-        name,
-        password: hashedPassword,
+        password: tempPassword, // Le mot de passe sera haché par le middleware 'pre save'
+        name
       });
-      await newUser.save();
+
       console.log(`✅ Nouvel utilisateur créé: ${email}`);
 
-      // Lire et modifier le modèle d'email
+      // Charger et remplir le modèle d'email
       const templatePath = path.join(__dirname, '../templates/signup.html');
       if (fs.existsSync(templatePath)) {
         let template = fs.readFileSync(templatePath, 'utf-8');
-        template = template.replace('{name}', name).replace('{password}', tempPassword);
+        template = template.replace('{name}', name)
+                           .replace('{password}', tempPassword);
 
-        // Envoyer l'email avec les informations du compte et le mot de passe temporaire
+        // Envoyer un e-mail de confirmation
         const mailOptions = {
           from: process.env.SMTP_MAIL,
           to: email,
           subject: 'Votre nouveau compte est prêt',
-          html: template,
+          html: template
         };
+
         await transporter.sendMail(mailOptions);
         console.log(`✅ Email envoyé avec succès à: ${email}`);
       } else {
