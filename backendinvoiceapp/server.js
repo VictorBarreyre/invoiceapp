@@ -8,28 +8,20 @@ const aboRoutes = require('./routes/aboRoutes');
 const webhookRoutes = require('./routes/webhookRoutes'); 
 const mongoose = require('mongoose');
 const cors = require('cors');
-const User = require('./models/User'); // Importez le modèle User
+const User = require('./models/User'); 
 const path = require('path');
 
 dotenv.config();
 
 const app = express();
 
-// Configurer le corps brut de la requête pour les webhooks Stripe
-app.use(
-  express.json({
-    limit: '50mb',
-    verify: (req, res, buf) => {
-      req.rawBody = buf.toString(); // Nécessaire pour la validation de la signature Stripe
-    },
-  })
-);
-
-
+// Limiter à 50mb pour l'analyse des données JSON (hors webhooks)
 app.use(express.json({ limit: '50mb' }));
+
 app.use(cors({
   origin: 'http://localhost:5173' // Autoriser uniquement les requêtes de ce domaine
 }));
+
 app.use(express.static('public'));
 app.use('/public', express.static(path.join(__dirname, 'public'), {
   maxAge: '1d', // Cache assets for 1 day
@@ -42,12 +34,13 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/email', emailRoutes);
 app.use('/api/users', userRoutes);
 app.use('/abonnement', aboRoutes); 
-app.use('/webhook', webhookRoutes);
+app.use('/webhook', webhookRoutes); // Les webhooks gèrent leur propre analyse de données (raw)
 
 app.get('/', (req, res) => {
   res.send('The Backend of my Invoice App');
 });
 
+// Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully');
@@ -56,6 +49,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 mongoose.set('debug', true);
 
+// Fonction pour récupérer les utilisateurs
 async function fetchUsers() {
   try {
     const users = await User.find({});
@@ -65,6 +59,7 @@ async function fetchUsers() {
   }
 }
 
+// Démarrage du serveur
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

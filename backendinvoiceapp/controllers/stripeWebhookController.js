@@ -33,63 +33,60 @@ exports.handleWebhook = async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Gérer l'événement de création de souscription
-  if (event.type === 'customer.subscription.created') {
-    const subscription = event.data.object;
+  // Gérer l'événement "invoice.payment_succeeded"
+  if (event.type === 'invoice.payment_succeeded') {
+    const invoice = event.data.object;
 
-    try {
-      // Récupérer les informations du client
-      const customer = await stripe.customers.retrieve(subscription.customer);
-      const email = customer.email;
-      const name = customer.name || 'Cher utilisateur';
+    // Récupérer les informations du client depuis l'invoice
+    const customer = await stripe.customers.retrieve(invoice.customer);
+    const email = customer.email;
+    const name = customer.name || 'Cher utilisateur';
 
-      console.log(`ℹ️  Récupération du client: ${email}`);
+    console.log(`ℹ️  Récupération du client: ${email}`);
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await User.findOne({ email });
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await User.findOne({ email });
 
-      if (!existingUser) {
-        console.log(`ℹ️  Aucun utilisateur trouvé avec l'email: ${email}. Création d'un nouvel utilisateur.`);
+    if (!existingUser) {
+      console.log(`ℹ️  Aucun utilisateur trouvé avec l'email: ${email}. Création d'un nouvel utilisateur.`);
 
-        // Générer un mot de passe temporaire
-        const tempPassword = uuidv4().slice(0, 8);
-        const hashedPassword = await argon2.hash(tempPassword);
+      // Générer un mot de passe temporaire
+      const tempPassword = uuidv4().slice(0, 8);
+      const hashedPassword = await argon2.hash(tempPassword);
 
-        // Créer un nouvel utilisateur
-        const newUser = new User({
-          email,
-          name,
-          password: hashedPassword,
-        });
-        await newUser.save();
-        console.log(`✅ Nouvel utilisateur créé: ${email}`);
+      // Créer un nouvel utilisateur
+      const newUser = new User({
+        email,
+        name,
+        password: hashedPassword,
+      });
+      await newUser.save();
+      console.log(`✅ Nouvel utilisateur créé: ${email}`);
 
-        // Lire et modifier le modèle d'email
-        const templatePath = path.join(__dirname, '../templates/signup.html');
-        if (fs.existsSync(templatePath)) {
-          let template = fs.readFileSync(templatePath, 'utf-8');
-          template = template.replace('{name}', name).replace('{password}', tempPassword);
+      // Lire et modifier le modèle d'email
+      const templatePath = path.join(__dirname, '../templates/signup.html');
+      if (fs.existsSync(templatePath)) {
+        let template = fs.readFileSync(templatePath, 'utf-8');
+        template = template.replace('{name}', name).replace('{password}', tempPassword);
 
-          // Envoyer l'email avec les informations du compte et le mot de passe temporaire
-          const mailOptions = {
-            from: process.env.SMTP_MAIL,
-            to: email,
-            subject: 'Votre nouveau compte est prêt',
-            html: template,
-          };
-          await transporter.sendMail(mailOptions);
-          console.log(`✅ Email envoyé avec succès à: ${email}`);
-        } else {
-          console.error(`❌ Le fichier de modèle d'email n'existe pas à: ${templatePath}`);
-        }
+        // Envoyer l'email avec les informations du compte et le mot de passe temporaire
+        const mailOptions = {
+          from: process.env.SMTP_MAIL,
+          to: email,
+          subject: 'Votre nouveau compte est prêt',
+          html: template,
+        };
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Email envoyé avec succès à: ${email}`);
       } else {
-        console.log(`ℹ️  Utilisateur déjà existant avec l'email: ${email}. Aucune création nécessaire.`);
+        console.error(`❌ Le fichier de modèle d'email n'existe pas à: ${templatePath}`);
       }
-    } catch (err) {
-      console.error('❌ Erreur lors de la création de l\'utilisateur ou de l\'envoi de l\'email:', err);
+    } else {
+      console.log(`ℹ️  Utilisateur déjà existant avec l'email: ${email}. Aucune création nécessaire.`);
     }
   }
 
   // Répondre à Stripe pour accuser réception du webhook
   res.json({ received: true });
 };
+
