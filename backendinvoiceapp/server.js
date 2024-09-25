@@ -4,7 +4,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const emailRoutes = require('./routes/emailRoutes');
 const userRoutes = require('./routes/userRoutes');
-const aboRoutes = require('./routes/aboRoutes'); // Importez le routeur des abonnements
+const aboRoutes = require('./routes/aboRoutes'); 
+const webhookRoutes = require('./routes/webhookRoutes'); 
 const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./models/User'); // Importez le modèle User
@@ -13,6 +14,17 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
+
+// Configurer le corps brut de la requête pour les webhooks Stripe
+app.use(
+  express.json({
+    limit: '50mb',
+    verify: (req, res, buf) => {
+      req.rawBody = buf.toString(); // Nécessaire pour la validation de la signature Stripe
+    },
+  })
+);
+
 
 app.use(express.json({ limit: '50mb' }));
 app.use(cors({
@@ -29,7 +41,8 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Routes
 app.use('/email', emailRoutes);
 app.use('/api/users', userRoutes);
-app.use('/abonnement', aboRoutes); // Utilisez les routes des abonnements
+app.use('/abonnement', aboRoutes); 
+app.use('/webhook', webhookRoutes);
 
 app.get('/', (req, res) => {
   res.send('The Backend of my Invoice App');
