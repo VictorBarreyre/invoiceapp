@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   total: {
     display: 'flex',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 20,
     marginBottom: 80,
     color: 'black',
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   subtitletotal: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
     fontWeight: '600',
     fontFamily: 'Helvetica',
