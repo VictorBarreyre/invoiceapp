@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   date: {
+    marginTop: 5,
     fontSize: 10,
     color: 'grey',
   },
@@ -45,11 +46,11 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Helvetica',
     fontSize: 10,
-    marginBottom: 2,
     color: 'grey',
+    lineHeight: 1.4,
   },
   addressText: {
-    lineHeight: 1.5, // Ajustez la valeur selon vos besoins
+    lineHeight: 1.4, // Ajustez la valeur selon vos besoins
   },
   paiementDetails: {
     fontSize: 14,

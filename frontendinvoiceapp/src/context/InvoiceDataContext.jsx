@@ -22,7 +22,7 @@ export const InvoiceDataProvider = ({ children }) => {
             country: 'France',
             postalCode: '91450',
             siret: '',
-            email: 'barreyrevictor.contact@gmaiLcom',
+            email: 'barreyrevictor.contact@gmailcom',
             iban: '',
         },
         client: {

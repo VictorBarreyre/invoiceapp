@@ -81,8 +81,12 @@ const InvoiceSummary = () => {
             fontSize: "16px",
             fontWeight: "600",
         },
+        textFactComp: {
+            fontSize: "24px",
+        },
         textFact: {
             fontSize: "18px",
+            fontWeight:"bold",
         },
         text: {
             fontSize: "16px",
@@ -139,15 +143,40 @@ const InvoiceSummary = () => {
 
     return (
         <>
-            <Heading size='md'>Votre facture</Heading>
+            <Heading size='md'>Résumé de votre facture</Heading>
             <Box {...styleProps.container}>
                 <VStack spacing={6} align="start">
-                    <Flex justifyContent={isMobile ? "start" : "end"} width='100%' alignItems={isMobile ? "start" : "end"}>
-                        <Flex pl={isMobile ? '20px' : '0px'} pt={isMobile ? '20px' : '0px'} alignItems={isMobile ? "start" : "end"} alignContent='end' direction='column'>
-                            <Text {...styleProps.textFact}><strong>n°</strong> {invoiceData.number}</Text>
-                            <Text {...styleProps.text}><strong>Date d'émission:</strong> {invoiceData.date}</Text>
+                    <Flex
+                        justifyContent="space-between"
+                        width="100%"
+                        alignItems={isMobile ? "start" : "center"}
+                        pl={isMobile ? '20px' : '20px'}
+                        pr={isMobile ? '20px' : '20px'}
+                        mt='2rem'
+                        fontWeight='bold'
+                    >
+                        {/* Gauche : Nom de l'entreprise si elle existe */}
+                        {invoiceData?.issuer?.company && (
+                            <Text {...styleProps.textFactComp}>
+                                {invoiceData.issuer.company}
+                            </Text>
+                        )}
+
+                        {/* Droite : Numéro de facture et date */}
+                        <Flex
+                            alignItems={isMobile ? "start" : "end"}
+                            alignContent="end"
+                            direction="column"
+                        >
+                            <Text {...styleProps.textFact}>
+                                <strong>n°</strong> {invoiceData.number}
+                            </Text>
+                            <Text {...styleProps.text}>
+                                <strong>Date d'émission :</strong> {invoiceData.date}
+                            </Text>
                         </Flex>
                     </Flex>
+
 
                     <Flex {...styleProps.issuerAndClient} justifyContent="space-between">
                         <Flex flexDirection='column' borderBottom={isMobile ? "1px solid #e2e8f0" : "unset"} paddingBottom={isMobile ? "1rem" : "unset"} align="start">
