@@ -592,13 +592,6 @@ const InvoiceCreator = ({ totalError }) => {
           Veuillez toutefois vous assurer de respecter la législation locale concernant les moyens de paiement en fonction des montants concernés.
         </Text>
 
-        <PDFViewer width="100%" height="1300rem">
-        <InvoicePDF invoiceData={invoiceData} />
-      </PDFViewer>
-
-
-
-
       </VStack>
 
     </>
