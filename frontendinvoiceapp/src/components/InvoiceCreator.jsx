@@ -588,9 +588,16 @@ const InvoiceCreator = ({ totalError }) => {
           />
         </Flex>
         <Text p='0' mt='1rem' color='#4A5568' w='97%'>
-  Ce champ est uniquement requis si vous souhaitez recevoir votre paiement par virement.<br />
-  Veuillez toutefois vous assurer de respecter la législation locale concernant les moyens de paiement en fonction des montants concernés.
-</Text>
+          Ce champ est uniquement requis si vous souhaitez recevoir votre paiement par virement.<br />
+          Veuillez toutefois vous assurer de respecter la législation locale concernant les moyens de paiement en fonction des montants concernés.
+        </Text>
+
+        <PDFViewer width="100%" height="1300rem">
+        <InvoicePDF invoiceData={invoiceData} />
+      </PDFViewer>
+
+
+
 
       </VStack>
 
