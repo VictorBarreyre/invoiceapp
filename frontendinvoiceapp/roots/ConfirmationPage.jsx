@@ -54,9 +54,7 @@ function PaymentForm({ clientSecret }) {
     });
 
     if (result.error) {
-      console.log(result.error.message);
     } else {
-      console.log(result.paymentIntent.status);
     }
   };
 

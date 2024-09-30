@@ -42,7 +42,6 @@ const Paiements = () => {
     if (user && user.email) {
       try {
         const { hasActiveSubscription, subscription } = await checkActiveSubscription(user.email);
-        console.log('Subscription check response:', hasActiveSubscription, subscription);
 
         if (hasActiveSubscription) {
           setSubscriptionStatus('Actif');
@@ -95,18 +94,15 @@ const Paiements = () => {
 
         const selectedPriceId = selectedPlan === 'monthly' ? product.prices.find(price => price.recurring?.interval === 'month').id : product.prices.find(price => price.recurring?.interval === 'year').id;
 
-        console.log('Checking active subscription for email:', user.email);
 
         const { hasActiveSubscription, subscription } = await checkActiveSubscription(user.email);
 
         if (hasActiveSubscription) {
-          console.log('User has an active subscription:', subscription);
           setSubscriptionStatus('Actif');
           setSubscriptionDetails(subscription);
           return;
         }
 
-        console.log('Creating new checkout session for email:', user.email);
         await createCheckoutSession(user.email, user.name, selectedPriceId, onSuccess, onError);
       } catch (error) {
         console.error('Error creating subscription:', error);

@@ -41,8 +41,6 @@ export const InvoiceDataProvider = ({ children }) => {
     });
 
     useEffect(() => {
-        console.log('User:', user);
-        console.log('Invoice Data before update:', invoiceData);
         if (user) {
             setInvoiceData(prevData => ({
                 ...prevData,
@@ -54,7 +52,6 @@ export const InvoiceDataProvider = ({ children }) => {
                     iban: user.iban || ''
                 }
             }));
-            console.log('Invoice Data after update:', invoiceData);
         }
     }, [user]);
 
@@ -91,8 +88,6 @@ export const InvoiceDataProvider = ({ children }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(invoiceData);
-        console.log(user);
         if (name.startsWith('items.')) {
             const [_, index, field] = name.split('.');
             handleInvoiceDataChange(prevState => {
@@ -177,7 +172,6 @@ export const InvoiceDataProvider = ({ children }) => {
             return;
         }
         createCheckoutSession(email, name, (sessionId) => {
-            console.log(`Checkout session created: ${sessionId}`);
             onSuccess();
         }, (errorMessage) => {
             console.error("Error during checkout creation:", errorMessage);
@@ -204,7 +198,6 @@ export const InvoiceDataProvider = ({ children }) => {
         const areAllRequiredFieldsValid = number !== '' && issuer.name !== '' && client.name !== '';
 
         if (!areAllRequiredFieldsValid) {
-            console.log('Champs requis manquants ou invalides');
             return;
         }
 
@@ -242,14 +235,11 @@ export const InvoiceDataProvider = ({ children }) => {
                 const createAndSendEmailResponse = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/email/sendEmail`, formData, { headers });
 
                 if (createAndSendEmailResponse.status === 200) {
-                    console.log("Facture créée et email envoyé avec succès !");
                     onSuccess();
                 } else {
-                    console.log('Erreur lors de la création de la facture et de l’envoi de l’email', createAndSendEmailResponse.data);
                     onError();
                 }
             } else {
-                console.log('Email invalide ou absent, téléchargement de la facture...');
             }
         } catch (error) {
             console.error('Erreur lors de la génération ou de l’envoi du PDF', error);

@@ -49,7 +49,6 @@ cron.schedule('* * * * *', async () => {
       facture.nextReminderDate = moment(facture.nextReminderDate).add(facture.reminderFrequency, 'days').toDate();
       await facture.save();
 
-      console.log('Rappel envoyé pour la facture n°', facture.number);
     }
   } catch (error) {
     console.error('Erreur lors de l\'envoi des rappels :', error);
@@ -94,13 +93,11 @@ const convertPdfToPng = (pdfPath) => {
 
 // Other route handlers...
 const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
-  console.log("User in request:", req.userData);
   const { number, email, subject, montant, factureId, devise, reminderFrequency } = req.body;
   const emetteur = JSON.parse(req.body.emetteur);
   const destinataire = JSON.parse(req.body.destinataire);
   const items = JSON.parse(req.body.items) || [];
 
-  console.log("Items reçus:", items);
 
   try {
     if (!req.file) {
@@ -158,7 +155,6 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log(nouvelleFacture);
 
     res.send({
       message: "Email envoyé avec succès à " + email,

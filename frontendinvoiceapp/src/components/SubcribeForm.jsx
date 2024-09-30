@@ -42,7 +42,6 @@ const SubscribeForm = ({ clientSecret }) => {
       setError(result.error.message);
     } else {
       if (result.paymentIntent.status === 'succeeded') {
-        console.log('PaymentIntent succeeded');
       }
     }
   };

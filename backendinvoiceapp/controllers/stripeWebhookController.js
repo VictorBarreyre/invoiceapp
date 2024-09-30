@@ -22,14 +22,12 @@ let transporter = nodemailer.createTransport({
 
 exports.handleWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
-  console.log('Received signature:', sig);
   let event;
 
   // Vérification de la signature du webhook Stripe
   try {
     // Utiliser req.body ici, car bodyParser.raw() est déjà utilisé pour cette route
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log('✅ Webhook Stripe reçu avec succès:', event.type);
   } catch (err) {
     console.error('⚠️  Erreur lors de la vérification du webhook:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -44,13 +42,11 @@ exports.handleWebhook = async (req, res) => {
     const email = customer.email;
     const name = customer.name || 'Cher utilisateur';
 
-    console.log(`ℹ️  Récupération du client: ${email}`);
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
-      console.log(`ℹ️  Aucun utilisateur trouvé avec l'email: ${email}. Création d'un nouvel utilisateur.`);
 
       // Générer un mot de passe temporaire
       const tempPassword = uuidv4().slice(0, 8);
@@ -62,7 +58,6 @@ exports.handleWebhook = async (req, res) => {
         name
       });
 
-      console.log(`✅ Nouvel utilisateur créé: ${email}`);
 
       // Charger et remplir le modèle d'email
       const templatePath = path.join(__dirname, '../templates/signup.html');
@@ -80,12 +75,10 @@ exports.handleWebhook = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`✅ Email envoyé avec succès à: ${email}`);
       } else {
         console.error(`❌ Le fichier de modèle d'email n'existe pas à: ${templatePath}`);
       }
     } else {
-      console.log(`ℹ️  Utilisateur déjà existant avec l'email: ${email}. Aucune création nécessaire.`);
     }
   }
 

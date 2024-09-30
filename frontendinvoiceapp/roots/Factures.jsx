@@ -22,7 +22,6 @@ const Factures = () => {
         const { invoices, message } = await fetchUserInvoices();
         setInvoices(invoices);
         setMessage(message);
-        console.log(invoices);
       }
     };
 
@@ -43,7 +42,6 @@ const Factures = () => {
       });
       if (response.status === 200) {
         setInvoices(prevInvoices => prevInvoices.filter(invoice => invoice._id !== invoiceId));
-        console.log('Invoice deleted:', invoiceId);
       } else {
         console.error('Failed to delete invoice:', response.data);
       }
@@ -66,7 +64,6 @@ const Factures = () => {
         }
         return invoice;
       }));
-      console.log('Invoice marked as paid:', invoiceId);
     } catch (error) {
       console.error('Error marking invoice as paid:', error);
     }
@@ -85,7 +82,6 @@ const Factures = () => {
         }
         return invoice;
       }));
-      console.log('Invoice marked as unpaid:', invoiceId);
     } catch (error) {
       console.error('Error marking invoice as unpaid:', error);
     }
