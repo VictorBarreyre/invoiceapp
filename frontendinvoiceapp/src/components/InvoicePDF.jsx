@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   section: {
-    paddingLeft: 40,
-    paddingRight: 40,
+    paddingLeft: 30,
+    paddingRight: 30,
   },
   header: {
     display: 'flex',
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   numbfact: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'black',
     marginBottom: 2,
   },
@@ -37,16 +37,19 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
     fontWeight: '600',
     fontFamily: 'Helvetica',
   },
   text: {
     fontFamily: 'Helvetica',
-    fontSize: 12,
+    fontSize: 10,
     marginBottom: 2,
     color: 'grey',
+  },
+  addressText: {
+    lineHeight: 1.5, // Ajustez la valeur selon vos besoins
   },
   paiementDetails: {
     fontSize: 14,
@@ -66,15 +69,21 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     width: '50%',
-    paddingLeft: 40,
+    paddingLeft: 30,
   },
   clientDetails: {
     display: 'flex',
     flexDirection: 'column',
     width: '50%',
     alignItems: 'flex-end',
-    paddingRight: 40,
+    paddingRight: 30,
     textAlign: 'right',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: '5px'
   },
   table: {
     display: 'table',
@@ -124,7 +133,7 @@ const styles = StyleSheet.create({
   },
   total: {
     display: 'flex',
-    fontSize: 20,
+    fontSize: 16,
     marginTop: 20,
     marginBottom: 80,
     color: 'black',
@@ -167,7 +176,9 @@ const InvoicePDF = ({ invoiceData }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <View style={styles.issuerDetails}>
-          <Text style={styles.title}>Votre Société</Text>
+          <Text style={styles.title}>
+            {invoiceData.issuer.company ? invoiceData.issuer.company : 'Facture'}
+          </Text>
         </View>
         <View style={styles.clientDetails}>
           <Text style={styles.numbfact}>Facture n°: {invoiceData.number}</Text>
@@ -178,14 +189,30 @@ const InvoicePDF = ({ invoiceData }) => (
         <View style={styles.issuerDetails}>
           <Text style={styles.subtitle}>Émise par</Text>
           <Text style={styles.text}>{invoiceData.issuer.name}</Text>
-          <Text style={styles.text}>{invoiceData.issuer.adresse}</Text>
+          <Text style={[styles.text, styles.addressText]}> {invoiceData.issuer.adresse
+            .split(',')
+            .map((item) => item.trim())
+            .join('\n')}</Text>
+          <View style={styles.row}>
+            <Text style={styles.text}>{invoiceData.issuer.postalCode}</Text>
+            <Text style={styles.text}>{invoiceData.issuer.country}</Text>
+          </View>
           <Text style={styles.text}>{invoiceData.issuer.siret}</Text>
           <Text style={styles.text}>{invoiceData.issuer.email}</Text>
         </View>
         <View style={styles.clientDetails}>
           <Text style={styles.subtitle}>À destination de</Text>
           <Text style={styles.text}>{invoiceData.client.name}</Text>
-          <Text style={styles.text}>{invoiceData.client.adresse}</Text>
+          <Text style={[styles.text, styles.addressText]}>
+            {invoiceData.client.adresse
+              .split(',')
+              .map((item) => item.trim())
+              .join('\n')}
+          </Text>
+          <View style={styles.row}>
+            <Text style={styles.text}>{invoiceData.client.postalCode}</Text>
+            <Text style={styles.text}>{invoiceData.client.country}</Text>
+          </View>
           <Text style={styles.text}>{invoiceData.client.siret}</Text>
           <Text style={styles.text}>{invoiceData.client.email}</Text>
         </View>
@@ -217,21 +244,23 @@ const InvoicePDF = ({ invoiceData }) => (
             <Text style={styles.subtitletotal}>Total TTC: {invoiceData.total}{invoiceData.devise}</Text>
           </View>
         </View>
-        <View style={styles.paiementDetails}>
-          <Text style={styles.subtitle}>Modalités de paiement</Text>
-          <Text style={styles.text}>IBAN sur lequel le paiement sera envoyé</Text>
-          <Text style={styles.text}>{invoiceData.issuer.iban}</Text>
-        </View>
+        {invoiceData.issuer.iban && (
+          <View style={styles.paiementDetails}>
+            <Text style={styles.subtitle}>Modalités de paiement</Text>
+            <Text style={styles.text}>IBAN sur lequel le paiement sera envoyé</Text>
+            <Text style={styles.text}>{invoiceData.issuer.iban}</Text>
+          </View>
+        )}
         <View style={{ marginTop: 60 }}>
           <Text style={styles.date}>
-          Cette facture est éditée par {invoiceData.issuer.name}, 
+            Cette facture est éditée par {invoiceData.issuer.name},
             <br />
             Conformément aux articles L.441-9 et suivants du Code de commerce, cette facture doit être réglée dans un délai de 30 jours à compter de sa date d'émission.
             <br />
             En cas de retard de paiement, une pénalité de retard calculée sur la base de trois fois le taux d'intérêt légal sera appliquée. Une indemnité forfaitaire de 40 euros pour frais de recouvrement sera également due (art. D.441-5 du Code de commerce).
             <br />
             Pour toute question relative à cette facture, merci de contacter notre service comptable à l'adresse {invoiceData.issuer.email}.
-          </Text>          
+          </Text>
         </View>
 
       </View>

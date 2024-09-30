@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { pdf, PDFViewer } from '@react-pdf/renderer';
 import {
   Stack,
-  Table, Thead, Tbody, Tfoot, Tr, Th, Td, Box, Input, InputGroup, InputRightElement, Button, Heading, Text, VStack, IconButton, Flex, Link,Textarea
+  Table, Thead, Tbody, Tfoot, Tr, Th, Td, Box, Input, InputGroup, InputRightElement, Button, Heading, Text, VStack, IconButton, Flex, Link, Textarea
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
@@ -34,11 +34,11 @@ const InvoiceCreator = ({ totalError }) => {
   const [clientSuggestions, setClientSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-    // Références pour le redimensionnement automatique des Textareas
-    const issuerTextareaRef = useRef(null);
-    const clientTextareaRef = useRef(null);
+  // Références pour le redimensionnement automatique des Textareas
+  const issuerTextareaRef = useRef(null);
+  const clientTextareaRef = useRef(null);
 
-    // Fonction pour redimensionner automatiquement un Textarea
+  // Fonction pour redimensionner automatiquement un Textarea
   const autoResizeTextarea = (ref) => {
     if (ref.current) {
       ref.current.style.height = 'auto'; // Réinitialise la hauteur
@@ -46,14 +46,14 @@ const InvoiceCreator = ({ totalError }) => {
     }
   };
 
-  
+
 
 
   const handleAddressInputChangeForIssuer = async (e) => {
     const value = e.target.value;
     handleChange(e);
     autoResizeTextarea(issuerTextareaRef);
-  
+
     if (value.length > 2) {
       try {
         const apiKey = import.meta.env.VITE_LOCATION_API_KEY; // Utilisez import.meta.env pour Vite
@@ -75,7 +75,7 @@ const InvoiceCreator = ({ totalError }) => {
     const value = e.target.value;
     handleChange(e);
     autoResizeTextarea(clientTextareaRef);
-  
+
     if (value.length > 2) {
       try {
         const apiKey = import.meta.env.VITE_LOCATION_API_KEY; // Utilisez import.meta.env pour Vite
@@ -92,7 +92,7 @@ const InvoiceCreator = ({ totalError }) => {
       setClientSuggestions([]);
     }
   };
-  
+
 
   const handleSelectIssuerSuggestion = (suggestion) => {
     const { display_name } = suggestion;
@@ -195,30 +195,48 @@ const InvoiceCreator = ({ totalError }) => {
       <VStack mt={{ base: '1rem', lg: '2rem' }} boxShadow=' 1px solid black' align="start">
         <Text mb='1rem' color="red"> {totalError()}</Text>
         <Flex w='100%' justifyContent='space-between'>
-          <Flex w={{ base: '10.5rem', lg: 'auto' }} direction='column' justifyContent='space-between' pb="2rem">
-            <Heading mb='1rem' size="sm">Facture n° :</Heading>
+
+          <Flex w={{ base: 'unset', lg: '25vw' }} direction='column' pb="2rem">
+            <Heading mb='1rem' size="sm">Votre Société :</Heading>
             <Input
               _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
               _active={{ bg: "white", color: "black" }}
-              className={getClassForField(invoiceData.number)}
-              placeholder="Numéro de facture" name="number" value={invoiceData.number} onChange={handleChange} />
+              className={getClassForField(invoiceData.issuer.company)}
+              placeholder="Nom de votre société (Si professionnel)" name="number" value={invoiceData.issuer.company} onChange={handleChange} />
           </Flex>
-          <Box direction='column' w={{ base: '10rem', lg: 'unset' }} justifyContent='space-between' pb="2rem">
-            <Heading mb='1rem' size="sm">Date :</Heading>
-            <DatePicker
-              className='neue-down'
-              boxShadow='rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px !important'
-              position='static !important'
-              backgroundColor='white'
-              color="#0B3860"
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              minDate={new Date()}
-              maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
-              dateFormat="dd/MM/yyyy"
-              customInput={<CustomInput />}
-            />
-          </Box>
+
+          <Flex direction='row' w={{ base: 'unset', lg: '25vw' }} justifyContent='space-between' pb="2rem">
+            <Flex direction='column' w='48%'>
+              <Heading mb='1rem' size="sm">Facture n° :</Heading>
+              <Input
+                _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
+                _active={{ bg: "white", color: "black" }}
+                className={getClassForField(invoiceData.number)}
+                placeholder="Numéro de facture"
+                name="number"
+                value={invoiceData.number}
+                onChange={handleChange}
+              />
+            </Flex>
+
+            <Flex direction='column' w='48%'>
+              <Heading mb='1rem' size="sm">Date :</Heading>
+              <DatePicker
+                className='neue-down'
+                boxShadow='rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px !important'
+                position='static !important'
+                backgroundColor='white'
+                color="#0B3860"
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                minDate={new Date()}
+                maxDate={new Date().setFullYear(new Date().getFullYear() + 1)}
+                dateFormat="dd/MM/yyyy"
+                customInput={<CustomInput />}
+              />
+            </Flex>
+          </Flex>
+
         </Flex>
         <Flex flexDirection={{ base: 'column', lg: 'row' }} w='25vw' justifyContent='space-between' width='-webkit-fill-available' pb="2rem">
           <Flex direction="column" w={{ base: 'unset', lg: '25vw' }} alignItems='start'>
@@ -280,7 +298,7 @@ const InvoiceCreator = ({ totalError }) => {
             <Heading mb='1rem' size="sm">Informations sur le client :</Heading>
             <Input className={getClassForField(invoiceData.client.name)}
               placeholder="Nom et Prénom / Société*" name="client.name" value={invoiceData.client.name} onChange={handleChange} />
-           <Textarea
+            <Textarea
               ref={clientTextareaRef} // Référence pour l'auto-resize
               className={getClassForField(invoiceData.client.adresse)}
               placeholder="Adresse*"
@@ -573,6 +591,11 @@ const InvoiceCreator = ({ totalError }) => {
           Ce champ est uniquement requis si vous souhaitez recevoir votre paiement par virement. Veuillez toutefois vous assurer de respecter la législation locale concernant les moyens de paiement en fonction des montants concernés.
         </Text>
       </VStack>
+
+      <PDFViewer width="100%" height="1300rem">
+        <InvoicePDF invoiceData={invoiceData} />
+      </PDFViewer>
+
     </>
   );
 };
