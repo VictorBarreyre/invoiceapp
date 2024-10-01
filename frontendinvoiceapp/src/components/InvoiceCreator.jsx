@@ -172,6 +172,7 @@ const InvoiceCreator = ({ totalError }) => {
     const vatAmount = subtotal * (invoiceData.vatRate / 100).toFixed(2);
     const total = (parseFloat(subtotal) + parseFloat(vatAmount)).toFixed(2);
     handleInvoiceDataChange((prevState) => ({ ...prevState, subtotal, vatAmount, total }));
+    console.log(total)
   }, [invoiceData.items, invoiceData.vatRate]);
 
   useEffect(() => {
