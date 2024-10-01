@@ -6,11 +6,13 @@ const styles = StyleSheet.create({
   page: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    justifyContent: 'space-between', // Ensure that content is spaced between top and bottom
+    height: '100vh', // Use full viewport height
   },
   section: {
     paddingLeft: 30,
     paddingRight: 30,
+    flexGrow: 1,
   },
   header: {
     display: 'flex',
@@ -18,7 +20,7 @@ const styles = StyleSheet.create({
     alignItems: 'start',
     justifyContent: 'space-between',
     fontSize: 24,
-    marginTop: 50,
+    marginTop: 40,
     marginBottom: 80,
     color: 'black',
     fontWeight: 'bold',
@@ -163,6 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 'auto',
     paddingRight: 40,
+    paddingBottom: 40,
   },
   footerText: {
     fontSize: 10,
@@ -232,7 +235,7 @@ const InvoicePDF = ({ invoiceData }) => (
               <View style={styles.tableCol}><Text style={styles.tableCell}>{item.description}</Text></View>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{item.quantity}</Text></View>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{item.unitPrice}</Text></View>
-              <View style={styles.tableCol}><Text style={styles.tableCelllast}>{item.quantity * item.unitPrice}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCelllast}>{item.quantity * item.unitPrice} {invoiceData.devise}</Text></View>
             </View>
           ))}
         </View>
@@ -252,7 +255,7 @@ const InvoicePDF = ({ invoiceData }) => (
             <Text style={styles.text}>{invoiceData.issuer.iban}</Text>
           </View>
         )}
-        <View style={{ marginTop: 60 }}>
+         <View style={styles.footer}>
           <Text style={styles.date}>
             Cette facture est éditée par {invoiceData.issuer.name},
             <br />
