@@ -597,9 +597,6 @@ const InvoiceCreator = ({ totalError }) => {
         <InvoicePDF invoiceData={invoiceData} />
       </PDFViewer>
 
-
-
-
       </VStack>
 
     </>
