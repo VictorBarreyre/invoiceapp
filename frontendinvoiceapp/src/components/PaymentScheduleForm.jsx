@@ -27,7 +27,6 @@ const PaymentScheduleForm = ({ showSchedError, setShowErrorSched }) => {
 
   return (
     <>
-    
       {isMobile ? (
         <Box borderBottom="1px solid #f2f2f2" pt='1rem' pb='1rem' mb='1rem'>
           <Flex direction='column' justifyContent='space-between'>
