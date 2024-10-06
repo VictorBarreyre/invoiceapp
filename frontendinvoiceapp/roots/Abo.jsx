@@ -47,14 +47,12 @@ const Abo = () => {
 
     // Gérer la création de la session Stripe et l'affichage de la modale
     const handleCheckoutSessionCreation = async (priceId) => {
-        console.log('Creating checkout session with priceId:', priceId); // Ajoutez ce log
         if (isCheckoutSessionCreated || !priceId) return;
         setIsCheckoutSessionCreated(true);
         setError(null);
 
         try {
             const onSuccess = (clientSecret) => {
-                console.log('Checkout session created successfully:', clientSecret);
                 setClientSecret(clientSecret);
                 onOpen(); // Ouvre la modale
             };

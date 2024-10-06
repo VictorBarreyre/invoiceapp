@@ -71,17 +71,14 @@ exports.signupUser = expressAsyncHandler(async (req, res) => {
 
 exports.signinUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log("Attempting to find user with email:", email);
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      console.log("User not found with email:", email);
       return res.status(401).json({ message: 'Utilisateur ou mot de passe incorrect' });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      console.log("Password does not match for user:", email);
       return res.status(401).json({ message: 'Utilisateur ou mot de passe incorrect' });
     }
 
@@ -103,7 +100,6 @@ exports.signinUser = expressAsyncHandler(async (req, res) => {
 
 exports.sendResetEmail = expressAsyncHandler(async (req, res) => {
   const { email } = req.body;
-  console.log("Email received for password reset:", email); // Ajout d'un log pour vérifier l'email reçu
 
   if (!process.env.JWT_RESET_SECRET) {
     console.error('JWT_RESET_SECRET is not defined');
@@ -111,32 +107,25 @@ exports.sendResetEmail = expressAsyncHandler(async (req, res) => {
   }
 
   try {
-    console.log("Searching for user with email:", email); // Ajout d'un log avant la recherche de l'utilisateur
     const user = await User.findOne({ email });
     if (!user) {
-      console.log("User not found with email:", email); // Ajout d'un log si l'utilisateur n'est pas trouvé
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
-    console.log("User found:", user); // Ajout d'un log pour vérifier les détails de l'utilisateur trouvé
 
     const resetToken = jwt.sign({ _id: user._id }, process.env.JWT_RESET_SECRET, { expiresIn: '15m' });
-    console.log('Generated reset token:', resetToken); // Ajout d'un log pour vérifier le token généré
 
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpire = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
-    console.log('Saving user with reset token and expiration time'); // Ajout d'un log avant de sauvegarder l'utilisateur
     await user.save();
 
     const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
-    console.log('Generated reset link:', resetLink); // Ajout d'un log pour vérifier le lien de réinitialisation
 
     // Lire et remplir le template HTML
     const templatePath = path.join(__dirname, '../templates/reset_password.html');
     let template = fs.readFileSync(templatePath, 'utf-8');
     template = template.replace('{resetLink}', resetLink);
 
-    console.log('Template content:', template); // Ajout d'un log pour vérifier le contenu du template après remplacement
 
     const mailOptions = {
       from: process.env.SMTP_MAIL,
@@ -145,9 +134,7 @@ exports.sendResetEmail = expressAsyncHandler(async (req, res) => {
       html: template
     };
 
-    console.log('Sending email to:', email); // Ajout d'un log avant l'envoi de l'email
     await transporter.sendMail(mailOptions);
-    console.log("Password reset email sent to:", email); // Ajout d'un log pour vérifier que l'email est envoyé
 
     res.json({ message: 'Un e-mail de réinitialisation a été envoyé.' });
   } catch (error) {
@@ -178,14 +165,11 @@ exports.getUser = expressAsyncHandler(async (req, res) => {
 
 exports.getUserInvoices = expressAsyncHandler(async (req, res) => {
   if (!req.userData) {
-    console.log('Utilisateur non authentifié');
     return res.status(401).json({ message: 'Utilisateur non authentifié' });
   }
 
   try {
-    console.log('Recherche des factures pour:', req.userData.email);
     const invoices = await Invoice.find({ 'emetteur.email': req.userData.email });
-    console.log('Factures trouvées:', invoices);
     res.json(invoices);
   } catch (error) {
     console.error('Erreur lors de la récupération des factures:', error);
@@ -210,8 +194,6 @@ exports.updateUser = expressAsyncHandler(async (req, res) => {
       }
     });
 
-    console.log("Updating user with ID:", id);
-    console.log("Updates to apply:", updates);
 
     await user.save();
     res.json({
@@ -242,34 +224,24 @@ exports.resetPassword = expressAsyncHandler(async (req, res) => {
   const { token, newPassword } = req.body;
 
   try {
-    console.log('Received token:', token);
-    console.log('Received new password:', newPassword);
 
     // Décodage du token pour obtenir l'ID de l'utilisateur
     const decoded = jwt.verify(token, process.env.JWT_RESET_SECRET);
-    console.log('Decoded token:', decoded);
 
     // Recherche de l'utilisateur par ID
     const user = await User.findById(decoded._id);
-    console.log('Found user:', user);
 
     if (!user) {
-      console.log('User not found');
       return res.status(400).json({ message: 'Utilisateur non trouvé' });
     }
 
     // Ajout des logs pour le token et la date d'expiration
-    console.log('User resetPasswordToken:', user.resetPasswordToken);
-    console.log('User resetPasswordExpire:', user.resetPasswordExpire);
-    console.log('Current time:', Date.now());
 
     if (user.resetPasswordToken !== token) {
-      console.log('Tokens do not match');
       return res.status(400).json({ message: 'Le lien de réinitialisation est invalide' });
     }
 
     if (user.resetPasswordExpire < Date.now()) {
-      console.log('Token has expired');
       return res.status(400).json({ message: 'Le lien de réinitialisation a expiré' });
     }
 
@@ -296,13 +268,11 @@ exports.deleteUser = expressAsyncHandler(async (req, res) => {
     const user = await User.findById(id);
 
     if (!user) {
-      console.log(`User with ID ${id} not found`);
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      console.log('Password does not match');
       return res.status(401).json({ message: 'Mot de passe incorrect' });
     }
 
@@ -341,26 +311,21 @@ exports.changePassword = expressAsyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const userId = req.userData.id; // Assurez-vous que le middleware d'authentification ajoute userData à la requête
 
-  console.log(`Received request to change password for user ID: ${userId}`);
 
   try {
     const user = await User.findById(userId);
     if (!user) {
-      console.log('User not found');
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
     const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) {
-      console.log('Current password does not match');
       return res.status(401).json({ message: 'Mot de passe actuel incorrect' });
     }
 
-    console.log('Current password matched. Proceeding to change password.');
     user.password = newPassword;
     await user.save();
 
-    console.log('Password changed successfully');
     res.json({ message: 'Mot de passe changé avec succès' });
   } catch (error) {
     console.error('Error in changePassword:', error);
@@ -372,21 +337,17 @@ exports.downloadUserData = expressAsyncHandler(async (req, res) => {
   const userId = req.userData.id;
 
   try {
-    console.log(`Starting downloadUserData for user ID: ${userId}`);
 
     // Récupérer les informations utilisateur
     const user = await User.findById(userId).select('-password -token -__v');
     if (!user) {
-      console.log('User not found');
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
-    console.log('User found:', user);
 
     // Récupérer les factures associées
     const invoices = await Invoice.find({ 'emetteur.email': user.email });
 
-    console.log('Invoices found:', invoices);
 
     // Créer un objet avec les données utilisateur et les factures
     const userData = {
@@ -404,14 +365,12 @@ exports.downloadUserData = expressAsyncHandler(async (req, res) => {
     const tmpDir = path.join(__dirname, '..', 'tmp');
     if (!fs.existsSync(tmpDir)) {
       fs.mkdirSync(tmpDir);
-      console.log('Temporary directory created');
     }
 
     // Créer un fichier temporaire pour stocker les données
     const filePath = path.join(tmpDir, fileName);
     fs.writeFileSync(filePath, jsonString);
 
-    console.log(`File created at ${filePath}`);
 
     // Envoyer le fichier en tant que téléchargement
     res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
@@ -423,7 +382,6 @@ exports.downloadUserData = expressAsyncHandler(async (req, res) => {
       } else {
         // Supprimer le fichier temporaire après l'envoi
         fs.unlinkSync(filePath);
-        console.log(`File ${filePath} deleted after sending`);
       }
     });
   } catch (error) {

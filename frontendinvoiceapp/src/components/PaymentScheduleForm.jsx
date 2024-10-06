@@ -17,7 +17,6 @@ const PaymentScheduleForm = ({ showSchedError, setShowErrorSched }) => {
     const newValue = parseInt(e.target.value, 10); // Convertir en nombre
     setReminderFrequency(newValue);
     setShowErrorSched(false); // Assurez-vous que cette fonction est définie dans le parent
-    console.log(reminderFrequency)
   };
 
   useEffect(() => {
@@ -28,7 +27,6 @@ const PaymentScheduleForm = ({ showSchedError, setShowErrorSched }) => {
 
   return (
     <>
-    
       {isMobile ? (
         <Box borderBottom="1px solid #f2f2f2" pt='1rem' pb='1rem' mb='1rem'>
           <Flex direction='column' justifyContent='space-between'>

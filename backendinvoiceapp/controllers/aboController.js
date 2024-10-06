@@ -20,10 +20,8 @@ exports.getProductsAndPrices = async (req, res) => {
 exports.createCheckoutSession = async (req, res) => {
   const { email, name, priceId, address, country, postalCode } = req.body;
 
-  console.log('Received request to create checkout session for email:', email, 'name:', name, 'priceId:', priceId, 'address:', address, 'country:', country, 'postalCode:', postalCode);
 
   if (!email || !name || !priceId ) {
-    console.log('Email, Name, Address, Country, or Postal Code is missing in the request.');
     return res.status(400).send({ error: { message: 'Email, Name, Address, Country, Postal Code, and Price ID are required.' } });
   }
 
@@ -45,15 +43,12 @@ exports.createCheckoutSession = async (req, res) => {
 
     if (existingCustomers.data.length > 0) {
       customer = existingCustomers.data[0];
-      console.log('Using existing customer:', customer.id);
 
       // **Update existing customer information** if name or address changes
       customer = await stripe.customers.update(customer.id, customerData);
-      console.log('Customer updated with new name and address:', customer.id);
     } else {
       // Create a new customer if none exists
       customer = await stripe.customers.create(customerData);
-      console.log('New customer created with address:', customer.id);
     }
 
     // Check for active subscription
@@ -64,12 +59,10 @@ exports.createCheckoutSession = async (req, res) => {
     });
 
     if (subscriptions.data.length > 0) {
-      console.log('Customer already has an active subscription:', subscriptions.data[0].id);
       return res.status(400).send({ error: { message: 'You already have an active subscription.' } });
     }
 
     // Create a new subscription
-    console.log('Creating subscription with price ID:', priceId);
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: priceId }],
@@ -77,19 +70,15 @@ exports.createCheckoutSession = async (req, res) => {
       expand: ['latest_invoice.payment_intent'],
     });
 
-    console.log('Subscription created with ID:', subscription.id);
 
     const paymentIntent = subscription.latest_invoice.payment_intent;
-    console.log('PaymentIntent retrieved with ID:', paymentIntent.id);
 
     if (paymentIntent) {
-      console.log('Sending clientSecret:', paymentIntent.client_secret);
       res.send({
         sessionId: null,  // Not used in this flow
         clientSecret: paymentIntent.client_secret,
       });
     } else {
-      console.log('No PaymentIntent found');
       throw new Error('Failed to retrieve payment intent');
     }
   } catch (error) {
@@ -113,7 +102,6 @@ exports.checkActiveSubscription = async (req, res) => {
 
     if (existingCustomers.data.length > 0) {
       customer = existingCustomers.data[0];
-      console.log('Using existing customer:', customer.id);
 
       const subscriptions = await stripe.subscriptions.list({
         customer: customer.id,
@@ -121,19 +109,15 @@ exports.checkActiveSubscription = async (req, res) => {
         limit: 1
       });
       
-      console.log('Subscriptions found:', subscriptions.data);
 
       if (subscriptions.data.length > 0) {
         const activeSubscription = subscriptions.data[0];
-        console.log('Customer already has an active subscription:', activeSubscription.id);
         return res.send({ hasActiveSubscription: true, subscription: activeSubscription });
       } else {
-        console.log('No active subscriptions found.');
         return res.send({ hasActiveSubscription: false });
       }
       
     } else {
-      console.log('No customer found with this email.');
     }
 
     res.send({ hasActiveSubscription: false });
@@ -152,15 +136,12 @@ exports.cancelSubscription = async (req, res) => {
   }
 
   try {
-    console.log('Fetching customer by email:', email);
     const existingCustomers = await stripe.customers.list({ email });
     let customer;
 
     if (existingCustomers.data.length > 0) {
       customer = existingCustomers.data[0];
-      console.log('Using existing customer:', customer.id);
 
-      console.log('Fetching active subscriptions for customer:', customer.id);
       const subscriptions = await stripe.subscriptions.list({
         customer: customer.id,
         status: 'active',
@@ -169,7 +150,6 @@ exports.cancelSubscription = async (req, res) => {
 
       if (subscriptions.data.length > 0) {
         const activeSubscription = subscriptions.data[0];
-        console.log('Canceling subscription:', activeSubscription.id);
 
         // Calculer la date de fin du mois prochain
         const now = new Date();
@@ -180,14 +160,11 @@ exports.cancelSubscription = async (req, res) => {
         const canceledSubscription = await stripe.subscriptions.update(activeSubscription.id, {
           cancel_at: cancelAt,
         });
-        console.log('Subscription set to cancel at:', new Date(cancelAt * 1000).toISOString());
         return res.send({ success: true, subscription: canceledSubscription });
       } else {
-        console.log('No active subscription found.');
         return res.status(400).send({ error: { message: 'No active subscription found.' } });
       }
     } else {
-      console.log('Customer not found.');
       return res.status(400).send({ error: { message: 'Customer not found.' } });
     }
   } catch (error) {

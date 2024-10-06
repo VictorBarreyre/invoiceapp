@@ -62,7 +62,6 @@ const Stepper = () => {
 
     await handleInvoiceActionSendMail(invoiceData, () => {
       setIsSubmitting(false);
-      console.log('Invoice sent successfully.');
       navigate('/success', { state: { fromInvoice: true } });
     }, (error) => {
       setIsSubmitting(false);

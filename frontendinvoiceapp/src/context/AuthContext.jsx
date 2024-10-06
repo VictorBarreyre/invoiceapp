@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
         iban: storedUser.iban || '',
         ...storedUser // Cela garantit que les valeurs non spécifiées seront prises depuis le localStorage
       };
-      console.log('User Loaded from Local Storage:', completeUser);
       setUser(completeUser);
     }
   }, []);
@@ -37,7 +36,6 @@ export const AuthProvider = ({ children }) => {
       ...userData
     };
     setUser(completeUser);
-    console.log('User Logged in:', completeUser);
     localStorage.setItem('user', JSON.stringify(completeUser));
   };
 
