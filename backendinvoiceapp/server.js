@@ -14,7 +14,18 @@ dotenv.config();
 
 const app = express();
 
-
+// Middleware de sécurité Helmet avec configuration Content Security Policy (CSP)
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://trusted-cdn.com"], // Autoriser les scripts de ce domaine
+      objectSrc: ["'none'"], // Bloquer les objets comme <object> et <embed>
+      imgSrc: ["'self'", "data:", "https:"], // Autoriser les images de soi-même, des data URIs, et HTTPS
+      upgradeInsecureRequests: [], // Forcer les requêtes HTTP à passer en HTTPS
+    }
+  }
+}));
 
 // Redirection HTTP vers HTTPS
 app.use((req, res, next) => {
