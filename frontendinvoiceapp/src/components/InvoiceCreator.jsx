@@ -202,7 +202,10 @@ const InvoiceCreator = ({ totalError }) => {
               _focus={{ borderColor: "#745FF2", boxShadow: "none" }}
               _active={{ bg: "white", color: "black" }}
               className={getClassForField(invoiceData.issuer.company)}
-              placeholder="Nom de votre société (Si professionnel)" name="number" value={invoiceData.issuer.company} onChange={handleChange} />
+              placeholder="Nom de votre société (Si professionnel)" 
+              name="company"
+              value={invoiceData.issuer.company} 
+              onChange={handleChange} />
           </Flex>
 
           <Flex direction='row' w={{ base: 'unset', lg: '25vw' }} justifyContent='space-between' pb="2rem">
