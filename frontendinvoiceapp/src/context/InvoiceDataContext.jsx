@@ -16,9 +16,9 @@ export const InvoiceDataProvider = ({ children }) => {
         number: '02',
         date: new Date().toISOString().split('T')[0],
         issuer: {
-            company:'My company',
-            name: 'Victor Barreyre',
-            adresse: '43 Grande rue, Étiolles',
+            company:'',
+            name: '',
+            adresse: '',
             country: 'France',
             postalCode: '91450',
             siret: '',
