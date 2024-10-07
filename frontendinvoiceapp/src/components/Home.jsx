@@ -8,12 +8,16 @@ const Home = () => {
 
     return (
         <>
-            {/* Section principale */}
+        <Flex  
+                direction="column"
+                justifyContent="center"
+                alignItems="center" > 
             <Flex
                 direction="column"
                 justifyContent="center"
                 alignItems="center"
-                height="100vh"  // Pour centrer verticalement
+                height="85vh"  // Pour centrer verticalement
+                width='40rem'
                 bg="gray.50"
                 px={4}
             >
@@ -27,7 +31,7 @@ const Home = () => {
                 <HStack spacing={4}>
                     <Button
                         w={{ base: 'unset', lg: 'fit-content' }}
-                        colorScheme="blue"
+                        colorScheme="black"
                         borderRadius="30px"
                         px={6}
                         py={4}
@@ -81,7 +85,7 @@ const Home = () => {
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} maxW="800px" mx="auto">
                     <Box>
                         <Text fontSize="16px" mb={2}>
-                            "Cette application a simplifié ma gestion de factures. Je gagne un temps précieux !"
+                            "Cette application a simplifié ma gestion de factures. <br /> Je gagne un temps précieux !"
                         </Text>
                         <Text fontWeight="bold">- Marie D., Freelance</Text>
                     </Box>
@@ -109,11 +113,7 @@ const Home = () => {
                     Commencer dès maintenant
                 </Button>
             </Box>
-
-            {/* Section pied de page */}
-            <Box py={6} bg="gray.800" color="white" textAlign="center">
-                <Text>&copy; {new Date().getFullYear()} Votre Société. Tous droits réservés.</Text>
-            </Box>
+            </Flex>
         </>
     );
 
