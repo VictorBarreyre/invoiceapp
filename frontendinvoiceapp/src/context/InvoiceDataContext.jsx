@@ -13,7 +13,7 @@ export const InvoiceDataProvider = ({ children }) => {
     const { user } = useAuth();
 
     const [invoiceData, setInvoiceData] = useState({
-        number: '02',
+        number: '',
         date: new Date().toISOString().split('T')[0],
         issuer: {
             company:'',
