@@ -21,10 +21,11 @@ const Home = () => {
                 justifyContent="center"
                 alignItems="center" >
                 <Flex
+                    pt='4rem'
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
-                    height="85vh"  // Pour centrer verticalement
+                    height="55vh"  // Pour centrer verticalement
                     width='40rem'
                     bg="gray.50"
                     px={4}
@@ -64,7 +65,7 @@ const Home = () => {
 
                 </Flex>
 
-                <Image src={Fact} alt="photo facture" />
+                <Image src={Fact} width='70rem' alt="photo facture" />
 
                 {/* Section des fonctionnalités clés */}
                 <Box w="100vw" py={10} bg="white" px={4}>
