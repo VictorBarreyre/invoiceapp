@@ -18,6 +18,8 @@ const Home = () => {
                     Powerful for developers. Fast for everyone.
                 </Heading>
                 <Text textAlign="center">Lorem ipsum</Text>
+
+                <Flex> 
                 <Button
                     w={{ base: 'unset', lg: 'fit-content' }}
                     color="white"
@@ -32,12 +34,14 @@ const Home = () => {
                     w={{ base: 'unset', lg: 'fit-content' }}
                     color="white"
                     borderRadius="30px"
-                    backgroundColor="black"
+                    backgroundColor="white"
+                    borderColor='black'
                     p="10px 20px"
                     mt="10px" // Espacement entre les deux boutons
                 >
                     À propos
                 </Button>
+                </Flex>
             </Flex>
 
         </>
