@@ -31,8 +31,9 @@ const Home = () => {
                 <HStack spacing={4}>
                     <Button
                         w={{ base: 'unset', lg: 'fit-content' }}
-                        colorScheme="black"
+                        backgroundColor="black"
                         borderRadius="30px"
+                        color='white'
                         px={6}
                         py={4}
                         fontSize="16px"
