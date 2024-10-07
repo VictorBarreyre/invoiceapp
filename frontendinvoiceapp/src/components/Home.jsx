@@ -16,8 +16,9 @@ const Home = () => {
 
     return (
         <>
-          <div className='tab-container'>
-
+         <div className='flex-stepper'>
+      <div className="stepper-container">
+        <div className="tabs-container">
             <Flex
                 direction="column"
                 justifyContent="center"
@@ -161,6 +162,8 @@ const Home = () => {
                 </Box>
             </Flex>
             </div>
+      </div>
+    </div>
 
         </>
     );
