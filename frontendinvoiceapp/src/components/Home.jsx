@@ -4,6 +4,12 @@ import {
     Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, StackDivider
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
+import {
+    AiOutlineFileText,
+    AiOutlineMail,
+    AiOutlineUser,
+    AiOutlineDashboard,
+} from 'react-icons/ai';
 
 const Home = () => {
 
@@ -62,48 +68,48 @@ const Home = () => {
                         Pourquoi choisir notre solution ?
                     </Heading>
                     <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5} maxW="1200px" mx="auto">
-                        <Box
+                    <Box
+                            className='neue-up'
                             borderWidth="1px"
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center"
-                            boxShadow="md"
+                            textAlign="center" 
                         >
-                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
+                            <Icon as={AiOutlineFileText} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="18px">Envoi de factures en ligne rapide et facile</Text>
                         </Box>
                         <Box
+                            className='neue-up'
                             borderWidth="1px"
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center"
-                            boxShadow="md"
+                            textAlign="center" 
                         >
-                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
+                            <Icon as={AiOutlineMail} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="18px">Automatisation des relances de paiement par email</Text>
                         </Box>
                         <Box
+                            className='neue-up'
                             borderWidth="1px"
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center"
-                            boxShadow="md"
+                            textAlign="center" 
                         >
-                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
+                            <Icon as={AiOutlineUser} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="18px">Création de profils clients détaillés</Text>
                         </Box>
                         <Box
+                            className='neue-up'
                             borderWidth="1px"
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center"
-                            boxShadow="md"
+                            textAlign="center" 
                         >
-                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
+                            <Icon as={AiOutlineDashboard} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="18px">Gestion efficace du statut des factures</Text>
                         </Box>
                     </SimpleGrid>
