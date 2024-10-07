@@ -130,7 +130,8 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
     const templatePath = path.join(__dirname, '../templates/emailTemplates.html');
     let template = fs.readFileSync(templatePath, 'utf-8');
 
-    const confirmationLink = `http://localhost:5173/confirmation?facture=${factureId}&montant=${montant}`;
+    const confirmationLink = `${process.env.FRONTEND_URL || process.env.STAGING_FRONTEND_URL}/confirmation?facture=${factureId}&montant=${montant}`;
+
 
     const replacements = {
       '{clientName}': destinataire.name,
