@@ -109,11 +109,12 @@ const Home = () => {
                         Prêt à simplifier votre facturation ?
                     </Heading>
                     <Button
-                        colorScheme="#745FF2"
+                        backgroundColor="#745FF2"
                         size="lg"
                         borderRadius="30px"
                         px={8}
                         py={6}
+                        color='white'
                     >
                         Commencer dès maintenant
                     </Button>
