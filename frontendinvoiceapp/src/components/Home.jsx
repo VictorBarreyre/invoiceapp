@@ -62,11 +62,9 @@ const Home = () => {
                         </Button>
                     </HStack>
 
-
-    
-
-
                 </Flex>
+
+                <Image src={Fact} alt="photo facture" />
 
                 {/* Section des fonctionnalités clés */}
                 <Box w="100vw" py={10} bg="white" px={4}>
