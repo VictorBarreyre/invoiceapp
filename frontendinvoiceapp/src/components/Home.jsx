@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
-    Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, StackDivider
+    Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, StackDivider,Image
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
 import {
@@ -10,6 +10,7 @@ import {
     AiOutlineUser,
     AiOutlineDashboard,
 } from 'react-icons/ai';
+import Fact from '../assets/fact.png';
 
 const Home = () => {
 
@@ -60,6 +61,11 @@ const Home = () => {
                             À propos
                         </Button>
                     </HStack>
+
+
+    
+
+
                 </Flex>
 
                 {/* Section des fonctionnalités clés */}
@@ -68,7 +74,7 @@ const Home = () => {
                         Pourquoi choisir notre solution ?
                     </Heading>
                     <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5} maxW="1200px" mx="auto">
-                    <Box
+                    <Box   
                             className='neue-up'
                             borderWidth="1px"
                             borderRadius="lg"
