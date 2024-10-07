@@ -46,7 +46,6 @@ const Home = () => {
                         <Button
                             w={{ base: 'unset', lg: 'fit-content' }}
                             colorScheme="gray"
-                            borderColor='black'
                             borderRadius="30px"
                             px={6}
                             py={4}
@@ -58,27 +57,55 @@ const Home = () => {
                 </Flex>
 
                 {/* Section des fonctionnalités clés */}
-                <Box w='100vw' py={10} bg="white" px={4}>
+                <Box w="100vw" py={10} bg="white" px={4}>
                     <Heading textAlign="center" mb={6} fontSize={{ base: '24px', lg: '30px' }}>
                         Pourquoi choisir notre solution ?
                     </Heading>
-                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} maxW="800px" mx="auto">
-                        <HStack align="start">
-                            <Icon as={CheckIcon} color="#745FF2" w={6} h={6} mt={1} />
+                    <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5} maxW="1200px" mx="auto">
+                        <Box
+                            borderWidth="1px"
+                            borderRadius="lg"
+                            overflow="hidden"
+                            p={5}
+                            textAlign="center"
+                            boxShadow="md"
+                        >
+                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
                             <Text fontSize="18px">Envoi de factures en ligne rapide et facile</Text>
-                        </HStack>
-                        <HStack align="start">
-                            <Icon as={CheckIcon} color="#745FF2" w={6} h={6} mt={1} />
+                        </Box>
+                        <Box
+                            borderWidth="1px"
+                            borderRadius="lg"
+                            overflow="hidden"
+                            p={5}
+                            textAlign="center"
+                            boxShadow="md"
+                        >
+                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
                             <Text fontSize="18px">Automatisation des relances de paiement par email</Text>
-                        </HStack>
-                        <HStack align="start">
-                            <Icon as={CheckIcon} color="#745FF2" w={6} h={6} mt={1} />
+                        </Box>
+                        <Box
+                            borderWidth="1px"
+                            borderRadius="lg"
+                            overflow="hidden"
+                            p={5}
+                            textAlign="center"
+                            boxShadow="md"
+                        >
+                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
                             <Text fontSize="18px">Création de profils clients détaillés</Text>
-                        </HStack>
-                        <HStack align="start">
-                            <Icon as={CheckIcon} color="#745FF2" w={6} h={6} mt={1} />
+                        </Box>
+                        <Box
+                            borderWidth="1px"
+                            borderRadius="lg"
+                            overflow="hidden"
+                            p={5}
+                            textAlign="center"
+                            boxShadow="md"
+                        >
+                            <Icon as={CheckIcon} color="#745FF2" w={8} h={8} mb={4} />
                             <Text fontSize="18px">Gestion efficace du statut des factures</Text>
-                        </HStack>
+                        </Box>
                     </SimpleGrid>
                 </Box>
 
