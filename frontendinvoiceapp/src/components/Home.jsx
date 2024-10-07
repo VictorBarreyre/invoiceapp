@@ -66,7 +66,7 @@ const Home = () => {
 
                 </Flex>
 
-                <Image src={Fact} width='70rem' alt="photo facture" />
+                <Image className='neue-up' src={Fact} width='75rem' alt="photo facture" />
 
                 {/* Section des fonctionnalités clés */}
                 <Box w="100vw" py={10} bg="white" px={4}>
