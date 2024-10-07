@@ -62,7 +62,7 @@ app.use('/webhook', webhookRoutes);
 
 // Route par défaut
 app.get('/', (req, res) => {
-  res.send('Why are you here?');
+  res.send('Why are you here? staging');
 });
 
 // Connexion à MongoDB
