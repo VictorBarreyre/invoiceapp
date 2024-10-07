@@ -27,7 +27,11 @@ app.use((req, res, next) => {
 // Limiter à 50mb pour l'analyse des données JSON
 app.use(express.json({ limit: '50mb' }));
 
-const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'https://www.dbill.io/',  // URL Frontend de production ou de développement
+  process.env.STAGING_FRONTEND_URL || 'https://staging.dbill.io'  // URL Frontend de staging
+];
+
 
 app.use(cors({
   origin: function (origin, callback) {
