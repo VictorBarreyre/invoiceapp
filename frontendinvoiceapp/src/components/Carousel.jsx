@@ -51,7 +51,7 @@ const Carousel = () => {
                         w={currentIndex === index ? '20px' : '10px'}
                         h="10px"
                         borderRadius="full"
-                        bg={currentIndex === index ? '#745ff2' : '#FFFFFF'}
+                        bg={currentIndex === index ? '#745ff2' : '#edf2f7'}
                         transition="width 0.3s ease"
                         cursor="pointer"
                         onClick={() => goToImage(index)}

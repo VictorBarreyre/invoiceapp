@@ -123,8 +123,8 @@ const Home = () => {
                 </Box>
 
                 {/* Section témoignages clients */}
-                <Box  mb='7rem' border='1px solid #e2e8f0' bg="white" width='100%' >
-                    <Heading textAlign="center" mb={6} fontSize={{ base: '24px', lg: '30px' }}>
+                <Box  mb='7rem' pb='4rem' pt='3rem'  border='1px solid #e2e8f0' bg="white" width='100%' >
+                    <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Ce que disent nos clients
                     </Heading>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} maxW="800px" mx="auto">
