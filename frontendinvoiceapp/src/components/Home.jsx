@@ -69,11 +69,11 @@ const Home = () => {
                 <Carousel />
 
                 {/* Section des fonctionnalités clés */}
-                <Box w="100vw" py={10} pt='3rem' px={4}>
-                    <Heading textAlign="center" mb={6} fontSize={{ base: '24px', lg: '30px' }}>
+                <Box w="90vw" mb='7rem' pt='3rem' >
+                    <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Pourquoi choisir notre solution ?
                     </Heading>
-                    <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5} maxW="1200px" mx="auto">
+                    <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5}  mx="auto">
                     <Box   
                             className='neue-up'
                             borderWidth="1px"

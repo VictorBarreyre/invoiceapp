@@ -42,7 +42,7 @@ const Carousel = () => {
     };
 
     return (
-        <Flex direction="column" alignItems="center" w={{ base: '100%', md: '75rem' }} position="relative">
+        <Flex direction="column" alignItems="center" w='100%' position="relative">
             {/* Les puces indicatrices */}
             <HStack spacing={2} mb={4}>
                 {images.map((_, index) => (
