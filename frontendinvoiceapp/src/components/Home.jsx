@@ -34,7 +34,7 @@ const Home = () => {
                     <Heading fontSize={{ base: '28px', lg: '36px' }} textAlign="center" mb={4}>
                         Simplifiez votre facturation avec notre solution en ligne
                     </Heading>
-                    <Text textAlign="center" fontSize={{ base: '16px', lg: '18px' }} mb={6}>
+                    <Text textAlign="center" fontSize={{ base: '16px', lg: '16px' }} mb={6}>
                         Créez et envoyez des factures professionnelles en quelques clics, gérez vos clients et automatisez vos relances de paiement.
                     </Text>
 
@@ -83,7 +83,7 @@ const Home = () => {
                             textAlign="center" 
                         >
                             <Icon as={AiOutlineFileText} color="#745FF2" w={10} h={10} mb={4} />
-                            <Text fontSize="18px">Envoi de factures en ligne rapide et facile</Text>
+                            <Text fontSize="16px">Envoi de factures en ligne rapide et facile</Text>
                         </Box>
                         <Box
                             className='neue-up'
@@ -94,7 +94,7 @@ const Home = () => {
                             textAlign="center" 
                         >
                             <Icon as={AiOutlineMail} color="#745FF2" w={10} h={10} mb={4} />
-                            <Text fontSize="18px">Automatisation des relances de paiement par email</Text>
+                            <Text fontSize="16px">Automatisation des relances de paiement par email</Text>
                         </Box>
                         <Box
                             className='neue-up'
@@ -105,7 +105,7 @@ const Home = () => {
                             textAlign="center" 
                         >
                             <Icon as={AiOutlineUser} color="#745FF2" w={10} h={10} mb={4} />
-                            <Text fontSize="18px">Création de profils clients détaillés</Text>
+                            <Text fontSize="16px">Création de profils clients détaillés</Text>
                         </Box>
                         <Box
                             className='neue-up'
@@ -116,7 +116,7 @@ const Home = () => {
                             textAlign="center" 
                         >
                             <Icon as={AiOutlineDashboard} color="#745FF2" w={10} h={10} mb={4} />
-                            <Text fontSize="18px">Gestion efficace du statut des factures</Text>
+                            <Text fontSize="16px">Gestion efficace du statut des factures</Text>
                         </Box>
                     </SimpleGrid>
                 </Box>
