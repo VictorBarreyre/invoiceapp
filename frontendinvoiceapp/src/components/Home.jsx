@@ -20,9 +20,10 @@ const Home = () => {
             <Flex
                 direction="column"
                 justifyContent="center"
-                alignItems="center" >
+                alignItems="center" 
+                mt='4.5rem'>
                 <Flex
-                    pt='4rem'
+                    pt='1rem'
                     direction="column"
                     justifyContent="center"
                     alignItems="center"
@@ -122,7 +123,7 @@ const Home = () => {
                 </Box>
 
                 {/* Section témoignages clients */}
-                <Box py={10} bg="gray.50" px={4}>
+                <Box  mb='7rem' border='1px solid #e2e8f0' bg="white" width='100%' >
                     <Heading textAlign="center" mb={6} fontSize={{ base: '24px', lg: '30px' }}>
                         Ce que disent nos clients
                     </Heading>
