@@ -15,6 +15,13 @@ import SignUpForm from './SignUpForm';
 
 const Home = () => {
 
+    const scrollToSection = (id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <>
             <Flex
@@ -54,8 +61,7 @@ const Home = () => {
                             Créer ma facture
                         </Button>
                         <Button
-                            as="a"
-                            href="#why-choose-us"
+                            onClick={() => scrollToSection('why-choose-us')}
                             w={{ base: 'unset', lg: 'fit-content' }}
                             colorScheme="gray"
                             borderRadius="30px"
