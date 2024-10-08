@@ -67,8 +67,8 @@ const Carousel = () => {
                     bottom="0"
                     left="0"
                     right="0"
-                    h="28%"
-                    background="linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #F7F9FC 50%)"
+                    h="100%"
+                    background="linear-gradient(180deg, rgba(255, 255, 255, 0.00) 50%, #F7F9FC 100%)"
                 />
             </Box>
         </Flex>
