@@ -11,6 +11,7 @@ import {
     AiOutlineDashboard,
 } from 'react-icons/ai';
 import Carousel from './Carousel';
+import SignUpForm from './SignUpForm';
 
 const Home = () => {
 
@@ -145,9 +146,22 @@ const Home = () => {
 
                 {/* Section appel à l'action */}
                 <Box className='neue-up' pb='4rem' pt='3rem' bg="white" textAlign="center"  w='90vw' borderRadius='10px'>
+
+                <Flex> 
                     <Heading mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Prêt à simplifier votre facturation ?
                     </Heading>
+
+                    <Text textAlign="left" fontSize={{ base: '16px', lg: '16px' }} mb={6}>
+                       Inscrivez-vous pour bénéficier d'un mois gratuit
+                    </Text>
+
+                    <SignUpForm/> 
+
+
+          
+
+                    </Flex>
                     <Button
                         backgroundColor="#745FF2"
                         size="lg"
