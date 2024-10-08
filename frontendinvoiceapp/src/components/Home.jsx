@@ -144,7 +144,7 @@ const Home = () => {
                 </Box>
 
                 {/* Section appel à l'action */}
-                <Box className='neue-up' pb='4rem' pt='3rem' bg="white" textAlign="center"  w='90vw'>
+                <Box className='neue-up' pb='4rem' pt='3rem' bg="white" textAlign="center"  w='90vw' borderRadius='10px'>
                     <Heading mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Prêt à simplifier votre facturation ?
                     </Heading>
