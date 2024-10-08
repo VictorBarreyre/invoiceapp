@@ -61,7 +61,7 @@ const Carousel = () => {
 
             {/* Image du carrousel avec dégradé */}
             <Box w="90vw" h="auto" position="relative">
-                <Image src={images[currentIndex]} alt={`Image ${currentIndex + 1}`} borderRadius="lg" />
+                <Image className='neue-up' src={images[currentIndex]} alt={`Image ${currentIndex + 1}`} borderRadius="lg" />
                 <Box
                     position="absolute"
                     bottom="0"
