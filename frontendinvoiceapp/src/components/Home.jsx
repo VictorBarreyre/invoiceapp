@@ -148,15 +148,15 @@ const Home = () => {
                 <Box  pb='4rem' pt='3rem' textAlign="center"  w='90vw' borderRadius='10px'>
 
                 <Flex> 
-                    <Flex direction='column'> 
+                    <Flex w='fit-content' alignItems='start' direction='column'> 
                     <Heading textAlign='left' mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Prêt à simplifier votre facturation ?
                     </Heading>
-                    </Flex>
-
+               
                     <Text textAlign="left" fontSize={{ base: '16px', lg: '16px' }} mb={6}>
                        Inscrivez-vous pour bénéficier d'un mois gratuit
                     </Text>
+                    </Flex>
 
                     <SignUpForm/> 
 
