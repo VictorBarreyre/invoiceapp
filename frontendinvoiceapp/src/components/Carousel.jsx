@@ -60,7 +60,7 @@ const Carousel = () => {
             </HStack>
 
             {/* Image du carrousel */}
-            <Box className='neue-up' w="90vw" h="auto">
+            <Box  w="90vw" h="auto">
                 <Image src={images[currentIndex]} alt={`Image ${currentIndex + 1}`} borderRadius="lg" />
             </Box>
         </Flex>
