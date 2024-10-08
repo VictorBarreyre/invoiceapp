@@ -60,14 +60,14 @@ const Carousel = () => {
             </HStack>
 
             {/* Image du carrousel avec dégradé */}
-            <Box w="100%" h="auto" position="relative">
+            <Box w="90vw" h="auto" position="relative">
                 <Image src={images[currentIndex]} alt={`Image ${currentIndex + 1}`} borderRadius="lg" />
                 <Box
                     position="absolute"
                     bottom="0"
                     left="0"
                     right="0"
-                    h="50%"
+                    h="28%"
                     background="linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #F7F9FC 50%)"
                 />
             </Box>
