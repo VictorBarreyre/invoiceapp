@@ -161,19 +161,8 @@ const Home = () => {
                                 Prêt à simplifier votre facturation ?
                             </Heading>
                             <Text fontSize={{ base: '16px', lg: '16px' }} mb={4}>
-                                Inscrivez-vous pour bénéficier d'un mois gratuit
+                            Inscrivez-vous pour bénéficier d'un mois gratuit et découvrez tous les avantages de notre solution sans engagement. Vous pouvez annuler votre abonnement à tout moment, sans frais supplémentaires. Rejoignez-nous dès maintenant et facilitez votre gestion de factures !
                             </Text>
-                            <Button
-                                backgroundColor="#745FF2"
-                                size="lg"
-                                borderRadius="30px"
-                                px={8}
-                                py={6}
-                                color='white'
-                                mt={{ base: '1rem', lg: '0' }}
-                            >
-                                Commencer dès maintenant
-                            </Button>
                         </Flex>
                         <Box w={{ base: '100%', lg: '50%' }}>
                             <SignUpForm />
