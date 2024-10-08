@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, Box, Image, IconButton, HStack, useBreakpointValue } from '@chakra-ui/react';
+import { Flex, Box, Image, IconButton, HStack } from '@chakra-ui/react';
 import { AiFillCaretRight, AiFillCaretLeft } from 'react-icons/ai';
 import Fact from '../assets/fact.png';
 import Rel from '../assets/rel.png';
@@ -13,16 +13,27 @@ const mobileImages = [MobFact, MobRel, MobSend];
 
 const Carousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-    // Utilisation des images en fonction de la taille de l'écran
-    const images = useBreakpointValue({ base: mobileImages, md: desktopImages }) || desktopImages;
+    // Fonction pour mettre à jour l'état en fonction de la taille de l'écran
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const images = isMobile ? mobileImages : desktopImages;
 
     // Fonction pour passer à l'image suivante automatiquement
     useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-        }, 3000); // Change l'image toutes les 3 secondes
-        return () => clearInterval(interval);
+        if (images.length > 0) {
+            const interval = setInterval(() => {
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+            }, 3000); // Change l'image toutes les 3 secondes
+            return () => clearInterval(interval);
+        }
     }, [images]);
 
     // Fonction pour aller à une image précise
