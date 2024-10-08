@@ -34,7 +34,7 @@ cron.schedule('* * * * *', async () => {
       let template = fs.readFileSync(templatePath, 'utf-8');
       template = template.replace('{clientName}', facture.destinataire.name)
                          .replace('{invoiceNumber}', facture.number)
-                         .replace('{confirmationLink}', `http://localhost:5173/confirmation?facture=${facture.factureId}&montant=${facture.montant}`)
+                         .replace('{confirmationLink}', `http://api.dbill.io/confirmation?facture=${facture.factureId}&montant=${facture.montant}`)
                          .replace('{issuerName}', facture.emetteur.name);
 
       const mailOptions = {
