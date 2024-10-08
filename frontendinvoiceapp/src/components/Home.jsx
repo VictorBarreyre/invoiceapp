@@ -10,9 +10,7 @@ import {
     AiOutlineUser,
     AiOutlineDashboard,
 } from 'react-icons/ai';
-import Fact from '../assets/fact.png';
-import Rel from '../assets/rel.png';
-import Send from '../assets/send.png'
+import Carousel from './Carousel';
 
 const Home = () => {
 
@@ -69,7 +67,7 @@ const Home = () => {
                 </Flex>
 
                 <Carousel />
-                
+
                 {/* Section des fonctionnalités clés */}
                 <Box w="100vw" py={10} bg="white" px={4}>
                     <Heading textAlign="center" mb={6} fontSize={{ base: '24px', lg: '30px' }}>
