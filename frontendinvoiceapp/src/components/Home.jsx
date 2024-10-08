@@ -80,7 +80,7 @@ const Home = () => {
                 <Carousel />
 
                 {/* Section des fonctionnalités clés */}
-                <Box id="why-choose-us" w="90vw" mb='7rem' mt='3rem' >
+                <Box id="why-choose-us" w="90vw" mb='7rem' pt='3rem' >
                     <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Pourquoi choisir notre solution ?
                     </Heading>
@@ -154,32 +154,31 @@ const Home = () => {
                 </Box>
 
                 {/* Section appel à l'action */}
-                <Box  pb='4rem' pt='3rem' textAlign="center"  w='90vw' borderRadius='10px'>
-
-                <Flex> 
-                    <Flex w='fit-content' alignItems='start' direction='column'> 
-                    <Heading textAlign='left' mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
-                        Prêt à simplifier votre facturation ?
-                    </Heading>
-               
-                    <Text textAlign="left" fontSize={{ base: '16px', lg: '16px' }} mb={6}>
-                       Inscrivez-vous pour bénéficier d'un mois gratuit
-                    </Text>
+                <Box pb='4rem' pt='3rem' textAlign="center" w='90vw' borderRadius='10px' bg="gray.50">
+                    <Flex direction={{ base: 'column', lg: 'row' }} alignItems="center" justifyContent="space-between" gap={6}>
+                        <Flex w={{ base: '100%', lg: '50%' }} alignItems='start' direction='column' textAlign={{ base: 'center', lg: 'left' }}>
+                            <Heading mb='1.5rem' fontSize={{ base: '24px', lg: '30px' }}>
+                                Prêt à simplifier votre facturation ?
+                            </Heading>
+                            <Text fontSize={{ base: '16px', lg: '16px' }} mb={4}>
+                                Inscrivez-vous pour bénéficier d'un mois gratuit
+                            </Text>
+                            <Button
+                                backgroundColor="#745FF2"
+                                size="lg"
+                                borderRadius="30px"
+                                px={8}
+                                py={6}
+                                color='white'
+                                mt={{ base: '1rem', lg: '0' }}
+                            >
+                                Commencer dès maintenant
+                            </Button>
+                        </Flex>
+                        <Box w={{ base: '100%', lg: '50%' }}>
+                            <SignUpForm />
+                        </Box>
                     </Flex>
-
-                    <SignUpForm/> 
-
-                </Flex>
-                    <Button
-                        backgroundColor="#745FF2"
-                        size="lg"
-                        borderRadius="30px"
-                        px={8}
-                        py={6}
-                        color='white'
-                    >
-                        Commencer dès maintenant
-                    </Button>
                 </Box>
             </Flex>
         </>
