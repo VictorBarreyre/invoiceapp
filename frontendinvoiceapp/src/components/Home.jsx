@@ -145,11 +145,11 @@ const Home = () => {
                 </Box>
 
                 {/* Section appel à l'action */}
-                <Box className='neue-up' pb='4rem' pt='3rem' textAlign="center"  w='90vw' borderRadius='10px'>
+                <Box  pb='4rem' pt='3rem' textAlign="center"  w='90vw' borderRadius='10px'>
 
                 <Flex> 
                     <Flex direction='column'> 
-                    <Heading mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
+                    <Heading textAlign='left' mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Prêt à simplifier votre facturation ?
                     </Heading>
                     </Flex>
