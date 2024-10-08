@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
-    Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, StackDivider,Image
+    Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, StackDivider, Image
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
 import {
@@ -17,7 +17,6 @@ const Home = () => {
 
     return (
         <>
-        
             <Flex
                 direction="column"
                 justifyContent="center"
@@ -55,6 +54,8 @@ const Home = () => {
                             Créer ma facture
                         </Button>
                         <Button
+                            as="a"
+                            href="#why-choose-us"
                             w={{ base: 'unset', lg: 'fit-content' }}
                             colorScheme="gray"
                             borderRadius="30px"
@@ -71,7 +72,7 @@ const Home = () => {
                 <Carousel />
 
                 {/* Section des fonctionnalités clés */}
-                <Box w="90vw" mb='7rem' pt='3rem' >
+                <Box id="why-choose-us" w="90vw" mb='7rem' pt='3rem' >
                     <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Pourquoi choisir notre solution ?
                     </Heading>
@@ -160,9 +161,7 @@ const Home = () => {
 
                     <SignUpForm/> 
 
-
-        
-                    </Flex>
+                </Flex>
                     <Button
                         backgroundColor="#745FF2"
                         size="lg"
