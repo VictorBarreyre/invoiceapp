@@ -15,7 +15,7 @@ const Carousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Utilisation des images en fonction de la taille de l'écran
-    const images = useBreakpointValue({ base: mobileImages, md: desktopImages });
+    const images = useBreakpointValue({ base: mobileImages, md: desktopImages }) || desktopImages;
 
     // Fonction pour passer à l'image suivante automatiquement
     useEffect(() => {

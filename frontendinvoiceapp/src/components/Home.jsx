@@ -27,7 +27,7 @@ const Home = () => {
                     justifyContent="center"
                     alignItems="center"
                     height="55vh"  // Pour centrer verticalement
-                    width='40rem'
+                    width={{ base: '23rem', lg: '40rem' }}
                     bg="gray.50"
                     px={4}
                 >
