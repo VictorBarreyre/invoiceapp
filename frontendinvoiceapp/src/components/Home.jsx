@@ -78,7 +78,7 @@ const Home = () => {
                 <Carousel />
 
                 {/* Section des fonctionnalités clés */}
-                <Box id="why-choose-us" w="90vw" mb='7rem' pt='3rem' >
+                <Box id="why-choose-us" w="90vw" mb='7rem' mt='3rem' >
                     <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Pourquoi choisir notre solution ?
                     </Heading>
