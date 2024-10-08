@@ -145,12 +145,14 @@ const Home = () => {
                 </Box>
 
                 {/* Section appel à l'action */}
-                <Box className='neue-up' pb='4rem' pt='3rem' bg="white" textAlign="center"  w='90vw' borderRadius='10px'>
+                <Box className='neue-up' pb='4rem' pt='3rem' textAlign="center"  w='90vw' borderRadius='10px'>
 
                 <Flex> 
+                    <Flex direction='column'> 
                     <Heading mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Prêt à simplifier votre facturation ?
                     </Heading>
+                    </Flex>
 
                     <Text textAlign="left" fontSize={{ base: '16px', lg: '16px' }} mb={6}>
                        Inscrivez-vous pour bénéficier d'un mois gratuit
@@ -159,8 +161,7 @@ const Home = () => {
                     <SignUpForm/> 
 
 
-          
-
+        
                     </Flex>
                     <Button
                         backgroundColor="#745FF2"
