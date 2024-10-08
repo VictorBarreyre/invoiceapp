@@ -51,7 +51,7 @@ const Carousel = () => {
                         w={currentIndex === index ? '20px' : '10px'}
                         h="10px"
                         borderRadius="full"
-                        bg={currentIndex === index ? 'gray.800' : 'gray.400'}
+                        bg={currentIndex === index ? '#745ff2' : '#edf2f7'}
                         transition="width 0.3s ease"
                         cursor="pointer"
                         onClick={() => goToImage(index)}
@@ -60,7 +60,7 @@ const Carousel = () => {
             </HStack>
 
             {/* Image du carrousel */}
-            <Box w="100%" h="auto">
+            <Box className='neue-up' w="90vw" h="auto">
                 <Image src={images[currentIndex]} alt={`Image ${currentIndex + 1}`} borderRadius="lg" />
             </Box>
         </Flex>
