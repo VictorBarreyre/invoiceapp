@@ -14,7 +14,34 @@ dotenv.config();
 
 const app = express();
 
+// Configuration de CORS
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
 
+// Middleware pour gérer les requêtes préflight (OPTIONS)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", allowedOrigins.includes(req.headers.origin) ? req.headers.origin : "");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Middleware CORS général pour toutes les requêtes
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  credentials: true
+}));
 
 // Logger les requêtes reçues pour déboguer
 app.use((req, res, next) => {
