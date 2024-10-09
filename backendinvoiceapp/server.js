@@ -14,22 +14,11 @@ dotenv.config();
 
 const app = express();
 
-// Configuration de CORS
-const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
+// Désactiver certaines fonctionnalités pour faciliter le débogage des requêtes CORS
+app.disable('x-powered-by');
 
-// Middleware CORS général pour toutes les requêtes
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true
-}));
+// Configuration de CORS
+app.use(cors());
 
 // Logger les requêtes reçues pour déboguer
 app.use((req, res, next) => {
@@ -38,10 +27,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware de sécurité Helmet (CSP désactivé temporairement pour tester)
-app.use(helmet({
-  contentSecurityPolicy: false
-}));
+// Middleware de sécurité Helmet (désactivé temporairement pour tester)
+// app.use(helmet({
+//   contentSecurityPolicy: false
+// }));
 
 // Redirection HTTP vers HTTPS (désactivée temporairement pour tester)
 // app.use((req, res, next) => {
