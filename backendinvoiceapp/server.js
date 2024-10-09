@@ -14,21 +14,7 @@ dotenv.config();
 
 const app = express();
 
-// Configuration de CORS
-const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true
-}));
 
 // Logger les requêtes reçues pour déboguer
 app.use((req, res, next) => {
