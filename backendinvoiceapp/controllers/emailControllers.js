@@ -34,11 +34,7 @@ cron.schedule('* * * * *', async () => {
       let template = fs.readFileSync(templatePath, 'utf-8');
       template = template.replace('{clientName}', facture.destinataire.name)
                          .replace('{invoiceNumber}', facture.number)
-<<<<<<< HEAD
-                         .replace('{confirmationLink}', `http://api.dbill.io/confirmation?facture=${facture.factureId}&montant=${facture.montant}`)
-=======
-                         .replace('{confirmationLink}', `https://staging.dbill.io/confirmation?facture=${facture.factureId}&montant=${facture.montant}`)
->>>>>>> staging
+                         .replace('{confirmationLink}', `https://dbill.io/confirmation?facture=${facture.factureId}&montant=${facture.montant}`)
                          .replace('{issuerName}', facture.emetteur.name);
 
       const mailOptions = {
@@ -111,7 +107,7 @@ const createFactureAndSendEmail = expressAsyncHandler(async (req, res) => {
     const filePath = await saveBufferToFile(req.file.buffer, req.file.originalname);
     const imagePath = await convertPdfToPng(filePath);
     const imageName = path.relative(imagesDir, imagePath);
-    const urlImage = `http://localhost:8000/images/${imageName}`;
+    const urlImage = `https://api.dbill.io/images/${imageName}`;
 
     const nouvelleFacture = new Facture({
       number,
