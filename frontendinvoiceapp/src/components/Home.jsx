@@ -38,7 +38,7 @@ const Home = () => {
                     alignItems="center"
                     height="55vh"  // Pour centrer verticalement
                     width={{ base: '23rem', lg: '40rem' }}
-                    bg="gray.50"
+                
                     px={4}
                 >
                     <Heading fontSize={{ base: '28px', lg: '36px' }} textAlign="center" mb={4}>

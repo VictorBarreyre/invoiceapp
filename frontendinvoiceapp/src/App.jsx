@@ -47,7 +47,7 @@ function App() {
       <ChakraProvider theme={theme}>
         <InvoiceDataProvider>
           <Router>
-            <Flex direction="column" minHeight="100vh" position="relative">
+            <Flex direction="column" minHeight="100vh">
               <Header />
               <Flex flex="1" overflow="hidden" pb='5rem'>
                 {user && !isMobile && <Sidebar />}
@@ -73,31 +73,6 @@ function App() {
                 </Box>
               </Flex>
               <Footer />
-              {/* Background with soft and harmonious gradients */}
-              <Box
-                position="absolute"
-                top="-200px"
-                left="-150px"
-                width="700px"
-                height="700px"
-                borderRadius="50%"
-                opacity="0.2"
-                background="radial-gradient(circle, #745FF2, #6B4EFF, transparent)"
-                filter="blur(200px)"
-                zIndex="-2"
-              />
-              <Box
-                position="absolute"
-                bottom="-100px"
-                right="-150px"
-                width="500px"
-                height="500px"
-                borderRadius="50%"
-                opacity="0.15"
-                background="radial-gradient(circle, #6B4EFF, #745FF2, transparent)"
-                filter="blur(180px)"
-                zIndex="-2"
-              />
             </Flex>
           </Router>
         </InvoiceDataProvider>
