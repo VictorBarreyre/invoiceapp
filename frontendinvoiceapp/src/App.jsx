@@ -27,6 +27,7 @@ import MentionsLegales from '../roots/MentionsLégales';
 import PolitiqueConfidentialite from '../roots/PolConf';
 import ResetPasswordForm from '../roots/ResetPasswordForm';
 import PrivateRoute from '../roots/PrivateRoute';
+import Home from './components/Home';
 
 const stripePromise = loadStripe('pk_test_51OwLFM00KPylCGutjKAkwhqleWEzuvici1dQUPCIvZHofEzLtGyM9Gdz5zEfvwSZKekKRgA1el5Ypnw7HLfYWOuB00ZdrKdygg');
 
@@ -52,7 +53,8 @@ function App() {
                 {user && !isMobile && <Sidebar />}
                 <Box flex="1" overflowY="auto" pb='5rem'>
                   <Routes>
-                    <Route path="/" element={<Stepper />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/creer-facture-en-ligne" element={<Stepper />} />
                     <Route path="/signin" element={!user ? <Signin /> : <Navigate to="/" />} />
                     <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
                     <Route path="/reset-password" element={<ResetPasswordForm />} />

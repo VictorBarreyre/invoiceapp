@@ -195,7 +195,7 @@ const InvoiceCreator = ({ totalError }) => {
     <>
       <VStack mt={{ base: '1rem', lg: '2rem' }} boxShadow=' 1px solid black' align="start">
         <Text mb='1rem' color="red"> {totalError()}</Text>
-        <Flex w='100%' justifyContent='space-between'>
+        <Flex w='100%' justifyContent='space-between' flexDirection={{ base: 'column', lg: 'unset' }}>
 
           <Flex w={{ base: 'unset', lg: '25vw' }} direction='column' pb="2rem">
             <Heading mb='1rem' size="sm">Votre Société :</Heading>

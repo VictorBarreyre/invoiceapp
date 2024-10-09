@@ -41,7 +41,7 @@ const Footer = () => {
                     <Link as={RouterLink} to="/conditions-generales" mx="4" mb={isMobile ? '1rem' : '0'} color='black' fontSize={linkSize}>
                         Conditions Générales d'Utilisation
                     </Link>
-                    <Link as={RouterLink} to="/contact" mx="4" color='black' fontSize={linkSize}>
+                    <Link as={RouterLink} to="mailto:contact@bdbill.io" mx="4" color='black' fontSize={linkSize}>
                         Contact
                     </Link>
                     <Text textAlign="center"  color='black' fontSize="sm">

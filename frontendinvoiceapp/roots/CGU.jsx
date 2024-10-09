@@ -10,9 +10,7 @@ const CGU = () => {
           <Heading fontSize={{ base: '24px', lg: '26px' }}>Conditions Générales d'Utilisation / Vente</Heading>
           <Text mt="1rem"><strong>1. Identité de l'éditeur du site</strong></Text>
           <Text>Nom de l'entreprise : DBILL.IO</Text>
-          <Text>Adresse : 123 Rue Exemple, 75001 Paris, France</Text>
-          <Text>Numéro de SIRET : 123 456 789 00000</Text>
-          <Text>Contact : contact@dbill.io, +33 1 23 45 67 89</Text>
+          <Text>Contact : contact@dbill.io,</Text>
 
           <Text mt="1rem"><strong>2. Objet des CGU/CGV</strong></Text>
           <Text>Les présentes Conditions Générales d'Utilisation et de Vente (CGU/CGV) définissent les règles et conditions d'utilisation du service de création de factures en ligne proposé par DBILL.IO.</Text>
