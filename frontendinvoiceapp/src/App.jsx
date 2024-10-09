@@ -73,17 +73,30 @@ function App() {
                 </Box>
               </Flex>
               <Footer />
+              {/* Background with soft and harmonious gradients */}
               <Box
                 position="absolute"
-                bottom="0"
-                left="0"
+                top="-200px"
+                left="-150px"
+                width="700px"
+                height="700px"
+                borderRadius="50%"
+                opacity="0.2"
+                background="radial-gradient(circle, #745FF2, #6B4EFF, transparent)"
+                filter="blur(200px)"
+                zIndex="-2"
+              />
+              <Box
+                position="absolute"
+                bottom="-100px"
+                right="-150px"
                 width="500px"
                 height="500px"
-                borderRadius="610px"
-                opacity="0.16"
-                background="radial-gradient(227.55% 102.35% at 8.8% 55.69%, #745FF2 0%, #6B4EFF 92.19%)"
-                filter="blur(150px)"
-                zIndex="-1"
+                borderRadius="50%"
+                opacity="0.15"
+                background="radial-gradient(circle, #6B4EFF, #745FF2, transparent)"
+                filter="blur(180px)"
+                zIndex="-2"
               />
             </Flex>
           </Router>

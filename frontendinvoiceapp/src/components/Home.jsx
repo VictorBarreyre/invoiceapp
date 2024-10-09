@@ -154,7 +154,7 @@ const Home = () => {
                 </Box>
 
                 {/* Section appel à l'action */}
-                <Box pb='4rem' pt='3rem' textAlign="center" w='90vw' borderRadius='10px' bg="gray.50">
+                <Box pb='4rem' pt='3rem' textAlign="center" w='90vw' borderRadius='10px' >
                     <Flex direction={{ base: 'column', lg: 'row' }} alignItems="center" justifyContent="space-between" gap={6}>
                         <Flex w={{ base: '100%', lg: '50%' }} alignItems='start' direction='column' textAlign={{ base: 'center', lg: 'left' }}>
                             <Heading mb='1.5rem' fontSize={{ base: '24px', lg: '30px' }}>
