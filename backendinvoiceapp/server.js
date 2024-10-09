@@ -14,6 +14,7 @@ dotenv.config();
 
 const app = express();
 
+
 // Middleware de sécurité Helmet avec configuration Content Security Policy (CSP)
 app.use(helmet({
   contentSecurityPolicy: {
