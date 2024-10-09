@@ -6,7 +6,8 @@
   },
   "devDependencies": {
     "babel-plugin-transform-remove-console": "^6.9.4",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "vite": "^5.4.8"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production vite build"
