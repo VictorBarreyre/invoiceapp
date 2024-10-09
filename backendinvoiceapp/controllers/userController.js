@@ -119,7 +119,7 @@ exports.sendResetEmail = expressAsyncHandler(async (req, res) => {
     user.resetPasswordExpire = Date.now() + 3 * 60 * 60 * 1000; // 3 hours
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+    const resetLink = `https://dbill.io/reset-password?token=${resetToken}`;
 
     // Lire et remplir le template HTML
     const templatePath = path.join(__dirname, '../templates/reset_password.html');

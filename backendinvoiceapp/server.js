@@ -80,13 +80,34 @@ app.get('/', (req, res) => {
 });
 
 // Connexion à MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
   })
-  .catch(err => console.error('Failed to connect to MongoDB', err));
+  .catch(err => {
+    console.error('Failed to connect to MongoDB', err);
+  });
+
+// Ajouter des événements de connexion pour MongoDB
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('Mongoose disconnected from MongoDB');
+});
 
 mongoose.set('debug', true);
+
+// Middleware de gestion des erreurs global
+app.use((err, req, res, next) => {
+  console.error('An error occurred:', err.message);
+  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+});
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 8000;

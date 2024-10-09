@@ -183,7 +183,6 @@ function SignupForm() {
                 />
               </InputRightElement>
             </InputGroup>
-            {errorMessage && <ChakraText mt='1rem' color="red">{errorMessage}</ChakraText>}
           </FormControl>
           <Button type="submit" color='white' borderRadius='30px' backgroundColor='black' mt="4" colorScheme="gray">
             Créer mon compte
