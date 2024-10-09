@@ -14,7 +14,7 @@ dotenv.config();
 
 const app = express();
 
-
+// Configuration de CORS
 const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
 
 app.use(cors({
@@ -30,32 +30,31 @@ app.use(cors({
   credentials: true, // Permettre l'envoi de cookies et autres en-têtes sensibles
 }));
 
+// Répondre aux requêtes préflight OPTIONS
+app.options('*', cors());
 
-// Middleware de sécurité Helmet avec configuration Content Security Policy (CSP)
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://trusted-cdn.com"], // Autoriser les scripts de ce domaine
-      objectSrc: ["'none'"], // Bloquer les objets comme <object> et <embed>
-      imgSrc: ["'self'", "data:", "https:"], // Autoriser les images de soi-même, des data URIs, et HTTPS
-      upgradeInsecureRequests: [], // Forcer les requêtes HTTP à passer en HTTPS
-    }
-  }
-}));
-
-// Redirection HTTP vers HTTPS
+// Logger les requêtes reçues pour déboguer
 app.use((req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
+  console.log('Request received:', req.method, req.url);
+  console.log('Request headers:', req.headers);
   next();
 });
 
+// Middleware de sécurité Helmet (CSP désactivé temporairement pour tester)
+app.use(helmet({
+  contentSecurityPolicy: false
+}));
+
+// Redirection HTTP vers HTTPS (désactivée temporairement pour tester)
+// app.use((req, res, next) => {
+//   if (req.headers['x-forwarded-proto'] !== 'https') {
+//     return res.redirect(`https://${req.headers.host}${req.url}`);
+//   }
+//   next();
+// });
+
 // Limiter à 50mb pour l'analyse des données JSON
 app.use(express.json({ limit: '50mb' }));
-
-
 
 // Configurer les fichiers statiques
 app.use(express.static('public'));
