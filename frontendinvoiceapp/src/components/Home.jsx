@@ -29,7 +29,7 @@ const Home = () => {
             <Flex
                 direction="column"
                 justifyContent="center"
-                alignItems="center" 
+                alignItems="center"
                 mt='4.5rem'>
                 <Flex
                     pt='1rem'
@@ -38,7 +38,7 @@ const Home = () => {
                     alignItems="center"
                     height="55vh"  // Pour centrer verticalement
                     width={{ base: '23rem', lg: '40rem' }}
-                
+
                     px={4}
                 >
                     <Heading fontSize={{ base: '28px', lg: '36px' }} textAlign="center" mb={4}>
@@ -55,13 +55,19 @@ const Home = () => {
                             w={{ base: 'unset', lg: 'fit-content' }}
                             backgroundColor="black"
                             borderRadius="30px"
-                            color='white'
+                            color="white"
                             px={6}
                             py={4}
                             fontSize="16px"
+                            _hover={{
+                                boxShadow: 'rgba(174, 174, 192, 0.4) -1.5px -1.5px 3px 0px, rgb(255, 255, 255) 1.5px 1.5px 3px 0px',
+                                color: '#745FF2',
+                                backgroundColor: 'white !important',
+                            }}
                         >
                             Créer ma facture
                         </Button>
+
                         <Button
                             onClick={() => scrollToSection('why-choose-us')}
                             w={{ base: 'unset', lg: 'fit-content' }}
@@ -84,14 +90,14 @@ const Home = () => {
                     <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Pourquoi choisir notre solution ?
                     </Heading>
-                    <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5}  mx="auto">
-                    <Box   
+                    <SimpleGrid columns={{ base: 1, md: 4 }} spacing={5} mx="auto">
+                        <Box
                             className='neue-up'
                             borderWidth="1px"
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center" 
+                            textAlign="center"
                         >
                             <Icon as={AiOutlineFileText} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="16px">Envoi de factures en ligne rapide et facile</Text>
@@ -102,7 +108,7 @@ const Home = () => {
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center" 
+                            textAlign="center"
                         >
                             <Icon as={AiOutlineMail} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="16px">Automatisation des relances de paiement par email</Text>
@@ -113,7 +119,7 @@ const Home = () => {
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center" 
+                            textAlign="center"
                         >
                             <Icon as={AiOutlineUser} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="16px">Création de profils clients détaillés</Text>
@@ -124,7 +130,7 @@ const Home = () => {
                             borderRadius="lg"
                             overflow="hidden"
                             p={5}
-                            textAlign="center" 
+                            textAlign="center"
                         >
                             <Icon as={AiOutlineDashboard} color="#745FF2" w={10} h={10} mb={4} />
                             <Text fontSize="16px">Gestion efficace du statut des factures</Text>
@@ -133,7 +139,7 @@ const Home = () => {
                 </Box>
 
                 {/* Section témoignages clients */}
-                <Box className='neue-up' mb='7rem' pb='4rem' pt='3rem'  bg="white" width='100%' >
+                <Box className='neue-up' mb='7rem' pb='4rem' pt='3rem' bg="white" width='100%' >
                     <Heading textAlign="center" mb='2rem' fontSize={{ base: '24px', lg: '30px' }}>
                         Ce que disent nos clients
                     </Heading>
@@ -161,7 +167,7 @@ const Home = () => {
                                 Prêt à simplifier votre facturation ?
                             </Heading>
                             <Text fontSize={{ base: '16px', lg: '16px' }} mb={4}>
-                            Inscrivez-vous pour bénéficier d'un mois gratuit et découvrez tous les avantages de notre solution sans engagement. Vous pouvez annuler votre abonnement à tout moment, sans frais supplémentaires. Rejoignez-nous dès maintenant et facilitez votre gestion de factures !
+                                Inscrivez-vous pour bénéficier d'un mois gratuit et découvrez tous les avantages de notre solution sans engagement. Vous pouvez annuler votre abonnement à tout moment, sans frais supplémentaires. Rejoignez-nous dès maintenant et facilitez votre gestion de factures !
                             </Text>
                         </Flex>
                         <Box w={{ base: '100%', lg: '50%' }}>
