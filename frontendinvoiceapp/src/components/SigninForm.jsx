@@ -110,7 +110,7 @@ function SignInForm() {
               </ChakraText>
             </FormControl>
           )}
-          {errorMessage && <ChakraText mt='1rem' textAlign='center' color="red">{errorMessage}</ChakraText>}
+          
           <Button type="submit" color='white' borderRadius='30px' backgroundColor='black' mt="4" colorScheme="gray" isLoading={isSubmitting}>{isForgotPassword ? 'Envoyer le lien de réinitialisation' : 'Se connecter'}</Button>
           {!isForgotPassword && (
             <ChakraText mt={4}>

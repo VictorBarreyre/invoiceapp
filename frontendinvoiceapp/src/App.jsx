@@ -53,7 +53,7 @@ function App() {
                 {user && !isMobile && <Sidebar />}
                 <Box flex="1" overflowY="auto" pb='5rem'>
                   <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={user ? <Navigate to="/creer-facture-en-ligne" /> : <Home />} />
                     <Route path="/creer-facture-en-ligne" element={<Stepper />} />
                     <Route path="/signin" element={!user ? <Signin /> : <Navigate to="/" />} />
                     <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
