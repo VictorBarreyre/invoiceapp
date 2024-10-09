@@ -53,10 +53,10 @@ function App() {
                 {user && !isMobile && <Sidebar />}
                 <Box flex="1" overflowY="auto" pb='5rem'>
                   <Routes>
-                    <Route path="/" element={user ? <Navigate to="/creer-facture-en-ligne" /> : <Home />} />
+                    <Route path="/" element={user ? <Navigate to="/creer-facture-en-ligne" replace /> : <Home />} />
                     <Route path="/creer-facture-en-ligne" element={<Stepper />} />
-                    <Route path="/signin" element={!user ? <Signin /> : <Navigate to="/" />} />
-                    <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
+                    <Route path="/signin" element={!user ? <Signin /> : <Navigate to="/creer-facture-en-ligne" replace />} />
+                    <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/creer-facture-en-ligne" replace />} />
                     <Route path="/reset-password" element={<ResetPasswordForm />} />
                     <Route path="/profil" element={<PrivateRoute><Profil /></PrivateRoute>} />
                     <Route path="/factures" element={<PrivateRoute><Factures /></PrivateRoute>} />
@@ -68,7 +68,7 @@ function App() {
                     <Route path="/conditions-generales" element={<CGU />} />
                     <Route path="/mentions-legales" element={<MentionsLegales />} />
                     <Route path="/politique-de-confidentialite" element={<PolitiqueConfidentialite />} />
-                    <Route path="*" element={<Navigate to="/" />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Box>
               </Flex>
