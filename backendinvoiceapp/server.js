@@ -15,6 +15,22 @@ dotenv.config();
 const app = express();
 
 
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Autoriser ces méthodes HTTP
+  allowedHeaders: ['Content-Type', 'Authorization'], // Autoriser ces en-têtes
+  credentials: true, // Permettre l'envoi de cookies et autres en-têtes sensibles
+}));
+
+
 // Middleware de sécurité Helmet avec configuration Content Security Policy (CSP)
 app.use(helmet({
   contentSecurityPolicy: {
@@ -39,20 +55,7 @@ app.use((req, res, next) => {
 // Limiter à 50mb pour l'analyse des données JSON
 app.use(express.json({ limit: '50mb' }));
 
-const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'https://www.dbill.io'];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Autoriser ces méthodes HTTP
-  allowedHeaders: ['Content-Type', 'Authorization'], // Autoriser ces en-têtes
-  credentials: true, // Permettre l'envoi de cookies et autres en-têtes sensibles
-}));
 
 // Configurer les fichiers statiques
 app.use(express.static('public'));
