@@ -90,6 +90,12 @@ mongoose.connection.on('disconnected', () => {
 
 mongoose.set('debug', true);
 
+// Middleware de gestion des erreurs global
+app.use((err, req, res, next) => {
+  console.error('An error occurred:', err.message);
+  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+});
+
 // Démarrage du serveur
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
