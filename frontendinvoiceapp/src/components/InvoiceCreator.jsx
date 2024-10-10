@@ -242,7 +242,7 @@ const InvoiceCreator = ({ totalError }) => {
           </Flex>
 
         </Flex>
-        <Flex flexDirection={{ base: 'column', lg: 'row' }} w='25vw' justifyContent='space-between' width='-webkit-fill-available' pb="2rem">
+        <Flex flexDirection={{ base: 'column', lg: 'row' }} w='25vw' justifyContent='space-between' width='100%' pb="2rem">
           <Flex direction="column" w={{ base: 'unset', lg: '25vw' }} alignItems='start'>
             <Heading mb='1rem' size="sm">Informations sur l'émetteur :</Heading>
 
