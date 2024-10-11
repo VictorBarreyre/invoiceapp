@@ -149,36 +149,52 @@ export const InvoiceDataProvider = ({ children }) => {
     
 
     const handleDownloadInvoice = async () => {
-        const file = <InvoicePDF invoiceData={invoiceData} />;
-        const asPDF = pdf([]);
-        asPDF.updateContainer(file);
-        const pdfBlob = await asPDF.toBlob();
-
-        const url = URL.createObjectURL(pdfBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `Facture-${invoiceData.number}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
-
-
-    const handleSendInvoice = () => {
-        const { email, name } = invoiceData.issuer;
-        if (!email || !name) {
-            console.error("Email or Name is missing.");
-            setShowError(true);
-            return;
-        }
-        createCheckoutSession(email, name, (sessionId) => {
-            onSuccess();
-        }, (errorMessage) => {
-            console.error("Error during checkout creation:", errorMessage);
-            setShowError(true);
+        // Envoi d'un événement à Google Analytics pour indiquer que le téléchargement a été initié
+        gtag('event', 'download_invoice', {
+            'event_category': 'button_click',
+            'event_label': 'Download Invoice',
+            'status': 'initiated'
         });
+    
+        try {
+            // Génération du fichier PDF
+            const file = <InvoicePDF invoiceData={invoiceData} />;
+            const asPDF = pdf([]);
+            asPDF.updateContainer(file);
+            const pdfBlob = await asPDF.toBlob();
+    
+            // Création de l'URL de téléchargement
+            const url = URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Facture-${invoiceData.number}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+    
+            // Envoi d'un événement à Google Analytics pour indiquer le succès du téléchargement
+            gtag('event', 'download_invoice', {
+                'event_category': 'button_click',
+                'event_label': 'Download Invoice',
+                'status': 'success'
+            });
+    
+        } catch (error) {
+            // En cas d'échec, envoi d'un événement à Google Analytics avec les détails de l'erreur
+            gtag('event', 'download_invoice', {
+                'event_category': 'button_click',
+                'event_label': 'Download Invoice',
+                'status': 'failure',
+                'error_message': error.message
+            });
+    
+            // Affichage de l'erreur dans la console
+            console.error('Erreur lors du téléchargement de la facture :', error);
+        }
     };
+    
+
 
     const checkActiveSubscription = async (email) => {
         try {
