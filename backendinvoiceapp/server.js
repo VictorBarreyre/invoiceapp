@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const invoiceRoutes = require('./routes/invoice');
 const emailRoutes = require('./routes/emailRoutes');
 const userRoutes = require('./routes/userRoutes');
 const aboRoutes = require('./routes/aboRoutes'); 
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 
 // Limiter à 50mb pour l'analyse des données JSON
 app.use(express.json({ limit: '50mb' }));
+app.use(cookieParser());
 
 // Configurer les fichiers statiques
 app.use(express.static('public'));
@@ -56,6 +58,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
 
 // Routes
+app.use('/api/invoice', invoiceRoutes);
 app.use('/email', emailRoutes);
 app.use('/api/users', userRoutes);
 app.use('/abonnement', aboRoutes); 

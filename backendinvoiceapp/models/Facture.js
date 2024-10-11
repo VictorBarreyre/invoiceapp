@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const factureSchema = new mongoose.Schema({
+  identifier: {
+    type: String,
+    required: false, 
+  },
   number: {
     type: String,
     required: true,
