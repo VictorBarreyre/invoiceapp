@@ -216,7 +216,7 @@ const Stepper = () => {
           <Button onClick={handleDownloadInvoice} w={{ base: 'unset', lg: 'fit-content' }} color='white' borderRadius='30px' backgroundColor='black' p='10px 20px 10px 20px'> Télécharger ma facture </Button>
        
           </Flex>
-            </Flex>
+          </Flex>
 
         </Flex>
       );

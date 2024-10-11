@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Flex, Box, useMediaQuery } from '@chakra-ui/react';
@@ -28,6 +29,7 @@ import PolitiqueConfidentialite from '../roots/PolConf';
 import ResetPasswordForm from '../roots/ResetPasswordForm';
 import PrivateRoute from '../roots/PrivateRoute';
 import Home from './components/Home';
+import CookieWall from './components/CookieWall'; // Importer le cookie wall
 
 const stripePromise = loadStripe('pk_test_51OwLFM00KPylCGutjKAkwhqleWEzuvici1dQUPCIvZHofEzLtGyM9Gdz5zEfvwSZKekKRgA1el5Ypnw7HLfYWOuB00ZdrKdygg');
 
@@ -73,6 +75,7 @@ function App() {
                 </Box>
               </Flex>
               <Footer />
+              <CookieWall /> {/* Ajouter le cookie wall ici */}
             </Flex>
           </Router>
         </InvoiceDataProvider>
