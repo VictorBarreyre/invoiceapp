@@ -14,7 +14,7 @@ import Carousel from './Carousel';
 import Abo from '../../roots/Abo';
 
 const Home = () => {
-
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
