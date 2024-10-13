@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { AiOutlineFileText, AiOutlineMail, AiOutlineUser, AiOutlineDashboard } from 'react-icons/ai';
 import Carousel from './Carousel';
-import Abo from './Abo'; // Importer le composant Abo
+import Abo from '../../roots/Abo';
 
 const Home = () => {
     const { isOpen, onOpen, onClose } = useDisclosure(); // Pour gérer la modale
