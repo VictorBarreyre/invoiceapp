@@ -64,7 +64,7 @@ app.use('/api/users', userRoutes);
 app.use('/abonnement', aboRoutes); 
 app.use('/webhook', webhookRoutes); 
 
-// Route par défaut
+// Route par défau
 app.get('/', (req, res) => {
   res.send('Why are you here? staging');
 });
