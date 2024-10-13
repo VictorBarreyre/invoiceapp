@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
-    Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, StackDivider, Image
+    Flex, Heading, Text, Button, VStack, HStack, Box, Icon, SimpleGrid, Modal, ModalOverlay,
+    ModalContent, ModalCloseButton, ModalBody, useDisclosure
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
 import {
