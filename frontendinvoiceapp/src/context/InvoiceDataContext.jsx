@@ -149,12 +149,19 @@ export const InvoiceDataProvider = ({ children }) => {
     
 
     const handleDownloadInvoice = async () => {
-        // Envoi d'un événement à Google Analytics pour indiquer que le téléchargement a été initié
-        gtag('event', 'download_invoice', {
-            'event_category': 'button_click',
-            'event_label': 'Download Invoice',
-            'status': 'initiated'
-        });
+        // Vérifier si gtag est disponible
+        if (typeof gtag === 'function') {
+            // Envoi d'un événement à Google Analytics pour indiquer que le téléchargement a été initié
+            gtag('event', 'download', {
+                'send_to': 'G-RVVPJ6YJ2J',  // Spécifiez l'ID de suivi de GA4
+                'content_type': 'invoice',
+                'event_category': 'button_click',  // Optionnel dans GA4, mais peut être ajouté
+                'event_label': 'Download Invoice',
+                'status': 'initiated',
+            });
+        } else {
+            console.error('Google Analytics gtag function is not defined');
+        }
     
         try {
             // Génération du fichier PDF
@@ -174,25 +181,33 @@ export const InvoiceDataProvider = ({ children }) => {
             URL.revokeObjectURL(url);
     
             // Envoi d'un événement à Google Analytics pour indiquer le succès du téléchargement
-            gtag('event', 'download_invoice', {
-                'event_category': 'button_click',
-                'event_label': 'Download Invoice',
-                'status': 'success'
-            });
-    
+            if (typeof gtag === 'function') {
+                gtag('event', 'download', {
+                    'send_to': 'G-RVVPJ6YJ2J',  // Spécifiez l'ID de suivi de GA4
+                    'content_type': 'invoice',
+                    'event_category': 'button_click',  // Optionnel
+                    'event_label': 'Download Invoice',
+                    'status': 'success',
+                });
+            }
         } catch (error) {
             // En cas d'échec, envoi d'un événement à Google Analytics avec les détails de l'erreur
-            gtag('event', 'download_invoice', {
-                'event_category': 'button_click',
-                'event_label': 'Download Invoice',
-                'status': 'failure',
-                'error_message': error.message
-            });
+            if (typeof gtag === 'function') {
+                gtag('event', 'download', {
+                    'send_to': 'G-RVVPJ6YJ2J',  // Spécifiez l'ID de suivi de GA4
+                    'content_type': 'invoice',
+                    'event_category': 'button_click',  // Optionnel
+                    'event_label': 'Download Invoice',
+                    'status': 'failure',
+                    'error_message': error.message,
+                });
+            }
     
             // Affichage de l'erreur dans la console
             console.error('Erreur lors du téléchargement de la facture :', error);
         }
     };
+    
     
 
 

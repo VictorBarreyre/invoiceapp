@@ -34,33 +34,25 @@
 
   <!-- Preload critical assets -->
   <link rel="preload" href="/dbico2.png" as="image">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16730659519">
-  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RVVPJ6YJ2J"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
-    gtag('config', 'AW-16730659519');
-  </script>
+    // Configuration pour GA4
+    gtag('config', 'G-RVVPJ6YJ2J');
 
-  <!-- Event snippet for Envoi de formulaire pour prospects conversion page -->
-<script>
-  gtag('event', 'conversion', {
+    // Configuration pour Google Ads (si nécessaire)
+    gtag('config', 'AW-16730659519');
+
+    // Si vous avez des conversions Google Ads
+    gtag('event', 'conversion', {
       'send_to': 'AW-16730659519/4RMbCJ_IwtoZEL-15qk-',
       'value': 1.0,
       'currency': 'EUR'
-  });
-</script>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RVVPJ6YJ2J"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'G-RVVPJ6YJ2J');
-    </script>
+    });
+  </script>
 </head>
 
 <body>
