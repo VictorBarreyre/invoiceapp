@@ -34,7 +34,7 @@ const CookieWall = () => {
             position="fixed"
             bottom="0"
             width="100%"
-            bg="black"
+            bg="white"
             color="white"
             p="4"
             zIndex="1000"
